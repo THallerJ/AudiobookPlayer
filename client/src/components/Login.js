@@ -7,7 +7,10 @@ const Login = () => {
 		<div>
 			<Button
 				onClick={() => {
-					window.open("http://localhost:5000/auth/google", "_self");
+					window.open(
+						`${process.env.REACT_APP_SERVER_URL}/auth/google`,
+						"_self"
+					);
 				}}
 				startIcon={<GoogleIcon />}
 				variant="contained"

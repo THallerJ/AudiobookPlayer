@@ -2,8 +2,19 @@ import { useEffect, useState } from "react";
 import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import Dashboard from "./components/Dashboard";
+import CircularProgress from "@mui/material/CircularProgress";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { DashboardContextProvider } from "./contexts/DashboardContext";
+
 const axios = require("axios");
+
+const theme = createTheme({
+	drawer: {
+		width: 240,
+	},
+	customColor: "#f1f1f1",
+});
 
 function App() {
 	const [authentication, setAuthentication] = useState({
@@ -13,7 +24,7 @@ function App() {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:5000/auth/isLoggedIn", {
+			.get(`${process.env.REACT_APP_SERVER_URL}/auth/isLoggedIn`, {
 				withCredentials: true,
 			})
 			.then((res) => {
@@ -25,23 +36,25 @@ function App() {
 	}, []);
 
 	return (
-		<div className="App">
-			{!authentication.isInitializing ? (
-				<Router>
-					<Route exact path="/login" component={Login} />
-					<Switch>
-						<LoginPrivateRoute
-							exact
-							path="/"
-							component={Dashboard}
-							isAuthenticated={authentication.isAuthenticated}
-						/>
-					</Switch>
-				</Router>
-			) : (
-				<h1>Loading</h1>
-			)}
-		</div>
+		<ThemeProvider theme={theme}>
+			<DashboardContextProvider>
+				{!authentication.isInitializing ? (
+					<Router>
+						<Route exact path="/login" component={Login} />
+						<Switch>
+							<LoginPrivateRoute
+								exact
+								path="/"
+								component={Dashboard}
+								isAuthenticated={authentication.isAuthenticated}
+							/>
+						</Switch>
+					</Router>
+				) : (
+					<CircularProgress />
+				)}
+			</DashboardContextProvider>
+		</ThemeProvider>
 	);
 }
 
