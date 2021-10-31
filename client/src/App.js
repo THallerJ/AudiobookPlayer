@@ -13,7 +13,6 @@ const theme = createTheme({
 	drawer: {
 		width: 240,
 	},
-	customColor: "#f1f1f1",
 });
 
 function App() {
