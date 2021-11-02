@@ -1,23 +1,28 @@
 import React from "react";
 import MediaPlayer from "./MediaPlayer";
-import { styled } from "@mui/material/styles";
-import BodyContent from "./BodyContent";
+import ChapterList from "./ChapterList";
+import { Box } from "@mui/system";
+import { Paper } from "@mui/material";
 
 const Body = () => {
 	return (
-		<div>
-			<BodyContent />
-			<StyledMediaPlayerContainer>
-				<MediaPlayer />
-			</StyledMediaPlayerContainer>
-		</div>
+		<Box
+			sx={{
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
+			}}
+		>
+			<Box sx={{ overflow: "auto" }}>
+				<ChapterList />
+			</Box>
+			<Box sx={{ height: "10%" }} boxShadow={5}>
+				<Paper elevation={0}>
+					<MediaPlayer />
+				</Paper>
+			</Box>
+		</Box>
 	);
 };
 
 export default Body;
-
-const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
-	position: "fixed",
-	bottom: 0,
-	width: "100%",
-}));
