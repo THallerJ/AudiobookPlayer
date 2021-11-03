@@ -20,12 +20,12 @@ const Sidebar = () => {
 
 	const listItems = [];
 	for (var i = 0; i < 20; i++) {
-		listItems.push(`Book Title: ${i + 1}`);
+		listItems.push(`Chapter ${i + 1}`);
 	}
 
 	const drawerContent = (
 		<StyledDrawerContent>
-			<Typography variant="subtitle2">LIBRARY</Typography>
+			<Typography variant="subtitle2">CHAPTERS</Typography>
 			<Divider />
 			<List>
 				{listItems.map((item) => {
@@ -35,6 +35,7 @@ const Sidebar = () => {
 								primary={item}
 								primaryTypographyProps={{ noWrap: "true" }}
 							/>
+							<Typography variant="caption">00:00</Typography>
 						</ListItem>
 					);
 				})}

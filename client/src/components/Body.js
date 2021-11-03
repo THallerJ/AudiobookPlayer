@@ -1,10 +1,13 @@
 import React from "react";
 import MediaPlayer from "./MediaPlayer";
-import ChapterList from "./ChapterList";
+import BookList from "./BookList";
 import { Box } from "@mui/system";
 import { Paper } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const Body = () => {
+	const theme = useTheme();
+
 	return (
 		<Box
 			sx={{
@@ -13,11 +16,11 @@ const Body = () => {
 				flexDirection: "column",
 			}}
 		>
-			<Box sx={{ overflow: "auto" }}>
-				<ChapterList />
+			<Box sx={{ height: "90%", overflow: "auto", p: theme.spacing(2) }}>
+				<BookList />
 			</Box>
-			<Box sx={{ height: "10%" }} boxShadow={5}>
-				<Paper elevation={0}>
+			<Box sx={{ height: "10%" }} boxShadow={6}>
+				<Paper elevation>
 					<MediaPlayer />
 				</Paper>
 			</Box>
