@@ -25,12 +25,19 @@ const Sidebar = () => {
 
 	const drawerContent = (
 		<StyledDrawerContent>
-			<Typography variant="subtitle2">CHAPTERS</Typography>
+			<Typography variant="subtitle2" align="center">
+				CHAPTERS
+			</Typography>
 			<Divider />
 			<List>
 				{listItems.map((item) => {
 					return (
-						<ListItem divider={true} dense={true}>
+						<ListItem
+							divider={true}
+							dense={true}
+							button={true}
+							onClick={() => console.log(`${item} selected`)}
+						>
 							<ListItemText
 								primary={item}
 								primaryTypographyProps={{ noWrap: "true" }}

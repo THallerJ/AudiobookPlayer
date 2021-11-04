@@ -1,28 +1,30 @@
 import React from "react";
 import {
-	IconButton,
 	Typography,
 	Card,
 	CardMedia,
 	CardContent,
+	CardActionArea,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import EditIcon from "@mui/icons-material/Edit";
 
 const Book = ({ title, author }) => {
 	return (
 		<StyledCard raised={true}>
-			<CardMedia
-				component="img"
-				image="https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg"
-			/>
-			<CardContent>
-				<Typography variant="subtitle2">{title}</Typography>
-				<Typography variant="caption">{author}</Typography>
-			</CardContent>
-			<IconButton>
-				<EditIcon fontSize="small" />
-			</IconButton>
+			<CardActionArea
+				onClick={() => console.log(`clicked "${title}" by ${author}`)}
+			>
+				<CardMedia
+					component="img"
+					image="https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg"
+				/>
+			</CardActionArea>
+			<CardActionArea onClick={() => console.log("edit clicked")}>
+				<CardContent>
+					<Typography variant="subtitle2">{title}</Typography>
+					<Typography variant="caption">{author}</Typography>
+				</CardContent>
+			</CardActionArea>
 		</StyledCard>
 	);
 };

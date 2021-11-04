@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	Typography,
 	Hidden,
@@ -6,6 +6,8 @@ import {
 	AppBar,
 	Toolbar,
 	useMediaQuery,
+	Menu,
+	MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./Sidebar";
@@ -16,7 +18,16 @@ import { styled, useTheme } from "@mui/material/styles";
 
 const Dashboard = () => {
 	const { setOpenDrawer } = useDashboard();
+	const [anchorEl, setAnchorEl] = useState(null);
 	const theme = useTheme();
+
+	function handleOpenMenu(event) {
+		setAnchorEl(event.currentTarget);
+	}
+
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+	};
 
 	const appBar = (
 		<div>
@@ -29,7 +40,7 @@ const Dashboard = () => {
 						<IconButton
 							edge="end"
 							sx={{ marginLeft: "auto" }}
-							onClick={() => console.log("icon clicked")}
+							onClick={handleOpenMenu}
 						>
 							<MoreVert />
 						</IconButton>
@@ -52,7 +63,7 @@ const Dashboard = () => {
 						<IconButton
 							edge="end"
 							sx={{ marginLeft: "auto" }}
-							onClick={() => console.log("icon clicked")}
+							onClick={handleOpenMenu}
 						>
 							<MoreVert />
 						</IconButton>
@@ -73,6 +84,24 @@ const Dashboard = () => {
 			>
 				<Body />
 			</div>
+			<Menu
+				id="simple-menu"
+				anchorEl={anchorEl}
+				dense={true}
+				keepMounted
+				open={Boolean(anchorEl)}
+				onClose={handleCloseMenu}
+				getContentAnchorEl={null}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+				transformOrigin={{ horizontal: "center" }}
+			>
+				<MenuItem onClick={() => console.log("clicked toggle dark mode")}>
+					Toggle Dark Mode
+				</MenuItem>
+				<MenuItem onClick={() => console.log("clicked log out")}>
+					Log Out
+				</MenuItem>
+			</Menu>
 		</StyledDashboardContainer>
 	);
 };

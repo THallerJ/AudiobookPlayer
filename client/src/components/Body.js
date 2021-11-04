@@ -20,7 +20,7 @@ const Body = () => {
 				<BookList />
 			</Box>
 			<Box sx={{ height: "10%" }} boxShadow={6}>
-				<Paper elevation>
+				<Paper elevation={0}>
 					<MediaPlayer />
 				</Paper>
 			</Box>
