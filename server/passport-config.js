@@ -21,6 +21,7 @@ passport.use(
 			callbackURL: process.env.GOOGLE_CALLBACK_URL,
 		},
 		(accessToken, refreshToken, profile, done) => {
+			// check if user with googleId exists, and if it does, do not save new instance of that user
 			const user = new User({
 				googleId: profile.id,
 				accessToken: accessToken,

@@ -13,12 +13,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./Sidebar";
 import Body from "./Body";
 import { useDashboard } from "../contexts/DashboardContext";
+import { useGoogle } from "../contexts/GoogleContext";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
 
 const Dashboard = () => {
 	const { setOpenDrawer } = useDashboard();
 	const [anchorEl, setAnchorEl] = useState(null);
+	const { getFolders } = useGoogle();
 	const theme = useTheme();
 
 	function handleOpenMenu(event) {
@@ -95,6 +97,7 @@ const Dashboard = () => {
 				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 				transformOrigin={{ horizontal: "center" }}
 			>
+				<MenuItem onClick={() => getFolders()}>Set File Directory</MenuItem>
 				<MenuItem onClick={() => console.log("clicked toggle dark mode")}>
 					Toggle Dark Mode
 				</MenuItem>

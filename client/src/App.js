@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
+import { GoogleContextProvider } from "./contexts/GoogleContext";
 
 const axios = require("axios");
 
@@ -37,21 +38,23 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<DashboardContextProvider>
-				{!authentication.isInitializing ? (
-					<Router>
-						<Route exact path="/login" component={Login} />
-						<Switch>
-							<LoginPrivateRoute
-								exact
-								path="/"
-								component={Dashboard}
-								isAuthenticated={authentication.isAuthenticated}
-							/>
-						</Switch>
-					</Router>
-				) : (
-					<CircularProgress />
-				)}
+				<GoogleContextProvider>
+					{!authentication.isInitializing ? (
+						<Router>
+							<Route exact path="/login" component={Login} />
+							<Switch>
+								<LoginPrivateRoute
+									exact
+									path="/"
+									component={Dashboard}
+									isAuthenticated={authentication.isAuthenticated}
+								/>
+							</Switch>
+						</Router>
+					) : (
+						<CircularProgress />
+					)}
+				</GoogleContextProvider>
 			</DashboardContextProvider>
 		</ThemeProvider>
 	);
