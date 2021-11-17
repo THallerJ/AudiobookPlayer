@@ -87,15 +87,12 @@ const Dashboard = () => {
 				<Body />
 			</div>
 			<Menu
-				id="simple-menu"
 				anchorEl={anchorEl}
-				dense={true}
 				keepMounted
 				open={Boolean(anchorEl)}
 				onClose={handleCloseMenu}
-				getContentAnchorEl={null}
 				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-				transformOrigin={{ horizontal: "center" }}
+				transformOrigin={{ horizontal: "center", vertical: "top" }}
 			>
 				<MenuItem onClick={() => getFolders()}>Set File Directory</MenuItem>
 				<MenuItem onClick={() => console.log("clicked toggle dark mode")}>

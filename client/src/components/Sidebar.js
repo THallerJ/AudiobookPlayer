@@ -30,9 +30,10 @@ const Sidebar = () => {
 			</Typography>
 			<Divider />
 			<List>
-				{listItems.map((item) => {
+				{listItems.map((item, index) => {
 					return (
 						<ListItem
+							key={index}
 							divider={true}
 							dense={true}
 							button={true}
@@ -40,7 +41,7 @@ const Sidebar = () => {
 						>
 							<ListItemText
 								primary={item}
-								primaryTypographyProps={{ noWrap: "true" }}
+								primaryTypographyProps={{ noWrap: true }}
 							/>
 							<Typography variant="caption">00:00</Typography>
 						</ListItem>

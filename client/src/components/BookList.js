@@ -8,14 +8,17 @@ const BookList = () => {
 
 	const bookArray = [];
 	for (var i = 0; i < 30; i++) {
-		bookArray.push(`Book Title ${i + 1}`);
+		bookArray.push({
+			title: `Book Title ${i + 1}`,
+			author: `Author Name${i + 1}`,
+		});
 	}
 
 	return (
 		<Grid item container spacing={theme.spacing(3)} justifyContent="center">
 			{bookArray.map((book) => (
-				<Grid item alignItem="center">
-					<Book title={book} author="Author Name" />
+				<Grid item key={`${book.title + book.author}`}>
+					<Book title={book.title} author={book.author} />
 				</Grid>
 			))}
 		</Grid>
