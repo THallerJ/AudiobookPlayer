@@ -20,17 +20,20 @@ passport.use(
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			callbackURL: process.env.GOOGLE_CALLBACK_URL,
 		},
-		(accessToken, refreshToken, profile, done) => {
-			// check if user with googleId exists, and if it does, do not save new instance of that user
-			const user = new User({
-				googleId: profile.id,
-				accessToken: accessToken,
-				refreshToken: refreshToken,
-			});
+		async (accessToken, refreshToken, profile, done) => {
+			const userExists = await User.findOne({ googleId: profile.id });
 
-			user.save((err, result) => {
-				if (err) console.log(err);
-			});
+			if (!userExists) {
+				const user = new User({
+					googleId: profile.id,
+					accessToken: accessToken,
+					refreshToken: refreshToken,
+				});
+
+				user.save((err, result) => {
+					if (err) console.log(err);
+				});
+			}
 
 			return done(null, profile);
 		}
