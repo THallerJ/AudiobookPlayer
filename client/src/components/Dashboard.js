@@ -16,11 +16,13 @@ import { useDashboard } from "../contexts/DashboardContext";
 import { useGoogle } from "../contexts/GoogleContext";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
+import { useAuth } from "../contexts/AuthContext";
 
 const Dashboard = () => {
 	const { setOpenDrawer } = useDashboard();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const { getFolders } = useGoogle();
+	const { logout } = useAuth();
 	const theme = useTheme();
 
 	function handleOpenMenu(event) {
@@ -98,9 +100,7 @@ const Dashboard = () => {
 				<MenuItem onClick={() => console.log("clicked toggle dark mode")}>
 					Toggle Dark Mode
 				</MenuItem>
-				<MenuItem onClick={() => console.log("clicked log out")}>
-					Log Out
-				</MenuItem>
+				<MenuItem onClick={logout}>Log Out</MenuItem>
 			</Menu>
 		</StyledDashboardContainer>
 	);

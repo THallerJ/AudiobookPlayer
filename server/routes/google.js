@@ -4,21 +4,18 @@ const axios = require("axios");
 require("dotenv").config();
 
 router.get("/folders", async (req, res) => {
-	const token = req.user[0].accessToken;
-	console.log("folders called");
+	const user = req.user[0];
+	const directory = req.query.directory ? req.query.directory : "root";
 
-	//rewrite to accept fileId as parameter. Use root as fileId on first call, use selected fileId on successive calls
 	try {
 		const response = await axios.get(
 			"https://www.googleapis.com/drive/v3/files",
 			{
 				headers: {
-					Authorization: `Bearer ${token}`,
-					refresh_token: req.user[0].refreshToken,
-					google_id: req.user[0].googleId,
+					Authorization: `Bearer ${user.accessToken}`,
 				},
 				params: {
-					q: `\"root\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
+					q: `\"${directory}\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
 				},
 			}
 		);

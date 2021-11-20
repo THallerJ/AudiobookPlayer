@@ -13,7 +13,12 @@ dbUtils.createDb();
 
 app.use(dbUtils.getSession());
 
-app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
+app.use(
+	cors({
+		credentials: true,
+		origin: process.env.CLIENT_URL,
+	})
+);
 
 app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL);

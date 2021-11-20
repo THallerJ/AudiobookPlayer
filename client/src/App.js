@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import Dashboard from "./components/Dashboard";
@@ -7,8 +7,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
 import { GoogleContextProvider } from "./contexts/GoogleContext";
-
-const axios = require("axios");
+import { useAuth } from "./contexts/AuthContext";
 
 const theme = createTheme({
 	drawer: {
@@ -17,23 +16,11 @@ const theme = createTheme({
 });
 
 function App() {
-	const [authentication, setAuthentication] = useState({
-		isInitializing: true,
-		isAuthenticated: false,
-	});
+	const { checkAuthentication, authentication } = useAuth();
 
 	useEffect(() => {
-		axios
-			.get(`${process.env.REACT_APP_SERVER_URL}/auth/isLoggedIn`, {
-				withCredentials: true,
-			})
-			.then((res) => {
-				setAuthentication({
-					isInitializing: false,
-					isAuthenticated: res.data.result,
-				});
-			});
-	}, []);
+		checkAuthentication();
+	}, [checkAuthentication]);
 
 	return (
 		<ThemeProvider theme={theme}>

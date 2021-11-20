@@ -9,10 +9,6 @@ router.get("/failed", (req, res) => {
 	res.send("<h1>Log in Failed :(</h1>");
 });
 
-const checkUserLoggedIn = (req, res, next) => {
-	req.user ? next() : res.sendStatus(401);
-};
-
 router.get(
 	"/google",
 	passport.authenticate("google", {
@@ -31,7 +27,7 @@ router.get(
 	}
 );
 
-router.get("/refresh_token", async (req, res) => {
+router.post("/refresh_token", async (req, res) => {
 	const user = req.user[0];
 
 	const response = await axios.post(
@@ -65,11 +61,15 @@ router.get("/isLoggedIn", (req, res) => {
 	res.send({ result: false });
 });
 
-router.get("/logout", (req, res) => {
-	res.send("hello");
-	//req.session = null;
-	//req.logout();
-	//res.redirect("/");
+router.post("/logout", (req, res) => {
+	User.deleteOne({ googleId: req.user[0].googleId }, (err) => {
+		if (err) {
+			console.log(err);
+		}
+	});
+
+	req.logout();
+	res.status(200).send("logged out");
 });
 
 module.exports = router;
