@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 const GoogleContext = React.createContext();
@@ -6,15 +6,18 @@ const GoogleContext = React.createContext();
 export const GoogleContextProvider = ({ children }) => {
 	const { axiosInstance } = useAuth();
 
-	async function getFolders(directory) {
-		const response = await axiosInstance.get(`/google/folders`, {
-			params: {
-				directory: directory ? directory : null,
-			},
-		});
+	const getFolders = useCallback(
+		async (directory) => {
+			const response = await axiosInstance.get(`/google/folders`, {
+				params: {
+					directory: directory ? directory : null,
+				},
+			});
 
-		console.log(response);
-	}
+			return response.data;
+		},
+		[axiosInstance]
+	);
 
 	const value = {
 		getFolders,
