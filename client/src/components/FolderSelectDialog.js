@@ -19,7 +19,7 @@ import { useGoogle } from "../contexts/GoogleContext";
 import { styled } from "@mui/material/styles";
 
 const FolderSelectDialog = ({ open, setOpen }) => {
-	const { getFolders } = useGoogle();
+	const { getFolders, setRootDirectory } = useGoogle();
 	const [loading, setLoading] = useState(false);
 	const [selectedFolders, setSelectedFolders] = useState([]);
 
@@ -141,13 +141,13 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 					{renderBreadCrumbs()}
 				</DialogTitle>
 				<DialogContent> {renderFolders()}</DialogContent>
-				<DialogActions className="thing">
+				<DialogActions>
 					<Button
 						onClick={() => {
-							console.log(
-								`audiobook directory: ${
-									selectedFolders[selectedFolders.length - 1].name
-								}`
+							setRootDirectory(
+								selectedFolders.length > 0
+									? selectedFolders[selectedFolders.length - 1].id
+									: "root"
 							);
 							setOpen(false);
 						}}

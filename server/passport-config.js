@@ -26,6 +26,7 @@ passport.use(
 			if (!userExists) {
 				const user = new User({
 					googleId: profile.id,
+					rootId: "root",
 					accessToken: accessToken,
 					refreshToken: refreshToken,
 				});

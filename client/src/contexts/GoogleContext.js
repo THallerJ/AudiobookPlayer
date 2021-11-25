@@ -19,8 +19,17 @@ export const GoogleContextProvider = ({ children }) => {
 		[axiosInstance]
 	);
 
+	function setRootDirectory(rootId) {
+		axiosInstance.post(`/player/rootDirectory`, {
+			data: {
+				rootId: rootId,
+			},
+		});
+	}
+
 	const value = {
 		getFolders,
+		setRootDirectory,
 	};
 
 	return (

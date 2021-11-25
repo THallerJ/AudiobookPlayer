@@ -1,9 +1,10 @@
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session");
 const dbUtils = require("./database-utils");
 const authRoute = require("./routes/auth.js");
 const googleRoute = require("./routes/google.js");
+const playerRoute = require("./routes/player.js");
+
 const cors = require("cors");
 require("./passport-config");
 
@@ -12,6 +13,7 @@ const app = express();
 dbUtils.createDb();
 
 app.use(dbUtils.getSession());
+app.use(express.json());
 
 app.use(
 	cors({
@@ -35,5 +37,6 @@ app.use(passport.session());
 
 app.use("/auth", authRoute);
 app.use("/google", googleRoute);
+app.use("/player", playerRoute);
 
 app.listen(5000, () => console.log(`Server listening on port ${5000}`));

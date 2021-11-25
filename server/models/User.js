@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
 	googleId: String,
+	rootId: String,
 	accessToken: String,
 	refreshToken: String,
 });
