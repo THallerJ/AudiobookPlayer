@@ -21,56 +21,71 @@ import { styled } from "@mui/material/styles";
 const FolderSelectDialog = ({ open, setOpen }) => {
 	const { getFolders } = useGoogle();
 	const [loading, setLoading] = useState(false);
+	const [selectedFolders, setSelectedFolders] = useState([]);
 
-	const [folderList, setFolderList] = useState([]);
+	const [folders, setFolders] = useState([]);
 
-	const updateFolderList = useCallback(
+	const updateFolders = useCallback(
 		async (rootId) => {
 			setLoading(true);
 			const folders = await getFolders(rootId);
-			setFolderList(folders);
+			setFolders(folders);
 			setLoading(false);
 		},
 		[getFolders]
 	);
 
+	function updateBreadCrumbs(rootId, index) {
+		setSelectedFolders((state) => state.slice(0, index));
+		updateFolders(rootId);
+	}
+
 	useEffect(() => {
 		const fetchData = async () => {
-			updateFolderList("root");
+			updateFolders("root");
 		};
 
-		open ? fetchData() : setFolderList([]);
-	}, [getFolders, updateFolderList, open]);
+		if (open) {
+			fetchData();
+		} else {
+			setFolders([]);
+			setSelectedFolders([]);
+		}
+	}, [getFolders, updateFolders, open]);
 
-	function folders() {
+	function renderFolders() {
 		if (loading) {
 			return (
-				<StyledCenter>
+				<StyledCenterWrapper>
 					<CircularProgress />
-				</StyledCenter>
+				</StyledCenterWrapper>
 			);
 		} else {
-			if (folderList.length === 0) {
+			if (folders.length === 0) {
 				return (
-					<StyledCenter>
+					<StyledCenterWrapper>
 						<Typography variant="subtitle2">
 							There are no folders here
 						</Typography>
-					</StyledCenter>
+					</StyledCenterWrapper>
 				);
 			} else {
 				return (
 					<List>
-						{folderList.map((data, index) => {
+						{folders.map((data, index) => {
 							return (
 								<ListItem
 									key={data.id}
 									onClick={() => {
-										updateFolderList(data.id);
+										updateFolders(data.id);
+										setSelectedFolders((state) => [
+											...state,
+											{ id: data.id, name: data.name },
+										]);
 									}}
 									button={true}
 									dense={true}
-									divider={index === folderList.length - 1 ? false : true}
+									divider={index === folders.length - 1 ? false : true}
 								>
 									<ListItemText primary={data.name} />
 								</ListItem>
@@ -82,48 +97,70 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 		}
 	}
 
+	function renderBreadCrumbs() {
+		return (
+			<Breadcrumbs>
+				<Link
+					component={StyledLinkButton}
+					onClick={() => updateBreadCrumbs("root", 0)}
+					underline="none"
+					variant="caption"
+				>
+					root
+				</Link>
+				{selectedFolders.length > 0
+					? selectedFolders.map((data, index) => {
+							return (
+								<Link
+									key={data.id}
+									component={StyledLinkButton}
+									onClick={() => updateBreadCrumbs(data.id, index + 1)}
+									underline="none"
+									variant="caption"
+								>
+									{data.name}
+								</Link>
+							);
+					  })
+					: null}
+				<Link />
+			</Breadcrumbs>
+		);
+	}
+
 	return (
-		<div>
+		<Box>
 			<Dialog open={open} onBackdropClick={() => setOpen(false)}>
 				<DialogTitle>
-					<Typography align="center" variant="h6">
-						Set Audiobook Directory
-					</Typography>
+					<div>
+						<Typography align="center" variant="h6">
+							Set Audiobook Directory
+						</Typography>
+					</div>
 					<Divider />
-					<Breadcrumbs aria-label="breadcrumb">
-						<Link
-							component={StyledLinkButton}
-							onClick={() => console.log("breadcrumb clicked")}
-							underline="none"
-							variant="caption"
-						>
-							Folder 1
-						</Link>
-						<Link
-							component={StyledLinkButton}
-							underline="none"
-							variant="caption"
-						>
-							Folder 2
-						</Link>
-						<Link
-							component={StyledLinkButton}
-							underline="none"
-							variant="caption"
-						>
-							Folder 3
-						</Link>
-					</Breadcrumbs>
+					{renderBreadCrumbs()}
 				</DialogTitle>
-				<DialogContent> {folders()}</DialogContent>
+				<DialogContent> {renderFolders()}</DialogContent>
 				<DialogActions className="thing">
-					<Button variant="text">OK</Button>
+					<Button
+						onClick={() => {
+							console.log(
+								`audiobook directory: ${
+									selectedFolders[selectedFolders.length - 1].name
+								}`
+							);
+							setOpen(false);
+						}}
+						variant="text"
+					>
+						OK
+					</Button>
 					<Button onClick={() => setOpen(false)} variant="text">
 						Cancel
 					</Button>
 				</DialogActions>
 			</Dialog>
-		</div>
+		</Box>
 	);
 };
 
@@ -134,7 +171,7 @@ const StyledLinkButton = styled(Button)(({ theme }) => ({
 	textTransform: "lowercase",
 }));
 
-const StyledCenter = styled(Box)(({ theme }) => ({
+const StyledCenterWrapper = styled(Box)(({ theme }) => ({
 	display: "flex",
 	justifyContent: "center",
 	alignItems: "center",
