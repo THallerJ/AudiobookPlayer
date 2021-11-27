@@ -168,7 +168,7 @@ export default FolderSelectDialog;
 
 // Styled Components
 const StyledLinkButton = styled(Button)(({ theme }) => ({
-	textTransform: "lowercase",
+	textTransform: "none",
 }));
 
 const StyledCenterWrapper = styled(Box)(({ theme }) => ({
