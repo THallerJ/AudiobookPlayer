@@ -53,12 +53,15 @@ router.post("/refresh_token", async (req, res) => {
 router.get("/isLoggedIn", (req, res) => {
 	if (req.user) {
 		if (req.user.length > 0) {
-			res.send({ result: true });
+			res.send({
+				loggedIn: true,
+				rootFlag: req.user[0].rootId ? true : false,
+			});
 			return;
 		}
 	}
 
-	res.send({ result: false });
+	res.send({ loggedIn: false, rootFlag: false });
 });
 
 router.post("/logout", (req, res) => {

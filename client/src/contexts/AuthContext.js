@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 const axios = require("axios");
 
 const AuthContext = React.createContext();
@@ -40,15 +40,24 @@ export const AuthContextProvider = ({ children }) => {
 		isInitializing: true,
 		isAuthenticated: false,
 	});
+	const [googleDirectoryFlag, setGoogleDirectoryFlag] = useState({
+		existsFlag: null,
+		updateFlag: false,
+	});
 
-	async function checkAuthentication() {
-		axiosInstance.get(`/auth/isLoggedIn`).then((res) => {
-			setAuthentication({
-				isInitializing: false,
-				isAuthenticated: res.data.result,
-			});
+	const checkAuthentication = useCallback(async () => {
+		const response = await axiosInstance.get(`/auth/isLoggedIn`);
+
+		setAuthentication({
+			isInitializing: false,
+			isAuthenticated: response.data.loggedIn,
 		});
-	}
+
+		setGoogleDirectoryFlag((prevState) => ({
+			existsFlag: response.data.rootFlag,
+			updateFlag: !prevState.updateFlag,
+		}));
+	}, [setGoogleDirectoryFlag]);
 
 	async function logout() {
 		await axiosInstance.post(`/auth/logout`);
@@ -57,6 +66,8 @@ export const AuthContextProvider = ({ children }) => {
 	const value = {
 		authentication,
 		checkAuthentication,
+		googleDirectoryFlag,
+		setGoogleDirectoryFlag,
 		logout,
 		axiosInstance,
 	};

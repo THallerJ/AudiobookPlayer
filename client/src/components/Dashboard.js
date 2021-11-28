@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Typography,
 	Hidden,
@@ -16,14 +16,17 @@ import { useDashboard } from "../contexts/DashboardContext";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
 import { useAuth } from "../contexts/AuthContext";
+import { useGoogle } from "../contexts/GoogleContext";
 import FolderSelectDialog from "./FolderSelectDialog";
+import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
 
 const Dashboard = () => {
 	const { setOpenDrawer } = useDashboard();
 	const [openDialog, setOpenDialog] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
-	const { logout } = useAuth();
+	const { logout, googleDirectoryFlag } = useAuth();
 	const theme = useTheme();
+	const { getLibrary } = useGoogle();
 
 	function handleOpenMenu(event) {
 		setAnchorEl(event.currentTarget);
@@ -32,6 +35,12 @@ const Dashboard = () => {
 	function handleCloseMenu() {
 		setAnchorEl(null);
 	}
+
+	useEffectSkipFirst(() => {
+		if (googleDirectoryFlag) {
+			getLibrary();
+		}
+	}, [googleDirectoryFlag, getLibrary]);
 
 	const appBar = (
 		<div>

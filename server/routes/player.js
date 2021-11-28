@@ -10,7 +10,7 @@ router.post("/rootDirectory", async (req, res) => {
 		{ $set: { rootId: req.body.data.rootId } }
 	);
 
-	res.status(200).send("directory saved");
+	res.status(200).send({ rootFlag: true });
 });
 
 module.exports = router;
