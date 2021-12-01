@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
 import { GoogleContextProvider } from "./contexts/GoogleContext";
-import { useAuth } from "./contexts/AuthContext";
+import { useApp } from "./contexts/AppContext";
 
 const theme = createTheme({
 	drawer: {
@@ -16,7 +16,7 @@ const theme = createTheme({
 });
 
 function App() {
-	const { checkAuthentication, authentication } = useAuth();
+	const { checkAuthentication, authentication } = useApp();
 
 	useEffect(() => {
 		checkAuthentication();

@@ -8,28 +8,22 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const Book = ({ title, author }) => {
+const BookCovers = ({ title, imageLink }) => {
 	return (
 		<StyledCard raised={true}>
-			<CardActionArea
-				onClick={() => console.log(`clicked "${title}" by ${author}`)}
-			>
-				<CardMedia
-					component="img"
-					image="https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg"
-				/>
+			<CardActionArea onClick={() => console.log(`clicked "${title}"}`)}>
+				<CardMedia component="img" image={imageLink} />
 			</CardActionArea>
 			<CardActionArea onClick={() => console.log("edit clicked")}>
 				<CardContent>
 					<Typography variant="subtitle2">{title}</Typography>
-					<Typography variant="caption">{author}</Typography>
 				</CardContent>
 			</CardActionArea>
 		</StyledCard>
 	);
 };
 
-export default Book;
+export default BookCovers;
 
 const StyledCard = styled(Card)(({ theme }) => ({
 	".MuiCardContent-root": {

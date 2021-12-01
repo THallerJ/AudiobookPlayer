@@ -30,50 +30,72 @@ router.get("/library", async (req, res) => {
 	const user = req.user[0];
 	const directory = user.rootId;
 
-	try {
-		const bookResp = await axios.get(
-			"https://www.googleapis.com/drive/v3/files",
-			{
-				headers: {
-					Authorization: `Bearer ${user.accessToken}`,
-				},
-				params: {
-					q: `\"${directory}\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
-				},
-			}
-		);
+	if (directory) {
+		try {
+			const bookResp = await axios.get(
+				"https://www.googleapis.com/drive/v3/files",
+				{
+					headers: {
+						Authorization: `Bearer ${user.accessToken}`,
+					},
+					params: {
+						q: `\"${directory}\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
+					},
+				}
+			);
 
-		const library = [];
+			const library = [];
 
-		await Promise.all(
-			bookResp.data.files.map(async (file) => {
-				const chapResp = await axios.get(
-					"https://www.googleapis.com/drive/v3/files",
-					{
-						headers: {
-							Authorization: `Bearer ${user.accessToken}`,
-						},
-						params: {
-							q: `\"${file.id}\" in parents and trashed = false`,
-						},
-					}
-				);
+			await Promise.all(
+				bookResp.data.files.map(async (file) => {
+					const chapResp = await axios.get(
+						"https://www.googleapis.com/drive/v3/files",
+						{
+							headers: {
+								Authorization: `Bearer ${user.accessToken}`,
+							},
+							params: {
+								q: `\"${file.id}\" in parents and trashed = false`,
+							},
+						}
+					);
 
-				const chapters = [];
+					const chapters = [];
 
-				chapResp.data.files.forEach((file) => {
-					const chapter = { name: file.name, id: file.id };
-					chapters.push(chapter);
-				});
+					chapResp.data.files.forEach((file) => {
+						const chapter = { name: file.name, id: file.id };
+						chapters.push(chapter);
+					});
 
-				const book = { name: file.name, id: file.id, chapters: chapters };
-				library.push(book);
-			})
-		);
+					const imageResp = await axios.get(
+						"https://www.googleapis.com/books/v1/volumes",
+						{
+							params: {
+								q: `title="${file.name}"`,
+								maxResults: 1,
+							},
+						}
+					);
 
-		res.status(200).send(library);
-	} catch (error) {
-		res.status(401).send("invalid access token");
+					const coverImageUrl =
+						imageResp.data.items[0].volumeInfo.imageLinks.thumbnail;
+
+					const book = {
+						name: file.name,
+						id: file.id,
+						chapters: chapters,
+						coverImageUrl: coverImageUrl,
+					};
+					library.push(book);
+				})
+			);
+
+			res.status(200).send(library);
+		} catch (error) {
+			res.status(401).send("invalid access token");
+		}
+	} else {
+		res.status(200).send([]);
 	}
 });
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useCallback } from "react";
 const axios = require("axios");
 
-const AuthContext = React.createContext();
+const AppContext = React.createContext();
 
 const axiosInstance = axios.create({
 	withCredentials: true,
@@ -35,14 +35,14 @@ axiosInstance.interceptors.response.use(
 	}
 );
 
-export const AuthContextProvider = ({ children }) => {
+export const AppContextProvider = ({ children }) => {
 	const [authentication, setAuthentication] = useState({
 		isInitializing: true,
 		isAuthenticated: false,
 	});
 	const [googleDirectoryFlag, setGoogleDirectoryFlag] = useState({
-		existsFlag: null,
-		updateFlag: false,
+		exists: null,
+		update: false,
 	});
 
 	const checkAuthentication = useCallback(async () => {
@@ -54,25 +54,20 @@ export const AuthContextProvider = ({ children }) => {
 		});
 
 		setGoogleDirectoryFlag((prevState) => ({
-			existsFlag: response.data.rootFlag,
-			updateFlag: !prevState.updateFlag,
+			exists: response.data.rootFlag,
 		}));
 	}, [setGoogleDirectoryFlag]);
 
-	async function logout() {
-		await axiosInstance.post(`/auth/logout`);
-	}
-
 	const value = {
 		authentication,
+		setAuthentication,
 		checkAuthentication,
 		googleDirectoryFlag,
 		setGoogleDirectoryFlag,
-		logout,
 		axiosInstance,
 	};
 
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useApp = () => useContext(AppContext);

@@ -1,12 +1,29 @@
 import React, { useContext, useCallback } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useApp } from "../contexts/AppContext";
 import useLocalStorage from "../hooks/useLocalStorage";
+import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
 
 const GoogleContext = React.createContext();
 
 export const GoogleContextProvider = ({ children }) => {
-	const { axiosInstance, setGoogleDirectoryFlag } = useAuth();
+	const {
+		axiosInstance,
+		googleDirectoryFlag,
+		setGoogleDirectoryFlag,
+		setAuthentication,
+	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
+
+	const getLibrary = useCallback(async () => {
+		if (googleDirectoryFlag.exists) {
+			const response = await axiosInstance.get(`/google/library`);
+			const sortedLibrary = response.data.sort((book1, book2) =>
+				book1.name.localeCompare(book2.name)
+			);
+
+			setLibrary(sortedLibrary);
+		}
+	}, [axiosInstance, setLibrary, googleDirectoryFlag]);
 
 	const getFolders = useCallback(
 		async (directory) => {
@@ -21,11 +38,6 @@ export const GoogleContextProvider = ({ children }) => {
 		[axiosInstance]
 	);
 
-	const getLibrary = useCallback(async () => {
-		const response = await axiosInstance.get(`/google/library`);
-		setLibrary(response.data);
-	}, [axiosInstance, setLibrary]);
-
 	async function setRootDirectory(rootId) {
 		const response = await axiosInstance.post(`/player/rootDirectory`, {
 			data: {
@@ -34,16 +46,27 @@ export const GoogleContextProvider = ({ children }) => {
 		});
 
 		setGoogleDirectoryFlag((prevState) => ({
-			existsFlag: response.data.rootFlag,
-			updateFlag: !prevState.updateFlag,
+			exists: response.data.rootFlag,
+			update: !prevState.update,
 		}));
 	}
+
+	async function logout() {
+		await axiosInstance.post(`/auth/logout`);
+		setLibrary(null);
+		setAuthentication({ isAuthenticated: false });
+	}
+
+	useEffectSkipFirst(() => {
+		getLibrary();
+	}, [googleDirectoryFlag, getLibrary]);
 
 	const value = {
 		getFolders,
 		setRootDirectory,
 		library,
 		getLibrary,
+		logout,
 	};
 
 	return (
