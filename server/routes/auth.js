@@ -57,7 +57,6 @@ router.get("/isLoggedIn", (req, res) => {
 				loggedIn: true,
 				rootFlag: req.user[0].rootId ? true : false,
 			});
-			return;
 		}
 	}
 
