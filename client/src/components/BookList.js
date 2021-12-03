@@ -12,8 +12,8 @@ const BookListCovers = () => {
 		<Grid item container spacing={theme.spacing(3)} justifyContent="center">
 			{library
 				? library.map((book) => (
-						<Grid item key={`${book.name}`}>
-							<Book title={book.name} imageLink={book.coverImageUrl} />
+						<Grid item key={`${book.id}`}>
+							<Book book={book} />
 						</Grid>
 				  ))
 				: ""}

@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, { useContext, useCallback, useState } from "react";
 import { useApp } from "../contexts/AppContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
@@ -13,6 +13,7 @@ export const GoogleContextProvider = ({ children }) => {
 		setAuthentication,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
+	const [currentBook, setCurrentBook] = useState();
 
 	const getLibrary = useCallback(async () => {
 		if (googleDirectoryFlag.exists) {
@@ -67,6 +68,8 @@ export const GoogleContextProvider = ({ children }) => {
 		library,
 		getLibrary,
 		logout,
+		currentBook,
+		setCurrentBook,
 	};
 
 	return (

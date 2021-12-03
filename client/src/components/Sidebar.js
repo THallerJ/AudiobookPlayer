@@ -10,9 +10,11 @@ import {
 } from "@mui/material";
 import { useDashboard } from "../contexts/DashboardContext";
 import { styled } from "@mui/material/styles";
+import { useGoogle } from "../contexts/GoogleContext";
 
 const Sidebar = () => {
 	const { openDrawer, setOpenDrawer } = useDashboard();
+	const { currentBook } = useGoogle();
 
 	function handleDrawerClose() {
 		setOpenDrawer(false);
@@ -26,27 +28,28 @@ const Sidebar = () => {
 	const drawerContent = (
 		<StyledDrawerContent>
 			<Typography variant="subtitle2" align="center">
-				CHAPTERS
+				{currentBook ? currentBook.name : "NO BOOK SELECTED"}
 			</Typography>
 			<Divider />
 			<List>
-				{listItems.map((item, index) => {
-					return (
-						<ListItem
-							key={index}
-							divider={true}
-							dense={true}
-							button={true}
-							onClick={() => console.log(`${item} selected`)}
-						>
-							<ListItemText
-								primary={item}
-								primaryTypographyProps={{ noWrap: true }}
-							/>
-							<Typography variant="caption">00:00</Typography>
-						</ListItem>
-					);
-				})}
+				{currentBook
+					? currentBook.chapters.map((item, index) => {
+							return (
+								<ListItem
+									key={index}
+									divider={true}
+									dense={true}
+									button={true}
+									onClick={() => console.log(`${item} selected`)}
+								>
+									<ListItemText
+										primary={item.name}
+										primaryTypographyProps={{ noWrap: true }}
+									/>
+								</ListItem>
+							);
+					  })
+					: null}
 			</List>
 		</StyledDrawerContent>
 	);

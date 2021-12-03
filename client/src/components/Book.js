@@ -7,9 +7,11 @@ import {
 	Box,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useGoogle } from "../contexts/GoogleContext";
 
-const BookCovers = ({ title, imageLink }) => {
+const BookCovers = ({ book }) => {
 	const [showOverlay, setShowOverlay] = useState(false);
+	const { setCurrentBook } = useGoogle();
 
 	const overlay = showOverlay ? (
 		<Box
@@ -23,7 +25,7 @@ const BookCovers = ({ title, imageLink }) => {
 				padding: "15px",
 			}}
 		>
-			<Typography variant="caption">{title}</Typography>
+			<Typography variant="caption">{book.name}</Typography>
 		</Box>
 	) : null;
 
@@ -33,8 +35,12 @@ const BookCovers = ({ title, imageLink }) => {
 			onMouseEnter={() => setShowOverlay(true)}
 			onMouseLeave={() => setShowOverlay(false)}
 		>
-			<CardActionArea onClick={() => console.log(`clicked "${title}"}`)}>
-				<CardMedia component="img" image={imageLink} />
+			<CardActionArea>
+				<CardMedia
+					component="img"
+					image={book.coverImageUrl}
+					onClick={() => setCurrentBook(book)}
+				/>
 				{overlay}
 			</CardActionArea>
 		</StyledCard>
