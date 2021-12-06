@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { IconButton, Slider, Typography, Grid } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
-import PauseIcon from "@mui/icons-material/Pause";
+import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";
 import PreviousIcon from "@mui/icons-material/SkipPrevious";
 import ArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
@@ -17,6 +17,7 @@ const MediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
+	const [isPlaying, setIsPlaying] = useState(false);
 
 	useEffect(() => {
 		if (playingChapter) {
@@ -32,6 +33,7 @@ const MediaPlayer = () => {
 			});
 
 			howl.play();
+			setIsPlaying(true);
 
 			setSound((prevState) => {
 				if (prevState) {
@@ -41,7 +43,24 @@ const MediaPlayer = () => {
 				return howl;
 			});
 		}
-	}, [setSound, playingChapter, setDuration]);
+	}, [setSound, playingChapter, setDuration, setIsPlaying]);
+
+	function togglePlay() {
+		if (sound) {
+			if (isPlaying) {
+				sound.pause();
+				setIsPlaying(false);
+			} else {
+				sound.play();
+				setIsPlaying(true);
+			}
+		}
+	}
+
+	function formatTime(seconds) {
+		const time = new Date(seconds * 1000).toISOString();
+		return seconds < 3600 ? time.substr(14, 5) : time.substr(11, 8);
+	}
 
 	return (
 		<StyledMediaPlayerContainer>
@@ -61,8 +80,12 @@ const MediaPlayer = () => {
 					<IconButton>
 						<ArrowLeftIcon fontSize="small" />
 					</IconButton>
-					<IconButton>
-						<PlayIcon fontSize="large" />
+					<IconButton onClick={() => togglePlay()}>
+						{isPlaying ? (
+							<PauseIcon fontSize="large" />
+						) : (
+							<PlayIcon fontSize="large" />
+						)}
 					</IconButton>
 					<IconButton>
 						<ArrowRightIcon fontSize="small" />
@@ -85,7 +108,7 @@ const MediaPlayer = () => {
 						variant="caption"
 						sx={{ pl: theme.spacing(1), verticalAlign: "bottom" }}
 					>
-						{duration ? duration : "00:00"}
+						{duration ? formatTime(duration) : "00:00"}
 					</Typography>
 				</Grid>
 				<Grid
