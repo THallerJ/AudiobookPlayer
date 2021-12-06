@@ -14,6 +14,8 @@ export const GoogleContextProvider = ({ children }) => {
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
 	const [currentBook, setCurrentBook] = useState();
+	const [playingBook, setPlayingBook] = useState();
+	const [playingChapter, setPlayingChapter] = useState();
 
 	const getLibrary = useCallback(async () => {
 		if (googleDirectoryFlag.exists) {
@@ -70,6 +72,10 @@ export const GoogleContextProvider = ({ children }) => {
 		logout,
 		currentBook,
 		setCurrentBook,
+		playingBook,
+		setPlayingBook,
+		setPlayingChapter,
+		playingChapter,
 	};
 
 	return (

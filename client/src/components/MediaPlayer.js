@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { IconButton, Slider, Typography, Grid } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
@@ -9,16 +9,50 @@ import ArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import TimeIcon from "@mui/icons-material/AccessTime";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
+import { useGoogle } from "../contexts/GoogleContext";
+import { Howl } from "howler";
 
 const MediaPlayer = () => {
 	const theme = useTheme();
+	const { playingChapter, playingBook } = useGoogle();
+	const [sound, setSound] = useState();
+	const [duration, setDuration] = useState();
+
+	useEffect(() => {
+		if (playingChapter) {
+			var howl = new Howl({
+				src: [
+					`https://docs.google.com/uc?export=download&id=${playingChapter.id}`,
+				],
+				html5: true,
+				preload: true,
+				onload: function () {
+					setDuration(this.duration());
+				},
+			});
+
+			howl.play();
+
+			setSound((prevState) => {
+				if (prevState) {
+					prevState.unload();
+				}
+
+				return howl;
+			});
+		}
+	}, [setSound, playingChapter, setDuration]);
 
 	return (
 		<StyledMediaPlayerContainer>
 			<Grid container spacing={theme.spacing(1)}>
 				<Grid item xs={4}>
-					<Typography variant="subtitle2">Book Title</Typography>
-					<Typography variant="subtitle1">Chapter 1</Typography>
+					<Typography variant="subtitle2">
+						{playingBook ? playingBook.name : "No audiobook selected"}
+					</Typography>
+					<Typography variant="subtitle1">
+						{playingChapter ? playingChapter.name : "-"}
+					</Typography>
 				</Grid>
 				<Grid item xs={4} align="center">
 					<IconButton>
@@ -51,7 +85,7 @@ const MediaPlayer = () => {
 						variant="caption"
 						sx={{ pl: theme.spacing(1), verticalAlign: "bottom" }}
 					>
-						00:00
+						{duration ? duration : "00:00"}
 					</Typography>
 				</Grid>
 				<Grid

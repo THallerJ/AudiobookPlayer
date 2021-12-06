@@ -14,7 +14,7 @@ import { useGoogle } from "../contexts/GoogleContext";
 
 const Sidebar = () => {
 	const { openDrawer, setOpenDrawer } = useDashboard();
-	const { currentBook } = useGoogle();
+	const { currentBook, setPlayingChapter, setPlayingBook } = useGoogle();
 
 	function handleDrawerClose() {
 		setOpenDrawer(false);
@@ -33,17 +33,20 @@ const Sidebar = () => {
 			<Divider />
 			<List>
 				{currentBook
-					? currentBook.chapters.map((item, index) => {
+					? currentBook.chapters.map((chapter, index) => {
 							return (
 								<ListItem
-									key={index}
+									key={chapter.id}
 									divider={true}
 									dense={true}
 									button={true}
-									onClick={() => console.log(`${item} selected`)}
+									onClick={() => {
+										setPlayingChapter(chapter);
+										setPlayingBook(currentBook);
+									}}
 								>
 									<ListItemText
-										primary={item.name}
+										primary={chapter.name}
 										primaryTypographyProps={{ noWrap: true }}
 									/>
 								</ListItem>
