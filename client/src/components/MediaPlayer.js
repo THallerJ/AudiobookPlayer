@@ -9,6 +9,7 @@ import ArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import TimeIcon from "@mui/icons-material/AccessTime";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import { useGoogle } from "../contexts/GoogleContext";
 import { Howl } from "howler";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
@@ -19,10 +20,12 @@ const MediaPlayer = () => {
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
+	const [isMuted, setIsMuted] = useState(true);
 	const [volume, setVolume] = useState(0);
 
 	useEffectSkipFirst(() => {
 		setVolume(50);
+		setIsMuted(false);
 	}, [sound]);
 
 	useEffectSkipFirst(() => {
@@ -61,6 +64,13 @@ const MediaPlayer = () => {
 				sound.play();
 				setIsPlaying(true);
 			}
+		}
+	}
+
+	function toggleMute() {
+		if (sound) {
+			sound.mute(!isMuted);
+			setIsMuted(!isMuted);
 		}
 	}
 
@@ -124,7 +134,16 @@ const MediaPlayer = () => {
 					align="center"
 					sx={{ display: "flex", flexDirection: "row" }}
 				>
-					<VolumeIcon fontSize="small" sx={{ pr: theme.spacing(1) }} />
+					<IconButton
+						onClick={() => toggleMute()}
+						sx={{ pr: theme.spacing(1), pt: theme.spacing(0) }}
+					>
+						{isMuted ? (
+							<VolumeOffIcon fontSize="small" />
+						) : (
+							<VolumeIcon fontSize="small" />
+						)}
+					</IconButton>
 					<Slider
 						onChange={(e, v) => {
 							setVolume(v);
