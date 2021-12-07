@@ -7,7 +7,8 @@ import NextIcon from "@mui/icons-material/SkipNext";
 import PreviousIcon from "@mui/icons-material/SkipPrevious";
 import ArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import TimeIcon from "@mui/icons-material/AccessTime";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import { useGoogle } from "../contexts/GoogleContext";
@@ -111,9 +112,19 @@ const MediaPlayer = () => {
 						<NextIcon fontSize="small" />
 					</IconButton>
 				</Grid>
-				<Grid container item xs={4} justifyContent="flex-end">
+				<Grid
+					container
+					item
+					xs={4}
+					justifyContent="flex-end"
+					sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+				>
 					<IconButton>
-						<TimeIcon />
+						<RemoveIcon />
+					</IconButton>
+					<Typography variant="h6">1.00x</Typography>
+					<IconButton>
+						<AddIcon />
 					</IconButton>
 				</Grid>
 				<Grid item xs={10} sx={{ display: "flex", flexDirection: "row" }}>
@@ -149,6 +160,7 @@ const MediaPlayer = () => {
 							setVolume(v);
 							sound.volume(v / 100);
 						}}
+						disabled={sound ? false : true}
 						size="small"
 						valueLabelDisplay={true}
 						value={volume}
