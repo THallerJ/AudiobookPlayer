@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { IconButton, Slider, Typography, Grid } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
@@ -11,6 +11,7 @@ import TimeIcon from "@mui/icons-material/AccessTime";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
 import { useGoogle } from "../contexts/GoogleContext";
 import { Howl } from "howler";
+import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
 
 const MediaPlayer = () => {
 	const theme = useTheme();
@@ -18,8 +19,13 @@ const MediaPlayer = () => {
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
+	const [volume, setVolume] = useState(0);
 
-	useEffect(() => {
+	useEffectSkipFirst(() => {
+		setVolume(50);
+	}, [sound]);
+
+	useEffectSkipFirst(() => {
 		if (playingChapter) {
 			var howl = new Howl({
 				src: [
@@ -27,6 +33,7 @@ const MediaPlayer = () => {
 				],
 				html5: true,
 				preload: true,
+				volume: 0.5,
 				onload: function () {
 					setDuration(this.duration());
 				},
@@ -118,7 +125,15 @@ const MediaPlayer = () => {
 					sx={{ display: "flex", flexDirection: "row" }}
 				>
 					<VolumeIcon fontSize="small" sx={{ pr: theme.spacing(1) }} />
-					<Slider size="small" />
+					<Slider
+						onChange={(e, v) => {
+							setVolume(v);
+							sound.volume(v / 100);
+						}}
+						size="small"
+						valueLabelDisplay={true}
+						value={volume}
+					/>
 				</Grid>
 			</Grid>
 		</StyledMediaPlayerContainer>
