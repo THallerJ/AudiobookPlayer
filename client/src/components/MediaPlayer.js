@@ -23,10 +23,12 @@ const MediaPlayer = () => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
 	const [volume, setVolume] = useState(0);
+	const [rate, setRate] = useState(1.0);
 
 	useEffectSkipFirst(() => {
 		setVolume(50);
 		setIsMuted(false);
+		//setRate(1);
 	}, [sound]);
 
 	useEffectSkipFirst(() => {
@@ -38,6 +40,7 @@ const MediaPlayer = () => {
 				html5: true,
 				preload: true,
 				volume: 0.5,
+				rate: rate,
 				onload: function () {
 					setDuration(this.duration());
 				},
@@ -64,6 +67,24 @@ const MediaPlayer = () => {
 			} else {
 				sound.play();
 				setIsPlaying(true);
+			}
+		}
+	}
+
+	function increaseRate() {
+		if (sound) {
+			if (rate < 4) {
+				setRate(rate + 0.25);
+				sound.rate(rate);
+			}
+		}
+	}
+
+	function decreaseRate() {
+		if (sound) {
+			if (rate > 0.5) {
+				setRate(rate - 0.25);
+				sound.rate(rate);
 			}
 		}
 	}
@@ -119,11 +140,11 @@ const MediaPlayer = () => {
 					justifyContent="flex-end"
 					sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
 				>
-					<IconButton>
+					<IconButton onClick={decreaseRate}>
 						<RemoveIcon />
 					</IconButton>
-					<Typography variant="h6">1.00x</Typography>
-					<IconButton>
+					<Typography variant="h6">{rate.toFixed(2)}x</Typography>
+					<IconButton onClick={increaseRate}>
 						<AddIcon />
 					</IconButton>
 				</Grid>
