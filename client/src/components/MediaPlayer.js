@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { IconButton, Slider, Typography, Grid } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";
 import PreviousIcon from "@mui/icons-material/SkipPrevious";
-import ArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import Forward5Icon from "@mui/icons-material/Forward5";
+import Replay5Icon from "@mui/icons-material/Replay5";
+
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
@@ -24,40 +25,53 @@ const MediaPlayer = () => {
 	const [isMuted, setIsMuted] = useState(true);
 	const [volume, setVolume] = useState(0);
 	const [rate, setRate] = useState(1.0);
+	const [progress, setProgress] = useState(0);
 
 	useEffectSkipFirst(() => {
 		setVolume(50);
 		setIsMuted(false);
-		//setRate(1);
-	}, [sound]);
+		setProgress(0);
+
+		if (sound) {
+			setIsPlaying(true);
+			sound.play();
+		}
+	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
 		if (playingChapter) {
-			var howl = new Howl({
-				src: [
-					`https://docs.google.com/uc?export=download&id=${playingChapter.id}`,
-				],
-				html5: true,
-				preload: true,
-				volume: 0.5,
-				rate: rate,
-				onload: function () {
-					setDuration(this.duration());
-				},
-			});
-
-			howl.play();
-			setIsPlaying(true);
-
 			setSound((prevState) => {
 				if (prevState) {
 					prevState.unload();
 				}
 
-				return howl;
+				return new Howl({
+					src: [
+						`https://docs.google.com/uc?export=download&id=${playingChapter.id}`,
+					],
+					html5: true,
+					preload: true,
+					volume: 0.5,
+					rate: rate,
+					onend: function () {
+						setDuration(this.duration());
+					},
+				});
 			});
 		}
 	}, [setSound, playingChapter, setDuration, setIsPlaying]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (sound && isPlaying) {
+				setProgress(sound.seek());
+			}
+		}, 250);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [setProgress, sound, isPlaying]);
 
 	function togglePlay() {
 		if (sound) {
@@ -96,6 +110,15 @@ const MediaPlayer = () => {
 		}
 	}
 
+	function handleSeek(value) {
+		if (sound) {
+			if (value < progress) {
+				setProgress(value);
+				sound.seek(value);
+			}
+		}
+	}
+
 	function formatTime(seconds) {
 		const time = new Date(seconds * 1000).toISOString();
 		return seconds < 3600 ? time.substr(14, 5) : time.substr(11, 8);
@@ -114,10 +137,20 @@ const MediaPlayer = () => {
 				</Grid>
 				<Grid item xs={4} align="center">
 					<IconButton>
-						<PreviousIcon fontSize="small" />
+						<PreviousIcon />
 					</IconButton>
 					<IconButton>
-						<ArrowLeftIcon fontSize="small" />
+						<Replay5Icon
+							onClick={() => {
+								if (progress - 5 > 0 && sound) {
+									sound.seek(progress - 5);
+									setProgress(sound.seek());
+								} else {
+									sound.seek(0);
+									setProgress(0);
+								}
+							}}
+						/>
 					</IconButton>
 					<IconButton onClick={() => togglePlay()}>
 						{isPlaying ? (
@@ -127,10 +160,10 @@ const MediaPlayer = () => {
 						)}
 					</IconButton>
 					<IconButton>
-						<ArrowRightIcon fontSize="small" />
+						<Forward5Icon />
 					</IconButton>
 					<IconButton>
-						<NextIcon fontSize="small" />
+						<NextIcon />
 					</IconButton>
 				</Grid>
 				<Grid
@@ -150,9 +183,15 @@ const MediaPlayer = () => {
 				</Grid>
 				<Grid item xs={10} sx={{ display: "flex", flexDirection: "row" }}>
 					<Typography variant="caption" sx={{ pr: theme.spacing(1) }}>
-						00:00
+						{formatTime(progress)}
 					</Typography>
-					<Slider size="small" sx={{ width: "90%" }} />
+					<Slider
+						size="small"
+						sx={{ width: "90%" }}
+						max={duration ? duration : 100}
+						value={progress}
+						onChangeCommitted={(e, v) => handleSeek(v)}
+					/>
 					<Typography
 						variant="caption"
 						sx={{ pl: theme.spacing(1), verticalAlign: "bottom" }}
@@ -183,7 +222,7 @@ const MediaPlayer = () => {
 						}}
 						disabled={sound ? false : true}
 						size="small"
-						valueLabelDisplay={true}
+						valueLabelDisplay="auto"
 						value={volume}
 					/>
 				</Grid>
@@ -209,5 +248,12 @@ const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 		boxShadow: "none",
 		height: 15,
 		width: 15,
+	},
+
+	".MuiSlider-dragging": {
+		".MuiSlider-thumb": {
+			height: 15,
+			width: 15,
+		},
 	},
 }));
