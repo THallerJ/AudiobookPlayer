@@ -244,16 +244,9 @@ const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 		width: 0,
 	},
 
-	".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover": {
+	".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover, .Mui-active	": {
 		boxShadow: "none",
 		height: 15,
 		width: 15,
-	},
-
-	".MuiSlider-dragging": {
-		".MuiSlider-thumb": {
-			height: 15,
-			width: 15,
-		},
 	},
 }));
