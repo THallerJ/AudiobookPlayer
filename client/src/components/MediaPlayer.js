@@ -7,7 +7,6 @@ import NextIcon from "@mui/icons-material/SkipNext";
 import PreviousIcon from "@mui/icons-material/SkipPrevious";
 import Forward5Icon from "@mui/icons-material/Forward5";
 import Replay5Icon from "@mui/icons-material/Replay5";
-
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
@@ -53,7 +52,7 @@ const MediaPlayer = () => {
 					preload: true,
 					volume: 0.5,
 					rate: rate,
-					onend: function () {
+					onload: function () {
 						setDuration(this.duration());
 					},
 				});
@@ -139,18 +138,18 @@ const MediaPlayer = () => {
 					<IconButton>
 						<PreviousIcon />
 					</IconButton>
-					<IconButton>
-						<Replay5Icon
-							onClick={() => {
-								if (progress - 5 > 0 && sound) {
-									sound.seek(progress - 5);
-									setProgress(sound.seek());
-								} else {
-									sound.seek(0);
-									setProgress(0);
-								}
-							}}
-						/>
+					<IconButton
+						onClick={() => {
+							if (progress - 5 > 0 && sound) {
+								sound.seek(progress - 5);
+								setProgress(sound.seek());
+							} else {
+								sound.seek(0);
+								setProgress(0);
+							}
+						}}
+					>
+						<Replay5Icon />
 					</IconButton>
 					<IconButton onClick={() => togglePlay()}>
 						{isPlaying ? (
