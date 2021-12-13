@@ -62,7 +62,14 @@ router.get("/library", async (req, res) => {
 
 					const chapters = [];
 
-					chapResp.data.files.forEach((file) => {
+					const sortedChaps = chapResp.data.files.sort((chap1, chap2) => {
+						const num1 = extractLastNumber(chap1.name);
+						const num2 = extractLastNumber(chap2.name);
+
+						return num1 && num2 ? num1 - num2 : 0;
+					});
+
+					sortedChaps.forEach((file) => {
 						const chapter = { name: file.name, id: file.id };
 						chapters.push(chapter);
 					});
@@ -98,5 +105,19 @@ router.get("/library", async (req, res) => {
 		res.status(200).send([]);
 	}
 });
+
+/* returns last integer in a string, not including integers that appear 
+   after a period to account for integers that appear in file extensions (i.e. .mp3) */
+function extractLastNumber(a) {
+	var numStr;
+
+	if (a.includes(".")) {
+		numStr = a.substr(0, a.indexOf(".")).match(/\d+$/);
+	} else {
+		numStr = a.match(/\d+$/);
+	}
+
+	return numStr ? parseInt(numStr[0]) : null;
+}
 
 module.exports = router;
