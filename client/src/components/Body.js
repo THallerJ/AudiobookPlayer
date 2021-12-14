@@ -4,6 +4,7 @@ import BookList from "./BookList";
 import { Box } from "@mui/system";
 import { Paper } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { MediaPlayerContextProvider } from "../contexts/MediaPlayerContext";
 
 const Body = () => {
 	const theme = useTheme();
@@ -21,7 +22,9 @@ const Body = () => {
 			</Box>
 			<Box sx={{ height: "10%" }} boxShadow={6}>
 				<Paper elevation={0}>
-					<MediaPlayer />
+					<MediaPlayerContextProvider>
+						<MediaPlayer />
+					</MediaPlayerContextProvider>
 				</Paper>
 			</Box>
 		</Box>

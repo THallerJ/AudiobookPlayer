@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import { IconButton, Slider, Typography, Grid } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
@@ -12,116 +12,28 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import { useGoogle } from "../contexts/GoogleContext";
-import { Howl } from "howler";
-import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
+import { useMediaPlayer } from "../contexts/MediaPlayerContext";
 
 const MediaPlayer = () => {
 	const theme = useTheme();
 	const { playingChapter, playingBook } = useGoogle();
-	const [sound, setSound] = useState();
-	const [duration, setDuration] = useState();
-	const [isPlaying, setIsPlaying] = useState(false);
-	const [isMuted, setIsMuted] = useState(true);
-	const [volume, setVolume] = useState(0);
-	const [rate, setRate] = useState(1.0);
-	const [progress, setProgress] = useState(0);
-
-	useEffectSkipFirst(() => {
-		setVolume(50);
-		setIsMuted(false);
-		setProgress(0);
-
-		if (sound) {
-			setIsPlaying(true);
-			sound.play();
-		}
-	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
-
-	useEffectSkipFirst(() => {
-		if (playingChapter) {
-			setSound((prevState) => {
-				if (prevState) {
-					prevState.unload();
-				}
-
-				return new Howl({
-					src: [
-						`https://docs.google.com/uc?export=download&id=${playingChapter.id}`,
-					],
-					html5: true,
-					preload: true,
-					volume: 0.5,
-					rate: rate,
-					onload: function () {
-						setDuration(this.duration());
-					},
-				});
-			});
-		}
-	}, [setSound, playingChapter, setDuration, setIsPlaying]);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (sound && isPlaying) {
-				setProgress(sound.seek());
-			}
-		}, 250);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [setProgress, sound, isPlaying]);
-
-	function togglePlay() {
-		if (sound) {
-			if (isPlaying) {
-				sound.pause();
-				setIsPlaying(false);
-			} else {
-				sound.play();
-				setIsPlaying(true);
-			}
-		}
-	}
-
-	function increaseRate() {
-		if (sound) {
-			if (rate < 4) {
-				setRate(rate + 0.25);
-				sound.rate(rate);
-			}
-		}
-	}
-
-	function decreaseRate() {
-		if (sound) {
-			if (rate > 0.5) {
-				setRate(rate - 0.25);
-				sound.rate(rate);
-			}
-		}
-	}
-
-	function toggleMute() {
-		if (sound) {
-			sound.mute(!isMuted);
-			setIsMuted(!isMuted);
-		}
-	}
-
-	function handleSeek(value) {
-		if (sound) {
-			if (value < progress) {
-				setProgress(value);
-				sound.seek(value);
-			}
-		}
-	}
-
-	function formatTime(seconds) {
-		const time = new Date(seconds * 1000).toISOString();
-		return seconds < 3600 ? time.substr(14, 5) : time.substr(11, 8);
-	}
+	const {
+		isPlaying,
+		duration,
+		sound,
+		togglePlay,
+		increaseRate,
+		decreaseRate,
+		toggleMute,
+		handleSeek,
+		formatTime,
+		volume,
+		setVolume,
+		rate,
+		progress,
+		seekBackward,
+		isMuted,
+	} = useMediaPlayer();
 
 	return (
 		<StyledMediaPlayerContainer>
@@ -138,17 +50,7 @@ const MediaPlayer = () => {
 					<IconButton>
 						<PreviousIcon />
 					</IconButton>
-					<IconButton
-						onClick={() => {
-							if (progress - 5 > 0 && sound) {
-								sound.seek(progress - 5);
-								setProgress(sound.seek());
-							} else {
-								sound.seek(0);
-								setProgress(0);
-							}
-						}}
-					>
+					<IconButton onClick={seekBackward}>
 						<Replay5Icon />
 					</IconButton>
 					<IconButton onClick={() => togglePlay()}>
