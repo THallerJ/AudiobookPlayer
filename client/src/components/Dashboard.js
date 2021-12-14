@@ -35,7 +35,7 @@ const Dashboard = () => {
 
 	const appBar = (
 		<div>
-			<Hidden smDown>
+			<Hidden mdDown>
 				<AppBar className={"appBarRight"} color="inherit" position="fixed">
 					<Toolbar>
 						<Typography noWrap variant="h6">
@@ -51,7 +51,7 @@ const Dashboard = () => {
 					</Toolbar>
 				</AppBar>
 			</Hidden>
-			<Hidden smUp>
+			<Hidden mdUp>
 				<AppBar color="inherit" position="fixed">
 					<Toolbar>
 						<IconButton
@@ -83,7 +83,7 @@ const Dashboard = () => {
 			{appBar}
 			<div
 				className={
-					useMediaQuery(theme.breakpoints.up("sm")) ? "bodyRight" : "body"
+					useMediaQuery(theme.breakpoints.up("md")) ? "bodyRight" : "body"
 				}
 			>
 				<Body />
@@ -149,11 +149,13 @@ const StyledDashboardContainer = styled("div")(({ theme }) => ({
 	".body": {
 		paddingTop: theme.mixins.toolbar.minHeight,
 		width: "100%",
+		height: "100%",
 	},
 
 	".bodyRight": {
 		paddingTop: theme.mixins.toolbar.minHeight,
 		marginLeft: theme.drawer.width,
 		width: "100%",
+		height: "100%",
 	},
 }));

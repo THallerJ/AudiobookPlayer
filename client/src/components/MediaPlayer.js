@@ -38,15 +38,15 @@ const MediaPlayer = () => {
 	return (
 		<StyledMediaPlayerContainer>
 			<Grid container spacing={theme.spacing(1)}>
-				<Grid item xs={4}>
-					<Typography variant="subtitle2">
+				<Grid item xs={4} sm={3}>
+					<Typography variant="subtitle2" noWrap>
 						{playingBook ? playingBook.name : "No audiobook selected"}
 					</Typography>
-					<Typography variant="subtitle1">
+					<Typography variant="subtitle1" noWrap>
 						{playingChapter ? playingChapter.name : "-"}
 					</Typography>
 				</Grid>
-				<Grid item xs={4} align="center">
+				<Grid item xs={4} sm={5} align="center">
 					<IconButton>
 						<PreviousIcon />
 					</IconButton>
@@ -139,6 +139,7 @@ const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 	paddingRight: theme.spacing(4),
 	paddingLeft: theme.spacing(4),
 	paddingTop: theme.spacing(2),
+	paddingBottom: theme.spacing(1),
 
 	" .MuiSlider-thumb": {
 		height: 0,
