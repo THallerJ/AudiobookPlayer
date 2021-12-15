@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
-import { IconButton, Slider, Typography, Grid } from "@mui/material";
+import { IconButton, Typography, Grid, LinearProgress } from "@mui/material";
 import { useGoogle } from "../contexts/GoogleContext";
 import { useMediaPlayer } from "../contexts/MediaPlayerContext";
 import PlayIcon from "@mui/icons-material/PlayArrow";
@@ -26,25 +26,37 @@ const SmallMediaPlayer = () => {
 		seekBackward,
 		isMuted,
 	} = useMediaPlayer();
+	const [progressPercent, setProgressPercent] = useState(0);
+
+	useEffect(() => {
+		setProgressPercent((progress / duration) * 100);
+	}, [duration, progress, setProgressPercent]);
 
 	return (
-		<StyledMediaPlayerContainer>
-			<Grid container>
-				<Grid item xs={10}>
-					<Typography variant="subtitle2" noWrap>
-						{playingBook ? playingBook.name : "No audiobook selected"}
-					</Typography>
-					<Typography variant="subtitle1" noWrap>
-						{playingChapter ? playingChapter.name : "-"}
-					</Typography>
+		<div>
+			<LinearProgress variant="determinate" value={progressPercent} />
+			<StyledMediaPlayerContainer>
+				<Grid container>
+					<Grid item xs={10}>
+						<Typography variant="subtitle2" noWrap>
+							{playingBook ? playingBook.name : "No audiobook selected"}
+						</Typography>
+						<Typography variant="subtitle1" noWrap>
+							{playingChapter ? playingChapter.name : "-"}
+						</Typography>
+					</Grid>
+					<Grid item xs={2}>
+						<IconButton onClick={togglePlay}>
+							{isPlaying ? (
+								<PauseIcon fontSize="large" />
+							) : (
+								<PlayIcon fontSize="large" />
+							)}
+						</IconButton>
+					</Grid>
 				</Grid>
-				<Grid item xs={2}>
-					<IconButton>
-						<PlayIcon fontSize="large" />
-					</IconButton>
-				</Grid>
-			</Grid>
-		</StyledMediaPlayerContainer>
+			</StyledMediaPlayerContainer>
+		</div>
 	);
 };
 
@@ -55,15 +67,4 @@ const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 	paddingLeft: theme.spacing(4),
 	paddingTop: theme.spacing(2),
 	paddingBottom: theme.spacing(2),
-
-	" .MuiSlider-thumb": {
-		height: 0,
-		width: 0,
-	},
-
-	".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover, .Mui-active	": {
-		boxShadow: "none",
-		height: 15,
-		width: 15,
-	},
 }));
