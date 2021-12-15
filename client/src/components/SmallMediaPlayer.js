@@ -10,7 +10,6 @@ import { useDashboard } from "../contexts/DashboardContext";
 const SmallMediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();
 	const { setShowTrackInfo } = useDashboard();
-
 	const { isPlaying, duration, togglePlay, progress } = useMediaPlayer();
 	const [progressPercent, setProgressPercent] = useState(0);
 
@@ -22,7 +21,9 @@ const SmallMediaPlayer = () => {
 		<div>
 			<LinearProgress variant="determinate" value={progressPercent} />
 			<StyledMediaPlayerContainer
-				onClick={() => setShowTrackInfo((prevState) => !prevState)}
+				onClick={() => {
+					if (playingBook) setShowTrackInfo((prevState) => !prevState);
+				}}
 			>
 				<Grid container>
 					<Grid item xs={10}>
