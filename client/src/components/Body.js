@@ -38,20 +38,20 @@ const Body = () => {
 					<TrackInfo />
 				)}
 			</Box>
-			{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
-				<Box boxShadow={6}>
-					<Paper elevation={0} sx={{ overflow: "hidden" }}>
-						<MediaPlayerContextProvider>
+			<MediaPlayerContextProvider>
+				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
+					<Box boxShadow={6}>
+						<Paper elevation={0} sx={{ overflow: "hidden" }}>
 							<Hidden smDown>
 								<MediaPlayer />
 							</Hidden>
 							<Hidden smUp>
 								<SmallMediaPlayer />
 							</Hidden>
-						</MediaPlayerContextProvider>
-					</Paper>
-				</Box>
-			) : null}
+						</Paper>
+					</Box>
+				) : null}
+			</MediaPlayerContextProvider>
 		</Box>
 	);
 };
