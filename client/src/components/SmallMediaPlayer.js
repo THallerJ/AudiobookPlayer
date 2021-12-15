@@ -5,27 +5,13 @@ import { useGoogle } from "../contexts/GoogleContext";
 import { useMediaPlayer } from "../contexts/MediaPlayerContext";
 import PlayIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import Replay5Icon from "@mui/icons-material/Replay5";
+import { useDashboard } from "../contexts/DashboardContext";
 
 const SmallMediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();
-	const {
-		isPlaying,
-		duration,
-		sound,
-		togglePlay,
-		increaseRate,
-		decreaseRate,
-		toggleMute,
-		handleSeek,
-		formatTime,
-		volume,
-		setVolume,
-		rate,
-		progress,
-		seekBackward,
-		isMuted,
-	} = useMediaPlayer();
+	const { setShowTrackInfo } = useDashboard();
+
+	const { isPlaying, duration, togglePlay, progress } = useMediaPlayer();
 	const [progressPercent, setProgressPercent] = useState(0);
 
 	useEffect(() => {
@@ -35,7 +21,9 @@ const SmallMediaPlayer = () => {
 	return (
 		<div>
 			<LinearProgress variant="determinate" value={progressPercent} />
-			<StyledMediaPlayerContainer>
+			<StyledMediaPlayerContainer
+				onClick={() => setShowTrackInfo((prevState) => !prevState)}
+			>
 				<Grid container>
 					<Grid item xs={10}>
 						<Typography variant="subtitle2" noWrap>
@@ -46,7 +34,12 @@ const SmallMediaPlayer = () => {
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>
-						<IconButton onClick={togglePlay}>
+						<IconButton
+							onClick={(e) => {
+								togglePlay();
+								e.stopPropagation();
+							}}
+						>
 							{isPlaying ? (
 								<PauseIcon fontSize="large" />
 							) : (
