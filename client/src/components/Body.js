@@ -18,27 +18,27 @@ const Body = () => {
 	}, [showTrackInfo]);
 
 	return (
-		<Box
-			sx={{
-				height: "100%",
-				display: "flex",
-				flexDirection: "column",
-			}}
-		>
+		<MediaPlayerContextProvider>
 			<Box
 				sx={{
-					height: showTrackInfo ? "100%" : "90%",
-					overflow: "auto",
-					p: theme.spacing(2),
+					height: "100%",
+					display: "flex",
+					flexDirection: "column",
 				}}
 			>
-				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
-					<BookList />
-				) : (
-					<TrackInfo />
-				)}
-			</Box>
-			<MediaPlayerContextProvider>
+				<Box
+					sx={{
+						height: showTrackInfo ? "100%" : "90%",
+						overflow: "auto",
+						p: theme.spacing(2),
+					}}
+				>
+					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
+						<BookList />
+					) : (
+						<TrackInfo />
+					)}
+				</Box>
 				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
 					<Box boxShadow={6}>
 						<Paper elevation={0} sx={{ overflow: "hidden" }}>
@@ -51,8 +51,8 @@ const Body = () => {
 						</Paper>
 					</Box>
 				) : null}
-			</MediaPlayerContextProvider>
-		</Box>
+			</Box>
+		</MediaPlayerContextProvider>
 	);
 };
 
