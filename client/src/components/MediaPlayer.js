@@ -1,6 +1,6 @@
 import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
-import { IconButton, Slider, Typography, Grid } from "@mui/material";
+import { IconButton, Slider, Typography, Grid, Chip } from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";
@@ -75,11 +75,11 @@ const MediaPlayer = () => {
 					sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
 				>
 					<IconButton onClick={decreaseRate}>
-						<RemoveIcon />
+						<RemoveIcon fontSize="small" />
 					</IconButton>
-					<Typography variant="h6">{rate.toFixed(2)}x</Typography>
+					<Chip variant="outlined" label={`${rate.toFixed(2)}x`} />
 					<IconButton onClick={increaseRate}>
-						<AddIcon />
+						<AddIcon fontSize="small" />
 					</IconButton>
 				</Grid>
 				<Grid item xs={10} sx={{ display: "flex", flexDirection: "row" }}>
