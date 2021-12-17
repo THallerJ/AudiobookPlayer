@@ -14,6 +14,7 @@ router.get(
 	passport.authenticate("google", {
 		scope: ["profile", "https://www.googleapis.com/auth/drive.readonly"],
 		accessType: "offline",
+		prompt: "consent",
 	})
 );
 
