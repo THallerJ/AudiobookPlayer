@@ -1,4 +1,5 @@
 const express = require("express");
+const ColorThief = require("colorthief");
 var router = express.Router();
 const axios = require("axios");
 require("dotenv").config();
@@ -87,11 +88,19 @@ router.get("/library", async (req, res) => {
 					const coverImageUrl =
 						imageResp.data.items[0].volumeInfo.imageLinks.thumbnail;
 
+					const colors = await ColorThief.getPalette(coverImageUrl, 2);
+
+					const hexColors = [];
+					colors.forEach((color) => {
+						hexColors.push(rgbToHex(color[0], color[1], color[2]));
+					});
+
 					const book = {
 						name: file.name,
 						id: file.id,
 						chapters: chapters,
 						coverImageUrl: coverImageUrl,
+						imageColors: hexColors,
 					};
 					library.push(book);
 				})
@@ -120,4 +129,15 @@ function extractLastNumber(a) {
 	return numStr ? parseInt(numStr[0]) : null;
 }
 
+function rgbToHex(r, g, b) {
+	return (
+		"#" +
+		[r, g, b]
+			.map((x) => {
+				const hex = x.toString(16);
+				return hex.length === 1 ? "0" + hex : hex;
+			})
+			.join("")
+	);
+}
 module.exports = router;

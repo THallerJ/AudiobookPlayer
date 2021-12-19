@@ -40,7 +40,11 @@ const TrackInfo = () => {
 	} = useMediaPlayer();
 
 	return (
-		<Container sx={{}}>
+		<Container
+			sx={{
+				background: `linear-gradient(to top, ${playingBook.imageColors[0]}, 10%, ${playingBook.imageColors[1]})`,
+			}}
+		>
 			<Grid container>
 				<Grid item xs={12} sx={{ display: "flex" }}>
 					<Grid item xs={6} align="start">
