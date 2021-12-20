@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MediaPlayer from "./MediaPlayer";
 import SmallMediaPlayer from "./SmallMediaPlayer";
 import BookList from "./BookList";
@@ -13,10 +13,6 @@ const Body = () => {
 	const theme = useTheme();
 	const { showTrackInfo } = useDashboard();
 
-	useEffect(() => {
-		console.log(showTrackInfo);
-	}, [showTrackInfo]);
-
 	return (
 		<MediaPlayerContextProvider>
 			<Box
@@ -30,7 +26,6 @@ const Body = () => {
 					sx={{
 						height: showTrackInfo ? "100%" : "90%",
 						overflow: "auto",
-						p: theme.spacing(2),
 					}}
 				>
 					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
