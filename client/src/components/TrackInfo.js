@@ -145,11 +145,17 @@ const TrackInfoContainer = styled(Box)(({ theme }) => ({
 
 	".MuiSlider-root": {
 		padding: 0,
+		background: theme.palette.primary.main,
+	},
+
+	".MuiSlider-track": {
+		backgroundColor: "white",
 	},
 
 	".MuiSlider-thumb": {
 		height: 0,
 		width: 0,
+		backgroundColor: "white",
 	},
 
 	".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover, .Mui-active	": {
