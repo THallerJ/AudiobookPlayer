@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Typography,
 	Card,
@@ -22,9 +22,11 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useDashboard } from "../contexts/DashboardContext";
 import { useGoogle } from "../contexts/GoogleContext";
 import { useMediaPlayer } from "../contexts/MediaPlayerContext";
+import tinyColor from "tinycolor2";
 
 const TrackInfo = () => {
 	const { setShowTrackInfo } = useDashboard();
+	const [brightness, setBrightness] = useState();
 	const { playingBook } = useGoogle();
 	const {
 		isPlaying,
@@ -39,6 +41,13 @@ const TrackInfo = () => {
 		seekBackward,
 	} = useMediaPlayer();
 
+	useEffect(() => {
+		const brightness1 = tinyColor(playingBook.imageColors[0]).getBrightness();
+		const brightness2 = tinyColor(playingBook.imageColors[1]).getBrightness();
+
+		setBrightness([brightness1, brightness2]);
+	}, [playingBook]);
+
 	return (
 		<Box
 			sx={{
@@ -47,14 +56,14 @@ const TrackInfo = () => {
 				overflow: "hidden",
 			}}
 		>
-			<TrackInfoContainer>
+			<TrackInfoContainer bright={brightness}>
 				<Grid container>
 					<Grid item xs={12} sx={{ display: "flex" }}>
 						<Grid item xs={6} align="start">
 							<IconButton
 								onClick={() => setShowTrackInfo((prevState) => !prevState)}
 							>
-								<ArrowBackIosIcon />
+								<ArrowBackIosIcon className="topIcon" />
 							</IconButton>
 						</Grid>
 						<Grid
@@ -68,7 +77,7 @@ const TrackInfo = () => {
 							}}
 						>
 							<IconButton onClick={decreaseRate}>
-								<RemoveIcon fontSize="small" />
+								<RemoveIcon className="topIcon" fontSize="small" />
 							</IconButton>
 							<Chip
 								variant="filled"
@@ -76,7 +85,7 @@ const TrackInfo = () => {
 								sx={{ backgroundColor: "white" }}
 							/>
 							<IconButton onClick={increaseRate}>
-								<AddIcon fontSize="small" />
+								<AddIcon className="topIcon" fontSize="small" />
 							</IconButton>
 						</Grid>
 					</Grid>
@@ -110,23 +119,23 @@ const TrackInfo = () => {
 					</Grid>
 					<Grid item xs={12} align="center">
 						<IconButton>
-							<PreviousIcon sx={{ fontSize: "35px" }} />
+							<PreviousIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 						<IconButton onClick={seekBackward}>
-							<Replay5Icon sx={{ fontSize: "35px" }} />
+							<Replay5Icon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 						<IconButton onClick={() => togglePlay()}>
 							{isPlaying ? (
-								<PauseIcon sx={{ fontSize: "50px" }} />
+								<PauseIcon className="bottomIcon" sx={{ fontSize: "50px" }} />
 							) : (
-								<PlayIcon sx={{ fontSize: "50px" }} />
+								<PlayIcon className="bottomIcon" sx={{ fontSize: "50px" }} />
 							)}
 						</IconButton>
 						<IconButton>
-							<Forward5Icon sx={{ fontSize: "35px" }} />
+							<Forward5Icon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 						<IconButton>
-							<NextIcon sx={{ fontSize: "35px" }} />
+							<NextIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 					</Grid>
 				</Grid>
@@ -138,7 +147,7 @@ const TrackInfo = () => {
 export default TrackInfo;
 
 // Styled Components
-const TrackInfoContainer = styled(Box)(({ theme }) => ({
+const TrackInfoContainer = styled(Box)(({ theme, bright }) => ({
 	display: "flex",
 	height: "100%",
 	flexDirection: "column",
@@ -177,5 +186,13 @@ const TrackInfoContainer = styled(Box)(({ theme }) => ({
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
+	},
+
+	".bottomIcon": {
+		fill: bright && bright[0] > 70 ? null : "white",
+	},
+
+	".topIcon": {
+		fill: bright && bright[1] > 70 ? null : "white",
 	},
 }));
