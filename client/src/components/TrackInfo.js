@@ -44,6 +44,7 @@ const TrackInfo = () => {
 			sx={{
 				height: "100%",
 				background: `linear-gradient(to top, ${playingBook.imageColors[0]}, 50%, ${playingBook.imageColors[1]})`,
+				overflow: "hidden",
 			}}
 		>
 			<TrackInfoContainer>
