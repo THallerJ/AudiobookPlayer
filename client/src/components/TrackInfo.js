@@ -81,7 +81,7 @@ const TrackInfo = () => {
 						</Grid>
 					</Grid>
 				</Grid>
-				<Box sx={{ height: "70%", overflow: "hidden" }}>
+				<Box className="cardWrapper">
 					<Card>
 						<CardMedia
 							component="img"
@@ -143,6 +143,7 @@ const TrackInfoContainer = styled(Box)(({ theme }) => ({
 	height: "100%",
 	flexDirection: "column",
 	padding: theme.spacing(2),
+	alignItems: "center",
 
 	".MuiSlider-root": {
 		padding: 0,
@@ -163,5 +164,18 @@ const TrackInfoContainer = styled(Box)(({ theme }) => ({
 		boxShadow: "none",
 		height: 15,
 		width: 15,
+	},
+
+	".MuiCardMedia-root": {
+		width: 225,
+	},
+
+	".cardWrapper": {
+		height: "65%",
+		width: 225,
+		overflow: "hidden",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 	},
 }));
