@@ -27,7 +27,7 @@ import tinyColor from "tinycolor2";
 const TrackInfo = () => {
 	const { setShowTrackInfo } = useDashboard();
 	const [brightness, setBrightness] = useState();
-	const { playingBook } = useGoogle();
+	const { playingBook, playingChapter } = useGoogle();
 	const {
 		isPlaying,
 		duration,
@@ -99,6 +99,16 @@ const TrackInfo = () => {
 					</Card>
 				</Box>
 				<Grid container justify="center" alignItems="center">
+					<Grid className="textColor" item xs={12}>
+						<Typography noWrap variant="subtitle1">
+							{playingBook.name}
+						</Typography>
+					</Grid>
+					<Grid className="textColor" item>
+						<Typography noWrap variant="subtitle1">
+							{playingChapter.name}
+						</Typography>
+					</Grid>
 					<Grid item xs={12}>
 						<Slider
 							max={duration ? duration : 100}
@@ -112,8 +122,10 @@ const TrackInfo = () => {
 						xs={12}
 						sx={{ display: "flex", justifyContent: "space-between" }}
 					>
-						<Typography variant="caption">{formatTime(progress)}</Typography>
-						<Typography variant="caption">
+						<Typography className="textColor" variant="caption">
+							{formatTime(progress)}
+						</Typography>
+						<Typography className="textColor" variant="caption">
 							{duration ? formatTime(duration) : "00:00"}
 						</Typography>
 					</Grid>
@@ -180,19 +192,24 @@ const TrackInfoContainer = styled(Box)(({ theme, bright }) => ({
 	},
 
 	".cardWrapper": {
-		height: "65%",
+		height: "60%",
 		width: 225,
 		overflow: "hidden",
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
+		padding: theme.spacing(1),
 	},
 
 	".bottomIcon": {
-		fill: bright && bright[0] > 70 ? null : "white",
+		fill: bright && bright[0] > 70 ? null : "#efefef",
 	},
 
 	".topIcon": {
-		fill: bright && bright[1] > 70 ? null : "white",
+		fill: bright && bright[1] > 70 ? null : "#efefef",
+	},
+
+	".textColor": {
+		color: bright && bright[0] > 70 ? "black" : "#efefef",
 	},
 }));
