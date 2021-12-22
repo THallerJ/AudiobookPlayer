@@ -31,7 +31,7 @@ const SmallMediaPlayer = () => {
 							{playingBook ? playingBook.name : "No audiobook selected"}
 						</Typography>
 						<Typography variant="subtitle1" noWrap>
-							{playingChapter ? playingChapter.name : "-"}
+							{playingChapter ? playingChapter.data.name : "-"}
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>

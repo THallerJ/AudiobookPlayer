@@ -6,7 +6,7 @@ import { Howl } from "howler";
 const MediaPlayerContext = React.createContext();
 
 export const MediaPlayerContextProvider = ({ children }) => {
-	const { playingChapter } = useGoogle();
+	const { setPlayingChapter, playingChapter, playingBook } = useGoogle();
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
@@ -35,7 +35,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 				return new Howl({
 					src: [
-						`https://docs.google.com/uc?export=download&id=${playingChapter.id}`,
+						`https://docs.google.com/uc?export=download&id=${playingChapter.data.id}`,
 					],
 					html5: true,
 					preload: true,
@@ -117,6 +117,28 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		}
 	}
 
+	function previousTrack() {
+		if (playingBook) {
+			const newIndex = playingChapter.index - 1;
+			if (newIndex >= 0)
+				setPlayingChapter({
+					data: playingBook.chapters[newIndex],
+					index: newIndex,
+				});
+		}
+	}
+
+	function nextTrack() {
+		if (playingBook) {
+			const newIndex = playingChapter.index + 1;
+			if (newIndex < playingBook.chapters.length)
+				setPlayingChapter({
+					data: playingBook.chapters[newIndex],
+					index: newIndex,
+				});
+		}
+	}
+
 	function formatTime(seconds) {
 		const time = new Date(seconds * 1000).toISOString();
 		return seconds < 3600 ? time.substr(14, 5) : time.substr(11, 8);
@@ -144,6 +166,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		seekBackward,
 		isMuted,
 		setIsMuted,
+		previousTrack,
+		nextTrack,
 	};
 
 	return (

@@ -39,6 +39,8 @@ const TrackInfo = () => {
 		rate,
 		progress,
 		seekBackward,
+		previousTrack,
+		nextTrack,
 	} = useMediaPlayer();
 
 	useEffect(() => {
@@ -106,7 +108,7 @@ const TrackInfo = () => {
 					</Grid>
 					<Grid className="textColor" item>
 						<Typography noWrap variant="subtitle1">
-							{playingChapter.name}
+							{playingChapter.data.name}
 						</Typography>
 					</Grid>
 					<Grid item xs={12}>
@@ -130,7 +132,7 @@ const TrackInfo = () => {
 						</Typography>
 					</Grid>
 					<Grid item xs={12} align="center">
-						<IconButton>
+						<IconButton onClick={previousTrack}>
 							<PreviousIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 						<IconButton onClick={seekBackward}>
@@ -146,7 +148,7 @@ const TrackInfo = () => {
 						<IconButton>
 							<Forward5Icon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
-						<IconButton>
+						<IconButton onClick={nextTrack}>
 							<NextIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 					</Grid>

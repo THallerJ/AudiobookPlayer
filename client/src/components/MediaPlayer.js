@@ -33,6 +33,8 @@ const MediaPlayer = () => {
 		progress,
 		seekBackward,
 		isMuted,
+		previousTrack,
+		nextTrack,
 	} = useMediaPlayer();
 
 	return (
@@ -43,11 +45,11 @@ const MediaPlayer = () => {
 						{playingBook ? playingBook.name : "No audiobook selected"}
 					</Typography>
 					<Typography variant="subtitle1" noWrap>
-						{playingChapter ? playingChapter.name : "-"}
+						{playingChapter ? playingChapter.data.name : "-"}
 					</Typography>
 				</Grid>
 				<Grid item xs={4} sm={5} align="center">
-					<IconButton>
+					<IconButton onClick={previousTrack}>
 						<PreviousIcon />
 					</IconButton>
 					<IconButton onClick={seekBackward}>
@@ -63,7 +65,7 @@ const MediaPlayer = () => {
 					<IconButton>
 						<Forward5Icon />
 					</IconButton>
-					<IconButton>
+					<IconButton onClick={nextTrack}>
 						<NextIcon />
 					</IconButton>
 				</Grid>

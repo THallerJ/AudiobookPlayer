@@ -28,7 +28,7 @@ const Sidebar = () => {
 
 	function generateListItemClassName(chapter) {
 		if (playingChapter) {
-			if (!playingChapter.id.localeCompare(chapter.id)) {
+			if (!playingChapter.data.id.localeCompare(chapter.id)) {
 				return "playingChapter";
 			}
 		}
@@ -44,7 +44,7 @@ const Sidebar = () => {
 			<Divider />
 			<List>
 				{currentBook
-					? currentBook.chapters.map((chapter) => {
+					? currentBook.chapters.map((chapter, index) => {
 							return (
 								<ListItem
 									className={generateListItemClassName(chapter)}
@@ -53,7 +53,7 @@ const Sidebar = () => {
 									dense={true}
 									button={true}
 									onClick={() => {
-										setPlayingChapter(chapter);
+										setPlayingChapter({ data: chapter, index: index });
 										setPlayingBook(currentBook);
 									}}
 								>
