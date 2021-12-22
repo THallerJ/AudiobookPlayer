@@ -38,7 +38,7 @@ const Sidebar = () => {
 
 	const drawerContent = (
 		<StyledDrawerContent>
-			<Typography variant="subtitle2" align="center">
+			<Typography noWrap variant="subtitle2" align="center">
 				{currentBook ? currentBook.name : "NO BOOK SELECTED"}
 			</Typography>
 			<Divider />
