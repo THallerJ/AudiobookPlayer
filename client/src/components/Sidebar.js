@@ -85,7 +85,6 @@ const Sidebar = () => {
 				<Drawer
 					anchor="left"
 					open={openDrawer}
-					close={() => handleDrawerClose}
 					ModalProps={{ onBackdropClick: handleDrawerClose }}
 					PaperProps={{ component: StyledPaper }}
 				>
