@@ -58,7 +58,7 @@ const TrackInfo = () => {
 				overflow: "hidden",
 			}}
 		>
-			<TrackInfoContainer bright={brightness}>
+			<TrackInfoContainer bright={brightness} colors={playingBook.imageColors}>
 				<Grid container>
 					<Grid item xs={12} sx={{ display: "flex" }}>
 						<Grid item xs={6} align="start">
@@ -161,7 +161,7 @@ const TrackInfo = () => {
 export default TrackInfo;
 
 // Styled Components
-const TrackInfoContainer = styled(Box)(({ theme, bright }) => ({
+const TrackInfoContainer = styled(Box)(({ theme, bright, colors }) => ({
 	display: "flex",
 	height: "100%",
 	flexDirection: "column",
@@ -170,11 +170,11 @@ const TrackInfoContainer = styled(Box)(({ theme, bright }) => ({
 
 	".MuiSlider-root": {
 		padding: 0,
-		background: theme.palette.primary.main,
+		background: colors[0],
 	},
 
 	".MuiSlider-track": {
-		backgroundColor: "white",
+		backgroundColor: colors[1],
 	},
 
 	".MuiSlider-thumb": {
