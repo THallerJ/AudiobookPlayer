@@ -35,6 +35,7 @@ const MediaPlayer = () => {
 		isMuted,
 		previousTrack,
 		nextTrack,
+		seekForward,
 	} = useMediaPlayer();
 
 	return (
@@ -55,14 +56,14 @@ const MediaPlayer = () => {
 					<IconButton onClick={seekBackward}>
 						<Replay5Icon />
 					</IconButton>
-					<IconButton onClick={() => togglePlay()}>
+					<IconButton onClick={togglePlay}>
 						{isPlaying ? (
 							<PauseIcon fontSize="large" />
 						) : (
 							<PlayIcon fontSize="large" />
 						)}
 					</IconButton>
-					<IconButton>
+					<IconButton onClick={seekForward}>
 						<Forward5Icon />
 					</IconButton>
 					<IconButton onClick={nextTrack}>
@@ -109,7 +110,7 @@ const MediaPlayer = () => {
 					sx={{ display: "flex", flexDirection: "row" }}
 				>
 					<IconButton
-						onClick={() => toggleMute()}
+						onClick={toggleMute}
 						sx={{ pr: theme.spacing(1), pt: theme.spacing(0) }}
 					>
 						{isMuted ? (

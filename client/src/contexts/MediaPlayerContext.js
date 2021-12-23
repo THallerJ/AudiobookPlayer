@@ -100,16 +100,28 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 	function handleSeek(value) {
 		if (sound) {
-			if (value < progress) {
-				setProgress(value);
-				sound.seek(value);
-			}
+			//if (value < progress) {
+			setProgress(value);
+			sound.seek(value);
+			//	}
 		}
 	}
 
 	function seekBackward() {
-		if (progress - 5 > 0 && sound) {
-			sound.seek(progress - 5);
+		const newProgress = progress - 5;
+		if (newProgress > 0 && sound) {
+			sound.seek(newProgress);
+			setProgress(sound.seek());
+		} else {
+			sound.seek(0);
+			setProgress(0);
+		}
+	}
+
+	function seekForward() {
+		const newProgress = progress + 5;
+		if (newProgress > 0 && sound) {
+			sound.seek(newProgress);
 			setProgress(sound.seek());
 		} else {
 			sound.seek(0);
@@ -168,6 +180,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setIsMuted,
 		previousTrack,
 		nextTrack,
+		seekForward,
 	};
 
 	return (
