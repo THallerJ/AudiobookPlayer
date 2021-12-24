@@ -8,17 +8,18 @@ const GoogleContext = React.createContext();
 export const GoogleContextProvider = ({ children }) => {
 	const {
 		axiosInstance,
-		googleDirectoryFlag,
-		setGoogleDirectoryFlag,
+		googleDirectoryExists,
+		setGoogleDirectoryExists,
 		setAuthentication,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
 	const [playingChapter, setPlayingChapter] = useState();
+	const [rootUpdated, setRootUpdated] = useState(false);
 
 	const getLibrary = useCallback(async () => {
-		if (googleDirectoryFlag.exists) {
+		if (googleDirectoryExists) {
 			const response = await axiosInstance.get(`/google/library`);
 			const sortedLibrary = response.data.sort((book1, book2) =>
 				book1.name.localeCompare(book2.name)
@@ -26,7 +27,7 @@ export const GoogleContextProvider = ({ children }) => {
 
 			setLibrary(sortedLibrary);
 		}
-	}, [axiosInstance, setLibrary, googleDirectoryFlag]);
+	}, [axiosInstance, setLibrary, googleDirectoryExists]);
 
 	const getFolders = useCallback(
 		async (directory) => {
@@ -48,10 +49,9 @@ export const GoogleContextProvider = ({ children }) => {
 			},
 		});
 
-		setGoogleDirectoryFlag((prevState) => ({
-			exists: response.data.rootFlag,
-			update: !prevState.update,
-		}));
+		setGoogleDirectoryExists(response.data.rootFlag);
+
+		setRootUpdated((prevState) => !prevState);
 	}
 
 	async function logout() {
@@ -62,7 +62,7 @@ export const GoogleContextProvider = ({ children }) => {
 
 	useEffectSkipFirst(() => {
 		getLibrary();
-	}, [googleDirectoryFlag, getLibrary]);
+	}, [rootUpdated]);
 
 	const value = {
 		getFolders,

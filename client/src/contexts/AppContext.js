@@ -40,10 +40,7 @@ export const AppContextProvider = ({ children }) => {
 		isInitializing: true,
 		isAuthenticated: false,
 	});
-	const [googleDirectoryFlag, setGoogleDirectoryFlag] = useState({
-		exists: null,
-		update: false,
-	});
+	const [googleDirectoryExists, setGoogleDirectoryExists] = useState(null);
 
 	const checkAuthentication = useCallback(async () => {
 		const response = await axiosInstance.get(`/auth/isLoggedIn`);
@@ -53,17 +50,15 @@ export const AppContextProvider = ({ children }) => {
 			isAuthenticated: response.data.loggedIn,
 		});
 
-		setGoogleDirectoryFlag((prevState) => ({
-			exists: response.data.rootFlag,
-		}));
-	}, [setGoogleDirectoryFlag]);
+		setGoogleDirectoryExists(response.data.rootFlag);
+	}, [setGoogleDirectoryExists]);
 
 	const value = {
 		authentication,
 		setAuthentication,
 		checkAuthentication,
-		googleDirectoryFlag,
-		setGoogleDirectoryFlag,
+		googleDirectoryExists,
+		setGoogleDirectoryExists,
 		axiosInstance,
 	};
 
