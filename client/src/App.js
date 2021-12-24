@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import Dashboard from "./components/Dashboard";
-import CircularProgress from "@mui/material/CircularProgress";
+import { CircularProgress, Box } from "@mui/material";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
@@ -47,7 +47,16 @@ function App() {
 							</Switch>
 						</Router>
 					) : (
-						<CircularProgress />
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								height: "100vh",
+							}}
+						>
+							<CircularProgress />
+						</Box>
 					)}
 				</GoogleContextProvider>
 			</DashboardContextProvider>
