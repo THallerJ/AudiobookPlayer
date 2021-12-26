@@ -48,7 +48,7 @@ router.get("/library", async (req, res) => {
 			const library = [];
 
 			await Promise.all(
-				bookResp.data.files.map(async (file) => {
+				bookResp.data.files.map(async (book) => {
 					const chapResp = await axios.get(
 						"https://www.googleapis.com/drive/v3/files",
 						{
@@ -56,7 +56,7 @@ router.get("/library", async (req, res) => {
 								Authorization: `Bearer ${user.accessToken}`,
 							},
 							params: {
-								q: `\"${file.id}\" in parents and trashed = false`,
+								q: `\"${book.id}\" in parents and trashed = false`,
 							},
 						}
 					);
@@ -70,8 +70,8 @@ router.get("/library", async (req, res) => {
 						return num1 && num2 ? num1 - num2 : 0;
 					});
 
-					sortedChaps.forEach((file) => {
-						const chapter = { name: file.name, id: file.id };
+					sortedChaps.forEach((chap) => {
+						const chapter = { name: chap.name, id: chap.id };
 						chapters.push(chapter);
 					});
 
@@ -79,30 +79,35 @@ router.get("/library", async (req, res) => {
 						"https://www.googleapis.com/books/v1/volumes",
 						{
 							params: {
-								q: `title="${file.name}"`,
+								q: `title="${book.name}"`,
 								maxResults: 1,
 							},
 						}
 					);
 
-					const coverImageUrl =
-						imageResp.data.items[0].volumeInfo.imageLinks.thumbnail;
-
-					const colors = await ColorThief.getPalette(coverImageUrl, 2);
-
 					const hexColors = [];
-					colors.forEach((color) => {
-						hexColors.push(rgbToHex(color[0], color[1], color[2]));
-					});
+					var coverImageUrl;
 
-					const book = {
-						name: file.name,
-						id: file.id,
+					if (imageResp.data.totalItems > 0) {
+						var coverImageUrl =
+							imageResp.data.items[0].volumeInfo.imageLinks.thumbnail;
+
+						const colors = await ColorThief.getPalette(coverImageUrl, 2);
+
+						colors.forEach((color) => {
+							hexColors.push(rgbToHex(color[0], color[1], color[2]));
+						});
+					}
+
+					const tempBook = {
+						name: book.name,
+						id: book.id,
 						chapters: chapters,
-						coverImageUrl: coverImageUrl,
+						coverImageUrl: coverImageUrl ? coverImageUrl : null,
 						imageColors: hexColors,
 					};
-					library.push(book);
+
+					library.push(tempBook);
 				})
 			);
 

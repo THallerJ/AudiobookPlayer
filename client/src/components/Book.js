@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useGoogle } from "../contexts/GoogleContext";
+import defaultBookCover from "../assets/images/defaultBookCover.jpg";
 
 const BookCovers = ({ book }) => {
 	const [showOverlay, setShowOverlay] = useState(false);
@@ -38,7 +39,7 @@ const BookCovers = ({ book }) => {
 			<CardActionArea>
 				<CardMedia
 					component="img"
-					image={book.coverImageUrl}
+					image={book.coverImageUrl ? book.coverImageUrl : defaultBookCover}
 					onClick={() => setCurrentBook(book)}
 				/>
 				{overlay}
