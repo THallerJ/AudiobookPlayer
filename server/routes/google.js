@@ -97,6 +97,8 @@ router.get("/library", async (req, res) => {
 						colors.forEach((color) => {
 							hexColors.push(rgbToHex(color[0], color[1], color[2]));
 						});
+					} else {
+						hexColors.push("#eeeeee", "#eeeeee");
 					}
 
 					const tempBook = {

@@ -23,11 +23,13 @@ import { useDashboard } from "../contexts/DashboardContext";
 import { useGoogle } from "../contexts/GoogleContext";
 import { useMediaPlayer } from "../contexts/MediaPlayerContext";
 import tinyColor from "tinycolor2";
+import defaultBookCover from "../assets/images/defaultBookCover.jpg";
 
 const TrackInfo = () => {
 	const { setShowTrackInfo } = useDashboard();
 	const [brightness, setBrightness] = useState();
 	const { playingBook, playingChapter } = useGoogle();
+	const [hasCover, setHasCover] = useState();
 	const {
 		isPlaying,
 		duration,
@@ -44,6 +46,8 @@ const TrackInfo = () => {
 	} = useMediaPlayer();
 
 	useEffect(() => {
+		setHasCover(playingBook.coverImageUrl ? true : false);
+
 		const brightness1 = tinyColor(playingBook.imageColors[0]).getBrightness();
 		const brightness2 = tinyColor(playingBook.imageColors[1]).getBrightness();
 
@@ -58,7 +62,11 @@ const TrackInfo = () => {
 				overflow: "hidden",
 			}}
 		>
-			<TrackInfoContainer bright={brightness} colors={playingBook.imageColors}>
+			<TrackInfoContainer
+				bright={brightness}
+				colors={playingBook.imageColors}
+				hasCover={hasCover}
+			>
 				<Grid container>
 					<Grid item xs={12} sx={{ display: "flex" }}>
 						<Grid item xs={6} align="start">
@@ -96,7 +104,11 @@ const TrackInfo = () => {
 					<Card>
 						<CardMedia
 							component="img"
-							image={playingBook ? playingBook.coverImageUrl : null}
+							image={
+								playingBook && playingBook.coverImageUrl
+									? playingBook.coverImageUrl
+									: defaultBookCover
+							}
 						/>
 					</Card>
 				</Box>
@@ -161,57 +173,58 @@ const TrackInfo = () => {
 export default TrackInfo;
 
 // Styled Components
-const TrackInfoContainer = styled(Box)(({ theme, bright, colors }) => ({
-	display: "flex",
-	height: "100%",
-	flexDirection: "column",
-	padding: theme.spacing(2),
-	alignItems: "center",
-
-	".MuiSlider-root": {
-		padding: 0,
-		background: colors[0],
-	},
-
-	".MuiSlider-track": {
-		backgroundColor: colors[1],
-	},
-
-	".MuiSlider-thumb": {
-		height: 0,
-		width: 0,
-		backgroundColor: "white",
-	},
-
-	".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover, .Mui-active	": {
-		boxShadow: "none",
-		height: 15,
-		width: 15,
-	},
-
-	".MuiCardMedia-root": {
-		width: 225,
-	},
-
-	".cardWrapper": {
-		height: "60%",
-		width: 225,
-		overflow: "hidden",
+const TrackInfoContainer = styled(Box)(
+	({ theme, bright, colors, hasCover }) => ({
 		display: "flex",
+		height: "100%",
+		flexDirection: "column",
+		padding: theme.spacing(2),
 		alignItems: "center",
-		justifyContent: "center",
-		padding: theme.spacing(1),
-	},
 
-	".bottomIcon": {
-		fill: bright && bright[0] > 70 ? null : "#efefef",
-	},
+		".MuiSlider-root": {
+			padding: 0,
+			background: hasCover ? colors[0] : "gray",
+		},
 
-	".topIcon": {
-		fill: bright && bright[1] > 70 ? null : "#efefef",
-	},
+		".MuiSlider-track, .MuiSlider-thumb": {
+			backgroundColor: hasCover ? colors[1] : theme.palette.primary.main,
+		},
 
-	".textColor": {
-		color: bright && bright[0] > 70 ? "black" : "#efefef",
-	},
-}));
+		".MuiSlider-thumb": {
+			height: 0,
+			width: 0,
+		},
+
+		".MuiSlider-thumb.Mui-focusVisible, .MuiSlider-thumb:hover, .Mui-active	": {
+			boxShadow: "none",
+			height: 15,
+			width: 15,
+		},
+
+		".MuiCardMedia-root": {
+			width: 225,
+		},
+
+		".cardWrapper": {
+			height: "60%",
+			width: 225,
+			overflow: "hidden",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			padding: theme.spacing(1),
+		},
+
+		".bottomIcon": {
+			fill: bright && bright[0] > 70 ? null : "#efefef",
+		},
+
+		".topIcon": {
+			fill: bright && bright[1] > 70 ? null : "#efefef",
+		},
+
+		".textColor": {
+			color: bright && bright[0] > 70 ? "black" : "#efefef",
+		},
+	})
+);
