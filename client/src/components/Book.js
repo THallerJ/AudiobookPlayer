@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Typography,
 	Card,
@@ -10,9 +10,30 @@ import { styled } from "@mui/material/styles";
 import { useGoogle } from "../contexts/GoogleContext";
 import defaultBookCover from "../assets/images/defaultBookCover.jpg";
 
-const BookCovers = ({ book }) => {
-	const [showOverlay, setShowOverlay] = useState(false);
+const Book = ({ book }) => {
+	const [showOverlay, setShowOverlay] = useState();
 	const { setCurrentBook } = useGoogle();
+	const [hasCover, setHasCover] = useState();
+
+	useEffect(() => {
+		setHasCover(book.coverImageUrl ? true : false);
+	}, [book]);
+
+	useEffect(() => {
+		if (!hasCover) {
+			setShowOverlay(true);
+		} else {
+			setShowOverlay(false);
+		}
+	}, [hasCover]);
+
+	function onMouseEnter() {
+		if (hasCover) setShowOverlay(true);
+	}
+
+	function onMouseLeave() {
+		if (hasCover) setShowOverlay(false);
+	}
 
 	const overlay = showOverlay ? (
 		<Box
@@ -33,13 +54,13 @@ const BookCovers = ({ book }) => {
 	return (
 		<StyledCard
 			raised={true}
-			onMouseEnter={() => setShowOverlay(true)}
-			onMouseLeave={() => setShowOverlay(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 		>
 			<CardActionArea>
 				<CardMedia
 					component="img"
-					image={book.coverImageUrl ? book.coverImageUrl : defaultBookCover}
+					image={hasCover ? book.coverImageUrl : defaultBookCover}
 					onClick={() => setCurrentBook(book)}
 				/>
 				{overlay}
@@ -48,7 +69,7 @@ const BookCovers = ({ book }) => {
 	);
 };
 
-export default BookCovers;
+export default Book;
 
 const StyledCard = styled(Card)(({ theme }) => ({
 	position: "relative",
