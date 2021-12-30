@@ -1,5 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useGoogle } from "../contexts/GoogleContext";
+import { useApp } from "../contexts/AppContext";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
 import { Howl } from "howler";
 
@@ -7,6 +8,7 @@ const MediaPlayerContext = React.createContext();
 
 export const MediaPlayerContextProvider = ({ children }) => {
 	const { setPlayingChapter, playingChapter, playingBook } = useGoogle();
+	const { axiosInstance } = useApp();
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
@@ -14,6 +16,32 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [volume, setVolume] = useState(0);
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
+
+	const syncChapterProgress = useCallback(async () => {
+		if (playingBook && playingChapter && sound) {
+			await axiosInstance.post(`/player/setChapterProgress`, {
+				data: {
+					bookId: playingBook.id,
+					chapterId: playingChapter.data.id,
+					time: Math.floor(sound.seek()),
+				},
+			});
+		}
+	}, [axiosInstance, playingBook, playingChapter, sound]);
+
+	useEffect(() => {
+		function beforeUnload(e) {
+			e.preventDefault();
+			e.returnValue = "";
+
+			syncChapterProgress();
+		}
+
+		window.addEventListener("beforeunload", beforeUnload);
+		return () => {
+			window.removeEventListener("beforeunload", beforeUnload);
+		};
+	}, [syncChapterProgress]);
 
 	useEffectSkipFirst(() => {
 		setVolume(50);
@@ -100,10 +128,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 	function handleSeek(value) {
 		if (sound) {
-			//if (value < progress) {
 			setProgress(value);
 			sound.seek(value);
-			//	}
 		}
 	}
 

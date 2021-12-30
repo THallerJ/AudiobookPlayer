@@ -70,8 +70,17 @@ router.get("/library", async (req, res) => {
 						return num1 && num2 ? num1 - num2 : 0;
 					});
 
+					// TODO========================================
+					// add time property to chapter object
+					// Update time for chapter when client closes by making api call, save chapter id, book/folder id, time and googleId
+					// a book/folder id can only have 1 time saved. Check if it exists and if it does overwrite
+					// when we call library, fetch all times that are saved in db,  fetch times from db and save in array?
+					// add time to chap object if exists, otherwise null
+					// if a a time is used remove from array
+					// remove all times that are not used (the ones that are still in the array) from the db
+
 					sortedChaps.forEach((chap) => {
-						const chapter = { name: chap.name, id: chap.id };
+						const chapter = { name: chap.name, id: chap.id, time: null };
 						chapters.push(chapter);
 					});
 
