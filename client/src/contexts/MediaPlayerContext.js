@@ -16,32 +16,36 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [volume, setVolume] = useState(0);
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
+	const [prevBookData, setPrevBookData] = useState(null);
 
-	const syncChapterProgress = useCallback(async () => {
-		if (playingBook && playingChapter && sound) {
-			await axiosInstance.post(`/player/setChapterProgress`, {
-				data: {
-					bookId: playingBook.id,
-					chapterId: playingChapter.data.id,
-					time: Math.floor(sound.seek()),
-				},
-			});
-		}
-	}, [axiosInstance, playingBook, playingChapter, sound]);
+	const syncChapterProgress = useCallback(
+		(book, chapter, time) => {
+			if (book && chapter) {
+				axiosInstance.post(`/player/setChapterProgress`, {
+					data: {
+						bookId: book.id,
+						chapterId: chapter.data.id,
+						time: Math.floor(time),
+					},
+				});
+			}
+		},
+		[axiosInstance]
+	);
 
 	useEffect(() => {
 		function beforeUnload(e) {
 			e.preventDefault();
 			e.returnValue = "";
 
-			syncChapterProgress();
+			syncChapterProgress(playingBook, playingChapter, sound.seek());
 		}
 
 		window.addEventListener("beforeunload", beforeUnload);
 		return () => {
 			window.removeEventListener("beforeunload", beforeUnload);
 		};
-	}, [syncChapterProgress]);
+	}, [syncChapterProgress, playingBook, playingChapter, sound]);
 
 	useEffectSkipFirst(() => {
 		setVolume(50);
@@ -53,6 +57,39 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			sound.play();
 		}
 	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
+
+	useEffectSkipFirst(() => {
+		if (prevBookData)
+			syncChapterProgress(
+				prevBookData.book,
+				prevBookData.chapter,
+				sound.seek()
+			);
+		setPrevBookData({ book: playingBook, chapter: playingChapter });
+	}, [playingBook, playingChapter]);
+
+	useEffectSkipFirst(() => {
+		if (playingChapter) {
+			setSound((prevState) => {
+				if (prevState) {
+					prevState.unload();
+				}
+
+				return new Howl({
+					src: [
+						`https://docs.google.com/uc?export=download&id=${playingChapter.data.id}`,
+					],
+					html5: true,
+					preload: true,
+					volume: 0.5,
+					rate: rate,
+					onload: function () {
+						setDuration(this.duration());
+					},
+				});
+			});
+		}
+	}, [prevBookData, setDuration, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
 		if (playingChapter) {
