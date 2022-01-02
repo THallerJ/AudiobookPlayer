@@ -21,11 +21,6 @@ const Sidebar = () => {
 		setOpenDrawer(false);
 	}
 
-	const listItems = [];
-	for (var i = 0; i < 20; i++) {
-		listItems.push(`Chapter ${i + 1}`);
-	}
-
 	function generateListItemClassName(chapter) {
 		if (playingChapter) {
 			if (!playingChapter.data.id.localeCompare(chapter.id)) {
