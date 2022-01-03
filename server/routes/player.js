@@ -1,14 +1,19 @@
 const express = require("express");
+const Chapter = require("../models/Chapter.js");
 var router = express.Router();
-const User = require("../models/User.js");
+const User = require("../models/Chapter.js");
 
 router.post("/rootDirectory", async (req, res) => {
 	const user = req.user[0];
 
-	await User.updateOne(
-		{ googleId: user.googleId },
-		{ $set: { rootId: req.body.data.rootId } }
-	);
+	try {
+		await User.updateOne(
+			{ googleId: user.googleId },
+			{ $set: { rootId: req.body.data.rootId } }
+		);
+	} catch (error) {
+		console.log(error);
+	}
 
 	res.status(200).send({ rootFlag: true });
 });
@@ -16,13 +21,29 @@ router.post("/rootDirectory", async (req, res) => {
 router.post("/setChapterProgress", async (req, res) => {
 	const user = req.user[0];
 
-	const chapterId = req.body.data.chapterId;
 	const bookId = req.body.data.bookId;
+	const chapterId = req.body.data.chapterId;
 	const time = req.body.data.time;
 
-	console.log(`chapterId: ${chapterId}\nbookId: ${bookId}\ntime: ${time}`);
+	try {
+		await Chapter.findOneAndUpdate(
+			{
+				googleId: user.id,
+				bookId: bookId,
+			},
+			{
+				$set: {
+					chapterId: chapterId,
+					time: time,
+				},
+			},
+			{ upsert: true }
+		);
+	} catch (error) {
+		console.log(error);
+	}
 
-	res.status(200).send("ok");
+	res.sendStatus(200);
 });
 
 module.exports = router;
