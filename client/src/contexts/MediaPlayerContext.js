@@ -17,6 +17,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
 	const [prevBookData, setPrevBookData] = useState(null);
+	const [booksProgress, setBooksProgress] = useState();
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
@@ -125,6 +126,20 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			clearInterval(timer);
 		};
 	}, [setProgress, sound, isPlaying]);
+
+	const getBookProgress = useCallback(async () => {
+		const response = await axiosInstance.get(`/player/getBooksProgress`);
+		return response.data;
+	}, [axiosInstance]);
+
+	useEffect(() => {
+		async function fetchBookProgress() {
+			const result = await getBookProgress();
+			setBooksProgress(result);
+		}
+
+		fetchBookProgress();
+	}, [getBookProgress]);
 
 	function togglePlay() {
 		if (sound) {
@@ -244,6 +259,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		previousTrack,
 		nextTrack,
 		seekForward,
+		booksProgress,
 	};
 
 	return (

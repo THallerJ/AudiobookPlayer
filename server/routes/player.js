@@ -1,10 +1,12 @@
 const express = require("express");
 const Chapter = require("../models/Chapter.js");
 var router = express.Router();
-const User = require("../models/Chapter.js");
+const User = require("../models/User.js");
 
 router.post("/rootDirectory", async (req, res) => {
 	const user = req.user[0];
+
+	console.log("thing");
 
 	try {
 		await User.updateOne(
@@ -44,6 +46,27 @@ router.post("/setChapterProgress", async (req, res) => {
 	}
 
 	res.sendStatus(200);
+});
+
+router.get("/getBooksProgress", async (req, res) => {
+	const user = req.user[0];
+
+	const result = await Chapter.find({
+		googleId: user.id,
+	});
+
+	const returnValue = result.reduce(
+		(map, obj) => (
+			(map[obj.bookId] = { chapterId: obj.chapterId, time: obj.time }), map
+		),
+		{}
+	);
+
+	res.status(200).send(returnValue);
+});
+
+router.post("/deleteChapterProgress", async (req, res) => {
+	const user = req.user[0];
 });
 
 module.exports = router;
