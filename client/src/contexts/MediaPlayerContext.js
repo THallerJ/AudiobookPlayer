@@ -17,7 +17,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
 	const [prevBookData, setPrevBookData] = useState(null);
-	const [booksProgress, setBooksProgress] = useState();
+	const [booksProgress, setBooksProgress] = useState({});
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
@@ -28,6 +28,15 @@ export const MediaPlayerContextProvider = ({ children }) => {
 						chapterId: chapter.data.id,
 						time: Math.floor(time),
 					},
+				});
+
+				setBooksProgress((prevState) => {
+					prevState[book.id] = {
+						chapterId: chapter.data.id,
+						time: Math.floor(time),
+					};
+
+					return prevState;
 				});
 			}
 		},
