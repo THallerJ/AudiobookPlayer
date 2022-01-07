@@ -6,8 +6,6 @@ const User = require("../models/User.js");
 router.post("/rootDirectory", async (req, res) => {
 	const user = req.user[0];
 
-	console.log("thing");
-
 	try {
 		await User.updateOne(
 			{ googleId: user.googleId },

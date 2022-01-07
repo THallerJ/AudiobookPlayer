@@ -7,7 +7,13 @@ import { Howl } from "howler";
 const MediaPlayerContext = React.createContext();
 
 export const MediaPlayerContextProvider = ({ children }) => {
-	const { setPlayingChapter, playingChapter, playingBook } = useGoogle();
+	const {
+		setPlayingChapter,
+		setPlayingBook,
+		playingChapter,
+		playingBook,
+		getBookAndChapter,
+	} = useGoogle();
 	const { axiosInstance } = useApp();
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
@@ -18,6 +24,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [progress, setProgress] = useState(0);
 	const [prevBookData, setPrevBookData] = useState(null);
 	const [booksProgress, setBooksProgress] = useState({});
+	const [resumeFlag, setResumeFlag] = useState(false);
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
@@ -69,12 +76,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
-		if (prevBookData)
+		if (prevBookData && sound)
 			syncChapterProgress(
 				prevBookData.book,
 				prevBookData.chapter,
 				sound.seek()
 			);
+
 		setPrevBookData({ book: playingBook, chapter: playingChapter });
 	}, [playingBook, playingChapter]);
 
@@ -96,45 +104,21 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					onload: function () {
 						setDuration(this.duration());
 					},
-				});
-			});
-		}
-	}, [prevBookData, setDuration, setIsPlaying]);
-
-	useEffectSkipFirst(() => {
-		if (playingChapter) {
-			setSound((prevState) => {
-				if (prevState) {
-					prevState.unload();
-				}
-
-				return new Howl({
-					src: [
-						`https://docs.google.com/uc?export=download&id=${playingChapter.data.id}`,
-					],
-					html5: true,
-					preload: true,
-					volume: 0.5,
-					rate: rate,
-					onload: function () {
-						setDuration(this.duration());
+					onplay: function () {
+						if (resumeFlag) this.seek(booksProgress[playingBook.id].time);
+						setResumeFlag(false);
 					},
 				});
 			});
 		}
-	}, [setSound, playingChapter, setDuration, setIsPlaying]);
+	}, [setDuration, setIsPlaying, playingChapter, setResumeFlag, playingBook]);
 
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (sound && isPlaying) {
-				setProgress(sound.seek());
-			}
-		}, 250);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [setProgress, sound, isPlaying]);
+	function resumePlayback(bookId) {
+		const bookChap = getBookAndChapter(bookId, booksProgress[bookId].chapterId);
+		setPlayingChapter(bookChap.chapter);
+		setPlayingBook(bookChap.book);
+		setResumeFlag(true);
+	}
 
 	const getBookProgress = useCallback(async () => {
 		const response = await axiosInstance.get(`/player/getBooksProgress`);
@@ -149,6 +133,18 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 		fetchBookProgress();
 	}, [getBookProgress]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (sound && isPlaying) {
+				setProgress(sound.seek());
+			}
+		}, 250);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [setProgress, sound, isPlaying]);
 
 	function togglePlay() {
 		if (sound) {
@@ -269,6 +265,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		nextTrack,
 		seekForward,
 		booksProgress,
+		resumePlayback,
 	};
 
 	return (

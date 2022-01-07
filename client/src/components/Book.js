@@ -8,7 +8,7 @@ import defaultBookCover from "../assets/images/defaultBookCover.jpg";
 const Book = ({ book }) => {
 	const [showTitleOverlay, setShowTitleOverlay] = useState();
 	const { setCurrentBook } = useGoogle();
-	const { booksProgress } = useMediaPlayer();
+	const { booksProgress, resumePlayback } = useMediaPlayer();
 	const [hasCover, setHasCover] = useState();
 
 	useEffect(() => {
@@ -59,7 +59,7 @@ const Book = ({ book }) => {
 				fullWidth
 				size="small"
 				variant="contained"
-				onClick={() => console.log("resume")}
+				onClick={() => resumePlayback(book.id)}
 			>
 				resume
 			</Button>
