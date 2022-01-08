@@ -67,6 +67,7 @@ export const GoogleContextProvider = ({ children }) => {
 	}
 
 	async function logout() {
+		await axiosInstance.post("/player/deleteAllChapterProgress");
 		await axiosInstance.post(`/auth/logout`);
 		setLibrary(null);
 		setAuthentication({ isAuthenticated: false });

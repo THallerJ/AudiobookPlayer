@@ -59,7 +59,10 @@ const Book = ({ book }) => {
 				fullWidth
 				size="small"
 				variant="contained"
-				onClick={() => resumePlayback(book.id)}
+				onClick={() => {
+					resumePlayback(book.id);
+					setCurrentBook(book);
+				}}
 			>
 				resume
 			</Button>

@@ -28,7 +28,7 @@ router.post("/setChapterProgress", async (req, res) => {
 	try {
 		await Chapter.findOneAndUpdate(
 			{
-				googleId: user.id,
+				googleId: user.googleId,
 				bookId: bookId,
 			},
 			{
@@ -50,7 +50,7 @@ router.get("/getBooksProgress", async (req, res) => {
 	const user = req.user[0];
 
 	const result = await Chapter.find({
-		googleId: user.id,
+		googleId: user.googleId,
 	});
 
 	const returnValue = result.reduce(
@@ -63,8 +63,14 @@ router.get("/getBooksProgress", async (req, res) => {
 	res.status(200).send(returnValue);
 });
 
-router.post("/deleteChapterProgress", async (req, res) => {
-	const user = req.user[0];
+router.post("/deleteAllChapterProgress", async (req, res) => {
+	Chapter.deleteMany({ googleId: req.user[0].googleId }, (err) => {
+		if (err) {
+			console.log(err);
+		}
+	});
+
+	res.sendStatus(200);
 });
 
 module.exports = router;
