@@ -17,12 +17,13 @@ import {
 } from "@mui/material";
 import { useGoogle } from "../contexts/GoogleContext";
 import { styled } from "@mui/material/styles";
+import { useDashboard } from "../contexts/DashboardContext";
 
-const FolderSelectDialog = ({ open, setOpen }) => {
+const FolderSelectDialog = () => {
 	const { getFolders, setRootDirectory } = useGoogle();
+	const { openRootDialog, setOpenRootDialog } = useDashboard();
 	const [loading, setLoading] = useState(false);
 	const [selectedFolders, setSelectedFolders] = useState([]);
-
 	const [folders, setFolders] = useState([]);
 
 	const updateFolders = useCallback(
@@ -45,13 +46,13 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 			updateFolders("root");
 		};
 
-		if (open) {
+		if (openRootDialog) {
 			fetchData();
 		} else {
 			setFolders([]);
 			setSelectedFolders([]);
 		}
-	}, [getFolders, updateFolders, open]);
+	}, [getFolders, updateFolders, openRootDialog]);
 
 	function renderFolders() {
 		if (loading) {
@@ -130,7 +131,10 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 
 	return (
 		<Box>
-			<Dialog open={open} onBackdropClick={() => setOpen(false)}>
+			<Dialog
+				open={openRootDialog}
+				onBackdropClick={() => setOpenRootDialog(false)}
+			>
 				<DialogTitle>
 					<div>
 						<Typography align="center" variant="h6">
@@ -149,13 +153,13 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 									? selectedFolders[selectedFolders.length - 1].id
 									: "root"
 							);
-							setOpen(false);
+							setOpenRootDialog(false);
 						}}
 						variant="text"
 					>
 						OK
 					</Button>
-					<Button onClick={() => setOpen(false)} variant="text">
+					<Button onClick={() => setOpenRootDialog(false)} variant="text">
 						Cancel
 					</Button>
 				</DialogActions>

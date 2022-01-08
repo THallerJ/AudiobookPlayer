@@ -19,8 +19,7 @@ import { useGoogle } from "../contexts/GoogleContext";
 import FolderSelectDialog from "./FolderSelectDialog";
 
 const Dashboard = () => {
-	const { setOpenDrawer } = useDashboard();
-	const [openDialog, setOpenDialog] = useState(false);
+	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const theme = useTheme();
 	const { getLibrary, logout } = useGoogle();
@@ -98,7 +97,7 @@ const Dashboard = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						setOpenDialog(true);
+						setOpenRootDialog(true);
 						handleCloseMenu();
 					}}
 				>
@@ -129,7 +128,7 @@ const Dashboard = () => {
 					Log Out
 				</MenuItem>
 			</Menu>
-			<FolderSelectDialog open={openDialog} setOpen={setOpenDialog} />
+			<FolderSelectDialog />
 		</StyledDashboardContainer>
 	);
 };
