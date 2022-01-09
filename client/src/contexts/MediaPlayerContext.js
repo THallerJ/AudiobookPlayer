@@ -33,7 +33,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					data: {
 						bookId: book.id,
 						chapterId: chapter.data.id,
-						time: Math.floor(time),
+						time: time > 4 ? Math.floor(time - 5) : 0,
 					},
 				});
 
