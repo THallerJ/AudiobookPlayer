@@ -43,10 +43,10 @@ const MediaPlayer = () => {
 			<Grid container spacing={theme.spacing(1)}>
 				<Grid item xs={4} sm={3}>
 					<Typography variant="subtitle2" noWrap>
-						{playingBook ? playingBook.name : "No audiobook selected"}
+						{playingBook ? playingBook.name : ""}
 					</Typography>
 					<Typography variant="subtitle1" noWrap>
-						{playingChapter ? playingChapter.data.name : "-"}
+						{playingChapter ? playingChapter.data.name : ""}
 					</Typography>
 				</Grid>
 				<Grid item xs={4} sm={5} align="center">
