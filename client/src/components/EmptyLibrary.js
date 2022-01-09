@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Button, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDashboard } from "../contexts/DashboardContext";
+import TutorialDialog from "./TutorialDialog";
 
 const EmptyLibrary = () => {
 	const { setOpenRootDialog } = useDashboard();
+	const [openTutorialDialog, setOpenTutorialDialog] = useState(false);
 
 	return (
 		<StyledContainer>
@@ -16,8 +18,12 @@ const EmptyLibrary = () => {
 				<Button onClick={() => setOpenRootDialog(true)}>
 					Set Drive Directory
 				</Button>
-				<Button>Tutorial</Button>
+				<Button onClick={() => setOpenTutorialDialog(true)}>Tutorial</Button>
 			</Box>
+			<TutorialDialog
+				open={openTutorialDialog}
+				setOpen={setOpenTutorialDialog}
+			/>
 		</StyledContainer>
 	);
 };
