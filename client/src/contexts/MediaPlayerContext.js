@@ -113,6 +113,14 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		}
 	}, [setDuration, setIsPlaying, playingChapter, setResumeFlag, playingBook]);
 
+	useEffectSkipFirst(() => {
+		// stops playback when root directory is changed
+		if (!playingChapter && sound) {
+			sound.unload();
+			setIsPlaying(false);
+		}
+	}, [playingChapter, sound]);
+
 	function resumePlayback(bookId) {
 		const bookChap = getBookAndChapter(bookId, booksProgress[bookId].chapterId);
 		setPlayingChapter(bookChap.chapter);
