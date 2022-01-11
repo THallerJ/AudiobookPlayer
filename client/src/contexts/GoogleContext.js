@@ -55,6 +55,10 @@ export const GoogleContextProvider = ({ children }) => {
 	}
 
 	async function setRootDirectory(rootId) {
+		setPlayingBook(null);
+		setCurrentBook(null);
+		setPlayingChapter(null);
+
 		const response = await axiosInstance.post(`/player/rootDirectory`, {
 			data: {
 				rootId: rootId,
@@ -62,7 +66,6 @@ export const GoogleContextProvider = ({ children }) => {
 		});
 
 		setGoogleDirectoryExists(response.data.rootFlag);
-
 		setRootUpdated((prevState) => !prevState);
 	}
 
