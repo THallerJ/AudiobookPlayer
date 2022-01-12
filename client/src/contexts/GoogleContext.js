@@ -13,6 +13,7 @@ export const GoogleContextProvider = ({ children }) => {
 		setAuthentication,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
+	const [loadingLibrary, setLoadingLibrary] = useState(false);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
 	const [playingChapter, setPlayingChapter] = useState();
@@ -20,11 +21,13 @@ export const GoogleContextProvider = ({ children }) => {
 
 	const getLibrary = useCallback(async () => {
 		if (googleDirectoryExists) {
+			setLoadingLibrary(true);
 			const response = await axiosInstance.get(`/google/library`);
 			const sortedLibrary = response.data.sort((book1, book2) =>
 				book1.name.localeCompare(book2.name)
 			);
 
+			setLoadingLibrary(false);
 			setLibrary(sortedLibrary);
 		}
 	}, [axiosInstance, setLibrary, googleDirectoryExists]);
@@ -93,6 +96,7 @@ export const GoogleContextProvider = ({ children }) => {
 		setPlayingChapter,
 		playingChapter,
 		getBookAndChapter,
+		loadingLibrary,
 	};
 
 	return (
