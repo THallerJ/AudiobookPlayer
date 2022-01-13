@@ -12,7 +12,7 @@ const BookList = () => {
 	return (
 		<Box sx={{ padding: theme.spacing(2), height: "100%" }}>
 			<Grid item container spacing={theme.spacing(3)} justifyContent="center">
-				{library.length > 0 ? (
+				{library && library.length > 0 ? (
 					library.map((book) => (
 						<Grid item key={`${book.id}`}>
 							<Book book={book} />

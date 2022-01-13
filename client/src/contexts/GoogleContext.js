@@ -57,10 +57,14 @@ export const GoogleContextProvider = ({ children }) => {
 		};
 	}
 
-	async function setRootDirectory(rootId) {
+	function resetMediaPlayer() {
 		setPlayingBook(null);
 		setCurrentBook(null);
 		setPlayingChapter(null);
+	}
+
+	async function setRootDirectory(rootId) {
+		resetMediaPlayer();
 
 		const response = await axiosInstance.post(`/player/rootDirectory`, {
 			data: {
@@ -73,7 +77,8 @@ export const GoogleContextProvider = ({ children }) => {
 	}
 
 	async function logout() {
-		await axiosInstance.post("/player/deleteAllChapterProgress");
+		resetMediaPlayer();
+
 		await axiosInstance.post(`/auth/logout`);
 		setLibrary(null);
 		setAuthentication({ isAuthenticated: false });

@@ -76,7 +76,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
-		if (prevBookData && sound)
+		if (prevBookData && sound && playingChapter && playingBook)
 			syncChapterProgress(
 				prevBookData.book,
 				prevBookData.chapter,
@@ -114,10 +114,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}, [setDuration, setIsPlaying, playingChapter, setResumeFlag, playingBook]);
 
 	useEffectSkipFirst(() => {
-		// stops playback when root directory is changed
+		// handles when root directory is changed
 		if (!playingChapter && sound) {
 			sound.unload();
 			setIsPlaying(false);
+			setBooksProgress({});
+			setProgress(0);
+			setVolume(0);
 		}
 	}, [playingChapter, sound]);
 

@@ -3,7 +3,7 @@ const passport = require("passport");
 const dbUtils = require("./database-utils");
 const authRoute = require("./routes/auth.js");
 const googleRoute = require("./routes/google.js");
-const playerRoute = require("./routes/player.js");
+const { playerRoute } = require("./routes/player.js");
 
 const cors = require("cors");
 require("./passport-config");

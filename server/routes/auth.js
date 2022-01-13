@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 var router = express.Router();
+const { deleteAllChapterProgress } = require("./player");
 const User = require("../models/User.js");
 const axios = require("axios");
 require("dotenv").config();
@@ -67,7 +68,11 @@ router.get("/isLoggedIn", (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-	User.deleteOne({ googleId: req.user[0].googleId }, (err) => {
+	const googleId = req.user[0].googleId;
+
+	deleteAllChapterProgress(googleId);
+
+	User.deleteOne({ googleId: googleId }, (err) => {
 		if (err) {
 			console.log(err);
 		}

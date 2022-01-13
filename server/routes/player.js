@@ -5,6 +5,7 @@ const User = require("../models/User.js");
 
 router.post("/rootDirectory", async (req, res) => {
 	const user = req.user[0];
+	deleteAllChapterProgress(user.googleId);
 
 	try {
 		await User.updateOne(
@@ -63,14 +64,12 @@ router.get("/getBooksProgress", async (req, res) => {
 	res.status(200).send(returnValue);
 });
 
-router.post("/deleteAllChapterProgress", async (req, res) => {
-	Chapter.deleteMany({ googleId: req.user[0].googleId }, (err) => {
+function deleteAllChapterProgress(googleId) {
+	Chapter.deleteMany({ googleId: googleId }, (err) => {
 		if (err) {
 			console.log(err);
 		}
 	});
+}
 
-	res.sendStatus(200);
-});
-
-module.exports = router;
+module.exports = { playerRoute: router, deleteAllChapterProgress };
