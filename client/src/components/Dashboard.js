@@ -141,7 +141,7 @@ export default Dashboard;
 // Styled Components
 const StyledDashboardContainer = styled("div")(({ theme }) => ({
 	display: "flex",
-	height: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+	height: "100vh",
 	width: "100%",
 
 	".appBarRight": {

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import Dashboard from "./components/Dashboard";
-import { CircularProgress, Box } from "@mui/material";
+import { CircularProgress, Box, CssBaseline } from "@mui/material";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
@@ -19,6 +19,7 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
+			<CssBaseline />
 			<DashboardContextProvider>
 				<GoogleContextProvider>
 					{!authentication.isInitializing ? (
