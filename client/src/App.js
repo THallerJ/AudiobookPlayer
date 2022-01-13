@@ -1,30 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import Dashboard from "./components/Dashboard";
 import { CircularProgress, Box } from "@mui/material";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
+import lightTheme from "./themes/lightTheme";
+import darkTheme from "./themes/darkTheme";
 import { GoogleContextProvider } from "./contexts/GoogleContext";
 import { useApp } from "./contexts/AppContext";
 
-const theme = createTheme({
-	drawer: {
-		width: 240,
-	},
-	palette: {
-		secondary: {
-			light: "#b1b1b1",
-			main: "#9e9e9e",
-			dark: "#6e6e6e",
-			contrastText: "#000",
-		},
-	},
-});
-
 function App() {
 	const { checkAuthentication, authentication } = useApp();
+	const [theme, setTheme] = useState(lightTheme);
 
 	useEffect(() => {
 		checkAuthentication();
