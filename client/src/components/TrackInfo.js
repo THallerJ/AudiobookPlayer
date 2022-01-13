@@ -92,7 +92,7 @@ const TrackInfo = () => {
 							<Chip
 								variant="filled"
 								label={`${rate.toFixed(2)}x`}
-								sx={{ backgroundColor: "white" }}
+								sx={{ backgroundColor: "white", color: "black" }}
 							/>
 							<IconButton onClick={increaseRate}>
 								<AddIcon className="topIcon" fontSize="small" />
@@ -216,11 +216,11 @@ const TrackInfoContainer = styled(Box)(
 		},
 
 		".bottomIcon": {
-			fill: bright && bright[0] > 70 ? null : "#efefef",
+			fill: bright && bright[0] > 70 ? theme.palette.grey[900] : "#efefef",
 		},
 
 		".topIcon": {
-			fill: bright && bright[1] > 70 ? null : "#efefef",
+			fill: bright && bright[1] > 70 ? theme.palette.grey[900] : "#efefef",
 		},
 
 		".textColor": {
