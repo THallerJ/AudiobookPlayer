@@ -1,4 +1,7 @@
 import React, { useContext, useState, useCallback } from "react";
+import lightTheme from "../themes/lightTheme";
+import darkTheme from "../themes/darkTheme";
+
 const axios = require("axios");
 
 const AppContext = React.createContext();
@@ -41,6 +44,18 @@ export const AppContextProvider = ({ children }) => {
 		isAuthenticated: false,
 	});
 	const [googleDirectoryExists, setGoogleDirectoryExists] = useState(null);
+	const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+	const [theme, setTheme] = useState(lightTheme);
+
+	function toggleDarkMode() {
+		if (darkModeEnabled) {
+			setTheme(lightTheme);
+		} else {
+			setTheme(darkTheme);
+		}
+
+		setDarkModeEnabled((prevState) => !prevState);
+	}
 
 	const checkAuthentication = useCallback(async () => {
 		const response = await axiosInstance.get(`/auth/isLoggedIn`);
@@ -60,6 +75,8 @@ export const AppContextProvider = ({ children }) => {
 		googleDirectoryExists,
 		setGoogleDirectoryExists,
 		axiosInstance,
+		theme,
+		toggleDarkMode,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
