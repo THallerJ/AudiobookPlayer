@@ -1,4 +1,5 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, useEffect } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
 import lightTheme from "../themes/lightTheme";
 import darkTheme from "../themes/darkTheme";
 
@@ -44,18 +45,25 @@ export const AppContextProvider = ({ children }) => {
 		isAuthenticated: false,
 	});
 	const [googleDirectoryExists, setGoogleDirectoryExists] = useState(null);
-	const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+	const [darkModeEnabled, setDarkModeEnabled] = useLocalStorage(
+		"darkModeEnabled",
+		"false"
+	);
 	const [theme, setTheme] = useState(lightTheme);
 
-	function toggleDarkMode() {
-		if (darkModeEnabled) {
-			setTheme(lightTheme);
-		} else {
-			setTheme(darkTheme);
-		}
+	const toggleDarkMode = useCallback(() => {
+		setDarkModeEnabled((prevState) => {
+			if (prevState === "true") {
+				return "false";
+			} else {
+				return "true";
+			}
+		});
+	}, [setDarkModeEnabled]);
 
-		setDarkModeEnabled((prevState) => !prevState);
-	}
+	useEffect(() => {
+		darkModeEnabled === "true" ? setTheme(darkTheme) : setTheme(lightTheme);
+	}, [toggleDarkMode, darkModeEnabled]);
 
 	const checkAuthentication = useCallback(async () => {
 		const response = await axiosInstance.get(`/auth/isLoggedIn`);
