@@ -26,21 +26,27 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [booksProgress, setBooksProgress] = useState({});
 	const [resumeFlag, setResumeFlag] = useState(false);
 
+	useEffect(() => {
+		console.log(booksProgress);
+	}, [booksProgress]);
+
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
 			if (book && chapter) {
+				const syncProgress = time > 4 ? Math.floor(time - 5) : 0;
+
 				axiosInstance.post(`/player/setChapterProgress`, {
 					data: {
 						bookId: book.id,
 						chapterId: chapter.data.id,
-						time: time > 4 ? Math.floor(time - 5) : 0,
+						progress: syncProgress,
 					},
 				});
 
 				setBooksProgress((prevState) => {
 					prevState[book.id] = {
 						chapterId: chapter.data.id,
-						time: Math.floor(time),
+						progress: syncProgress,
 					};
 
 					return prevState;
@@ -105,7 +111,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 						setDuration(this.duration());
 					},
 					onplay: function () {
-						if (resumeFlag) this.seek(booksProgress[playingBook.id].time);
+						if (resumeFlag) this.seek(booksProgress[playingBook.id].progress);
 						setResumeFlag(false);
 					},
 				});
