@@ -93,6 +93,7 @@ const MediaPlayer = () => {
 						size="small"
 						sx={{ width: "90%" }}
 						max={duration ? duration : 100}
+						disabled={sound ? false : true}
 						value={progress}
 						onChangeCommitted={(e, v) => handleSeek(v)}
 					/>
