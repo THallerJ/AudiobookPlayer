@@ -1,10 +1,18 @@
 const mongoose = require("mongoose");
 
-const chapterSchema = new mongoose.Schema({
-	googleId: String,
-	bookId: String,
-	chapterId: String,
-	time: Number,
-});
+const chapterSchema = new mongoose.Schema(
+	{
+		googleId: String,
+		bookId: String,
+		chapterId: String,
+		progress: Number,
+	},
+	{
+		timestamps: {
+			createdAt: false,
+			updatedAt: true,
+		},
+	}
+);
 
 module.exports = mongoose.model("Chapter", chapterSchema);

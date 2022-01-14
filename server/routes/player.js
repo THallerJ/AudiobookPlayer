@@ -24,7 +24,7 @@ router.post("/setChapterProgress", async (req, res) => {
 
 	const bookId = req.body.data.bookId;
 	const chapterId = req.body.data.chapterId;
-	const time = req.body.data.time;
+	const progress = req.body.data.progress;
 
 	try {
 		await Chapter.findOneAndUpdate(
@@ -35,7 +35,7 @@ router.post("/setChapterProgress", async (req, res) => {
 			{
 				$set: {
 					chapterId: chapterId,
-					time: time,
+					progress: progress,
 				},
 			},
 			{ upsert: true }
@@ -56,7 +56,8 @@ router.get("/getBooksProgress", async (req, res) => {
 
 	const returnValue = result.reduce(
 		(map, obj) => (
-			(map[obj.bookId] = { chapterId: obj.chapterId, time: obj.time }), map
+			(map[obj.bookId] = { chapterId: obj.chapterId, progress: obj.progress }),
+			map
 		),
 		{}
 	);
