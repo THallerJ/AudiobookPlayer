@@ -6,6 +6,10 @@ const darkTheme = createTheme({
 	},
 	palette: {
 		mode: "dark",
+		scrollbar: {
+			thumb: "#6b6b6b",
+			track: "#444444",
+		},
 		primary: {
 			dark: "#2f60b2",
 			main: "#448aff",

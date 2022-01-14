@@ -98,6 +98,16 @@ const StyledPaper = styled("div")(({ theme }) => ({
 }));
 
 const StyledDrawerContent = styled("div")(({ theme }) => ({
+	"&::-webkit-scrollbar": {
+		width: 7,
+	},
+	"&::-webkit-scrollbar-track": {
+		boxShadow: `inset 0 0 6px rgba(0, 0, 0, 0.3)`,
+	},
+	"&::-webkit-scrollbar-thumb": {
+		backgroundColor: "darkgrey",
+		outline: `1px solid slategrey`,
+	},
 	".MuiTypography-subtitle2": {
 		paddingLeft: theme.spacing(3),
 		paddingTop: theme.spacing(1),
