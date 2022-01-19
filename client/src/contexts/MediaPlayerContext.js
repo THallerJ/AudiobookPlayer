@@ -6,9 +6,12 @@ import { Howl } from "howler";
 
 const MediaPlayerContext = React.createContext();
 
+//TODO FIGURE HOW TO SET INIT
+
 export const MediaPlayerContextProvider = ({ children }) => {
 	const {
 		setPlayingChapter,
+		setCurrentBook,
 		setPlayingBook,
 		playingChapter,
 		playingBook,
@@ -19,16 +22,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
+	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [volume, setVolume] = useState(0);
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
 	const [prevBookData, setPrevBookData] = useState(null);
 	const [booksProgress, setBooksProgress] = useState({});
 	const [resumeFlag, setResumeFlag] = useState(false);
-
-	useEffect(() => {
-		console.log(booksProgress);
-	}, [booksProgress]);
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
@@ -65,21 +65,11 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		}
 
 		window.addEventListener("beforeunload", beforeUnload);
+
 		return () => {
 			window.removeEventListener("beforeunload", beforeUnload);
 		};
 	}, [syncChapterProgress, playingBook, playingChapter, sound]);
-
-	useEffectSkipFirst(() => {
-		setVolume(50);
-		setIsMuted(false);
-		setProgress(0);
-
-		if (sound) {
-			setIsPlaying(true);
-			sound.play();
-		}
-	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
 		if (prevBookData && sound && playingChapter && playingBook)
@@ -91,6 +81,19 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 		setPrevBookData({ book: playingBook, chapter: playingChapter });
 	}, [playingBook, playingChapter]);
+
+	useEffectSkipFirst(() => {
+		if (sound && resumeFlag) {
+			sound.once("play", () => {
+				sound.seek(booksProgress[playingBook.id].progress);
+				setResumeFlag(false);
+			});
+		}
+
+		return () => {
+			sound.off("play");
+		};
+	}, [sound, resumeFlag]);
 
 	useEffectSkipFirst(() => {
 		if (playingChapter) {
@@ -110,14 +113,29 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					onload: function () {
 						setDuration(this.duration());
 					},
-					onplay: function () {
-						if (resumeFlag) this.seek(booksProgress[playingBook.id].progress);
-						setResumeFlag(false);
-					},
 				});
 			});
 		}
-	}, [setDuration, setIsPlaying, playingChapter, setResumeFlag, playingBook]);
+	}, [
+		setDuration,
+		setIsPlaying,
+		playingChapter,
+		setResumeFlag,
+		playingBook,
+		setInitializedFlag,
+	]);
+
+	useEffectSkipFirst(() => {
+		setInitializedFlag((prevState) => {
+			if (sound && prevState) {
+				setIsPlaying(true);
+				setVolume(50);
+				setIsMuted(false);
+				setProgress(0); // TODO: CAN I REMOVE?
+				sound.play();
+			}
+		});
+	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
 
 	useEffectSkipFirst(() => {
 		// handles when root directory is changed
@@ -131,25 +149,51 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}, [playingChapter, sound]);
 
 	function resumePlayback(bookId) {
-		const bookChap = getBookAndChapter(bookId, booksProgress[bookId].chapterId);
-		setPlayingChapter(bookChap.chapter);
-		setPlayingBook(bookChap.book);
+		if (bookId) {
+			const bookChap = getBookAndChapter(
+				bookId,
+				booksProgress[bookId].chapterId
+			);
+			setPlayingChapter(bookChap.chapter);
+			setPlayingBook(bookChap.book);
+		}
+
+		setInitializedFlag(true);
 		setResumeFlag(true);
 	}
 
-	const getBookProgress = useCallback(async () => {
-		const response = await axiosInstance.get(`/player/getBooksProgress`);
-		return response.data;
-	}, [axiosInstance]);
-
 	useEffect(() => {
-		async function fetchBookProgress() {
-			const result = await getBookProgress();
-			setBooksProgress(result);
+		async function getBookProgress() {
+			const response = await axiosInstance.get(`/player/getBooksProgress`);
+
+			const reduce = response.data.reduce((map, obj) => {
+				map[obj.bookId] = {
+					chapterId: obj.chapterId,
+					progress: obj.progress,
+				};
+				return map;
+			}, {});
+
+			setBooksProgress(reduce);
+
+			const bookChap = getBookAndChapter(
+				response.data[0].bookId,
+				response.data[0].chapterId
+			);
+
+			setPlayingChapter(bookChap.chapter);
+			setPlayingBook(bookChap.book);
+			setCurrentBook(bookChap.book);
 		}
 
-		fetchBookProgress();
-	}, [getBookProgress]);
+		getBookProgress();
+	}, [
+		axiosInstance,
+		getBookAndChapter,
+		setPlayingBook,
+		setPlayingChapter,
+		setCurrentBook,
+	]);
 
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -161,7 +205,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		return () => {
 			clearInterval(timer);
 		};
-	}, [setProgress, sound, isPlaying]);
+	}, [setProgress, sound, isPlaying, initializedFlag]);
 
 	function togglePlay() {
 		if (sound) {
@@ -283,6 +327,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		seekForward,
 		booksProgress,
 		resumePlayback,
+		initializedFlag,
+		setInitializedFlag,
 	};
 
 	return (

@@ -45,17 +45,20 @@ export const GoogleContextProvider = ({ children }) => {
 		[axiosInstance]
 	);
 
-	function getBookAndChapter(bookId, chapterId) {
-		const book = library.find((element) => element.id === bookId);
-		const chapterIndex = book.chapters.findIndex(
-			(element) => element.id === chapterId
-		);
+	const getBookAndChapter = useCallback(
+		(bookId, chapterId) => {
+			const book = library.find((element) => element.id === bookId);
+			const chapterIndex = book.chapters.findIndex(
+				(element) => element.id === chapterId
+			);
 
-		return {
-			book: book,
-			chapter: { data: book.chapters[chapterIndex], index: chapterIndex },
-		};
-	}
+			return {
+				book: book,
+				chapter: { data: book.chapters[chapterIndex], index: chapterIndex },
+			};
+		},
+		[library]
+	);
 
 	function resetMediaPlayer() {
 		setPlayingBook(null);

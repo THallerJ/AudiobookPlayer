@@ -10,7 +10,14 @@ import { useDashboard } from "../contexts/DashboardContext";
 const SmallMediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();
 	const { setShowTrackInfo } = useDashboard();
-	const { isPlaying, duration, togglePlay, progress } = useMediaPlayer();
+	const {
+		isPlaying,
+		duration,
+		togglePlay,
+		progress,
+		initializedFlag,
+		resumePlayback,
+	} = useMediaPlayer();
 	const [progressPercent, setProgressPercent] = useState(0);
 
 	useEffect(() => {
@@ -37,7 +44,7 @@ const SmallMediaPlayer = () => {
 					<Grid item xs={2}>
 						<IconButton
 							onClick={(e) => {
-								togglePlay();
+								initializedFlag ? togglePlay() : resumePlayback();
 								e.stopPropagation();
 							}}
 						>

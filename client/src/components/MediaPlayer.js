@@ -36,6 +36,8 @@ const MediaPlayer = () => {
 		previousTrack,
 		nextTrack,
 		seekForward,
+		initializedFlag,
+		resumePlayback,
 	} = useMediaPlayer();
 
 	return (
@@ -56,7 +58,9 @@ const MediaPlayer = () => {
 					<IconButton onClick={seekBackward}>
 						<Replay5Icon />
 					</IconButton>
-					<IconButton onClick={togglePlay}>
+					<IconButton
+						onClick={() => (initializedFlag ? togglePlay() : resumePlayback())}
+					>
 						{isPlaying ? (
 							<PauseIcon fontSize="large" />
 						) : (

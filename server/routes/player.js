@@ -52,17 +52,9 @@ router.get("/getBooksProgress", async (req, res) => {
 
 	const result = await Chapter.find({
 		googleId: user.googleId,
-	});
+	}).sort({ updatedAt: -1 });
 
-	const returnValue = result.reduce(
-		(map, obj) => (
-			(map[obj.bookId] = { chapterId: obj.chapterId, progress: obj.progress }),
-			map
-		),
-		{}
-	);
-
-	res.status(200).send(returnValue);
+	res.status(200).send(result);
 });
 
 function deleteAllChapterProgress(googleId) {
