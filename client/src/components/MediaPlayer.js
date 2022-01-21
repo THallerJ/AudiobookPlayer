@@ -48,7 +48,9 @@ const MediaPlayer = () => {
 						{playingBook ? playingBook.name : ""}
 					</Typography>
 					<Typography variant="subtitle1" noWrap>
-						{playingChapter ? playingChapter.data.name : ""}
+						{playingChapter && playingChapter.data
+							? playingChapter.data.name
+							: ""}
 					</Typography>
 				</Grid>
 				<Grid item xs={4} sm={5} align="center">

@@ -6,8 +6,6 @@ import { Howl } from "howler";
 
 const MediaPlayerContext = React.createContext();
 
-//TODO FIGURE HOW TO SET INIT
-
 export const MediaPlayerContextProvider = ({ children }) => {
 	const {
 		setPlayingChapter,
@@ -16,19 +14,21 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		playingChapter,
 		playingBook,
 		getBookAndChapter,
+		rootUpdated,
 	} = useGoogle();
 	const { axiosInstance } = useApp();
 	const [sound, setSound] = useState();
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
-	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [volume, setVolume] = useState(0);
 	const [rate, setRate] = useState(1.0);
 	const [progress, setProgress] = useState(0);
 	const [prevBookData, setPrevBookData] = useState(null);
 	const [booksProgress, setBooksProgress] = useState({});
+	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [resumeFlag, setResumeFlag] = useState(false);
+	const [userInputFlag, setUserInputFlag] = useState(false);
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, time) => {
@@ -126,16 +126,20 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	]);
 
 	useEffectSkipFirst(() => {
-		setInitializedFlag((prevState) => {
-			if (sound && prevState) {
-				setIsPlaying(true);
-				setVolume(50);
-				setIsMuted(false);
-				setProgress(0); // TODO: CAN I REMOVE?
-				sound.play();
-			}
-		});
-	}, [sound, setVolume, setIsMuted, setProgress, setIsPlaying]);
+		if (sound && initializedFlag) {
+			setIsPlaying(true);
+			setVolume(50);
+			setIsMuted(false);
+			sound.play();
+		}
+	}, [
+		sound,
+		setVolume,
+		setIsMuted,
+		setProgress,
+		setIsPlaying,
+		initializedFlag,
+	]);
 
 	useEffectSkipFirst(() => {
 		// handles when root directory is changed
@@ -147,6 +151,66 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			setVolume(0);
 		}
 	}, [playingChapter, sound]);
+
+	useEffect(() => {
+		async function getBookProgress() {
+			const response = await axiosInstance.get(`/player/getBooksProgress`);
+
+			if (response.data.length) {
+				const reduce = response.data.reduce((map, obj) => {
+					map[obj.bookId] = {
+						chapterId: obj.chapterId,
+						progress: obj.progress,
+					};
+					return map;
+				}, {});
+
+				setBooksProgress(reduce);
+
+				const bookChap = getBookAndChapter(
+					response.data[0].bookId,
+					response.data[0].chapterId
+				);
+
+				setPlayingChapter(bookChap.chapter);
+				setPlayingBook(bookChap.book);
+				setCurrentBook(bookChap.book);
+			}
+
+			setUserInputFlag(true);
+		}
+
+		getBookProgress();
+	}, [
+		axiosInstance,
+		getBookAndChapter,
+		setPlayingBook,
+		setPlayingChapter,
+		setCurrentBook,
+		rootUpdated,
+	]);
+
+	useEffect(() => {
+		setUserInputFlag((prevState) => {
+			if (prevState) {
+				setInitializedFlag(true);
+			}
+
+			return prevState;
+		});
+	}, [playingChapter]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (sound && isPlaying) {
+				setProgress(sound.seek());
+			}
+		}, 250);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [setProgress, sound, isPlaying, initializedFlag]);
 
 	function resumePlayback(bookId) {
 		if (bookId) {
@@ -161,51 +225,6 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setInitializedFlag(true);
 		setResumeFlag(true);
 	}
-
-	useEffect(() => {
-		async function getBookProgress() {
-			const response = await axiosInstance.get(`/player/getBooksProgress`);
-
-			const reduce = response.data.reduce((map, obj) => {
-				map[obj.bookId] = {
-					chapterId: obj.chapterId,
-					progress: obj.progress,
-				};
-				return map;
-			}, {});
-
-			setBooksProgress(reduce);
-
-			const bookChap = getBookAndChapter(
-				response.data[0].bookId,
-				response.data[0].chapterId
-			);
-
-			setPlayingChapter(bookChap.chapter);
-			setPlayingBook(bookChap.book);
-			setCurrentBook(bookChap.book);
-		}
-
-		getBookProgress();
-	}, [
-		axiosInstance,
-		getBookAndChapter,
-		setPlayingBook,
-		setPlayingChapter,
-		setCurrentBook,
-	]);
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			if (sound && isPlaying) {
-				setProgress(sound.seek());
-			}
-		}, 250);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, [setProgress, sound, isPlaying, initializedFlag]);
 
 	function togglePlay() {
 		if (sound) {
