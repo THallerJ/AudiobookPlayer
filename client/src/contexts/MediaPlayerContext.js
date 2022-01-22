@@ -18,6 +18,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	} = useGoogle();
 	const { axiosInstance } = useApp();
 	const [sound, setSound] = useState();
+	const [soundLoaded, setSoundLoaded] = useState(false);
 	const [duration, setDuration] = useState();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
@@ -31,15 +32,16 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [userInputFlag, setUserInputFlag] = useState(false);
 
 	const syncChapterProgress = useCallback(
-		(book, chapter, time) => {
+		(book, chapter, progress, duration) => {
 			if (book && chapter) {
-				const syncProgress = time > 4 ? Math.floor(time - 5) : 0;
+				const syncProgress = progress > 4 ? Math.floor(progress - 5) : 0;
 
 				axiosInstance.post(`/player/setChapterProgress`, {
 					data: {
 						bookId: book.id,
 						chapterId: chapter.data.id,
 						progress: syncProgress,
+						duration: duration,
 					},
 				});
 
@@ -61,7 +63,12 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			e.preventDefault();
 			e.returnValue = "";
 
-			syncChapterProgress(playingBook, playingChapter, sound.seek());
+			syncChapterProgress(
+				playingBook,
+				playingChapter,
+				sound.seek(),
+				sound.duration()
+			);
 		}
 
 		window.addEventListener("beforeunload", beforeUnload);
@@ -76,7 +83,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			syncChapterProgress(
 				prevBookData.book,
 				prevBookData.chapter,
-				sound.seek()
+				sound.seek(),
+				sound.duration()
 			);
 
 		setPrevBookData({ book: playingBook, chapter: playingChapter });
@@ -100,6 +108,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			setSound((prevState) => {
 				if (prevState) {
 					prevState.unload();
+					setSoundLoaded(false);
 				}
 
 				return new Howl({
@@ -112,6 +121,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					rate: rate,
 					onload: function () {
 						setDuration(this.duration());
+						setSoundLoaded(true);
 					},
 				});
 			});
@@ -161,17 +171,20 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					map[obj.bookId] = {
 						chapterId: obj.chapterId,
 						progress: obj.progress,
+						duration: obj.duration,
 					};
 					return map;
 				}, {});
 
 				setBooksProgress(reduce);
 
-				const bookChap = getBookAndChapter(
-					response.data[0].bookId,
-					response.data[0].chapterId
-				);
+				const bookId = response.data[0].bookId;
+				const chapterId = response.data[0].chapterId;
 
+				const bookChap = getBookAndChapter(bookId, chapterId);
+
+				setProgress(reduce[bookId].progress);
+				setDuration(reduce[bookId].duration);
 				setPlayingChapter(bookChap.chapter);
 				setPlayingBook(bookChap.book);
 				setCurrentBook(bookChap.book);
@@ -191,13 +204,10 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	]);
 
 	useEffect(() => {
-		setUserInputFlag((prevState) => {
-			if (prevState) {
-				setInitializedFlag(true);
-			}
-
-			return prevState;
-		});
+		if (userInputFlag) {
+			setInitializedFlag(true);
+		}
+		// eslint-disable-next-line
 	}, [playingChapter]);
 
 	useEffect(() => {
@@ -264,7 +274,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}
 
 	function handleSeek(value) {
-		if (sound) {
+		if (sound && soundLoaded) {
 			setProgress(value);
 			sound.seek(value);
 		}

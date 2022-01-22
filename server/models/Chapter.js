@@ -6,6 +6,7 @@ const chapterSchema = new mongoose.Schema(
 		bookId: String,
 		chapterId: String,
 		progress: Number,
+		duration: Number,
 	},
 	{
 		timestamps: {

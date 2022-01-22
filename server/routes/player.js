@@ -25,6 +25,7 @@ router.post("/setChapterProgress", async (req, res) => {
 	const bookId = req.body.data.bookId;
 	const chapterId = req.body.data.chapterId;
 	const progress = req.body.data.progress;
+	const duration = req.body.data.duration;
 
 	try {
 		await Chapter.findOneAndUpdate(
@@ -36,6 +37,7 @@ router.post("/setChapterProgress", async (req, res) => {
 				$set: {
 					chapterId: chapterId,
 					progress: progress,
+					duration: duration,
 				},
 			},
 			{ upsert: true }
