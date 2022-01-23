@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useGoogle } from "../contexts/GoogleContext";
 import { useApp } from "../contexts/AppContext";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
+import useStateRef from "react-usestateref";
 import { Howl } from "howler";
 
 const MediaPlayerContext = React.createContext();
@@ -19,17 +20,20 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const { axiosInstance } = useApp();
 	const [sound, setSound] = useState();
 	const [soundLoaded, setSoundLoaded] = useState(false);
-	const [duration, setDuration] = useState();
+	const [duration, setDuration, durationRef] = useStateRef();
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(true);
 	const [volume, setVolume] = useState(0);
-	const [rate, setRate] = useState(1.0);
-	const [progress, setProgress] = useState(0);
+	const [rate, setRate, rateRef] = useStateRef(1.0);
+	const [progress, setProgress, progressRef] = useStateRef(0);
 	const [prevBookData, setPrevBookData] = useState(null);
 	const [booksProgress, setBooksProgress] = useState({});
 	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [resumeFlag, setResumeFlag] = useState(false);
-	const [userInputFlag, setUserInputFlag] = useState(false);
+
+	// eslint-disable-next-line
+	const [userInputFlag, setUserInputFlag, userInputFlagRef] =
+		useStateRef(false);
 
 	const syncChapterProgress = useCallback(
 		(book, chapter, progress, duration) => {
@@ -59,6 +63,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	);
 
 	useEffect(() => {
+		// sync when user refreshes or leaves website
 		function beforeUnload(e) {
 			e.preventDefault();
 			e.returnValue = "";
@@ -66,8 +71,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			syncChapterProgress(
 				playingBook,
 				playingChapter,
-				sound.seek(),
-				sound.duration()
+				progressRef.current,
+				durationRef.current
 			);
 		}
 
@@ -76,19 +81,27 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		return () => {
 			window.removeEventListener("beforeunload", beforeUnload);
 		};
-	}, [syncChapterProgress, playingBook, playingChapter, sound]);
+	}, [
+		syncChapterProgress,
+		playingBook,
+		playingChapter,
+		sound,
+		progressRef,
+		durationRef,
+	]);
 
 	useEffectSkipFirst(() => {
+		// sync when changing tracks
 		if (prevBookData && sound && playingChapter && playingBook)
 			syncChapterProgress(
 				prevBookData.book,
 				prevBookData.chapter,
-				sound.seek(),
-				sound.duration()
+				progressRef.current,
+				durationRef.current
 			);
 
 		setPrevBookData({ book: playingBook, chapter: playingChapter });
-	}, [playingBook, playingChapter]);
+	}, [playingBook, playingChapter, progressRef, durationRef]);
 
 	useEffectSkipFirst(() => {
 		if (sound && resumeFlag) {
@@ -118,7 +131,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					html5: true,
 					preload: true,
 					volume: 0.5,
-					rate: rate,
+					rate: rateRef.current,
 					onload: function () {
 						setDuration(this.duration());
 						setSoundLoaded(true);
@@ -133,6 +146,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setResumeFlag,
 		playingBook,
 		setInitializedFlag,
+		rateRef,
 	]);
 
 	useEffectSkipFirst(() => {
@@ -200,15 +214,17 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setPlayingBook,
 		setPlayingChapter,
 		setCurrentBook,
+		setDuration,
+		setProgress,
 		rootUpdated,
+		setUserInputFlag,
 	]);
 
 	useEffect(() => {
-		if (userInputFlag) {
+		if (userInputFlagRef.current) {
 			setInitializedFlag(true);
 		}
-		// eslint-disable-next-line
-	}, [playingChapter]);
+	}, [playingChapter, userInputFlagRef]);
 
 	useEffect(() => {
 		const timer = setInterval(() => {
