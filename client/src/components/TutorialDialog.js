@@ -7,12 +7,16 @@ import {
 	DialogActions,
 	Typography,
 	Divider,
+	List,
+	ListItem,
+	ListItemIcon,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TreeView from "@mui/lab/TreeView";
 import TreeItem from "@mui/lab/TreeItem";
 import { useTheme } from "@mui/material/styles";
+import LabelIcon from "@mui/icons-material/LabelOutlined";
 
 const TutorialDialog = ({ open, setOpen }) => {
 	const theme = useTheme();
@@ -52,10 +56,6 @@ const TutorialDialog = ({ open, setOpen }) => {
 		],
 	};
 
-	useEffect(() => {
-		console.log(expandedNodes);
-	}, [expandedNodes]);
-
 	function setExpanded(nodeId) {
 		if (expandedNodes.includes(nodeId)) {
 			setExpandedNodes((prevState) =>
@@ -92,25 +92,58 @@ const TutorialDialog = ({ open, setOpen }) => {
 				<Divider />
 			</DialogTitle>
 			<DialogContent>
-				<Typography>
-					Your audiobook library on Google Drive must be organized in the
-					following manner:
-				</Typography>
-				<Divider sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }} />
-				<TreeView
-					aria-label="controlled"
-					defaultCollapseIcon={<ExpandMoreIcon />}
-					defaultExpandIcon={<ChevronRightIcon />}
-					multiSelect
-					expanded={expandedNodes}
-				>
-					{renderTree(mockLibrary)}
-				</TreeView>
-				<Divider sx={{ mt: theme.spacing(1), mb: theme.spacing(2) }} />
-				<Typography>
-					The Google Drive folder containing your audiobook library must also be
-					accessible to "Anyone with the link".
-				</Typography>
+				<List>
+					<ListItem>
+						<ListItemIcon>
+							<LabelIcon fontSize="small" />
+						</ListItemIcon>
+						<Typography>
+							Your audiobook library on Google Drive must be organized in the
+							following manner:
+						</Typography>
+					</ListItem>
+					<Divider sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }} />
+					<ListItem>
+						<TreeView
+							aria-label="controlled"
+							defaultCollapseIcon={<ExpandMoreIcon />}
+							defaultExpandIcon={<ChevronRightIcon />}
+							multiSelect
+							expanded={expandedNodes}
+						>
+							{renderTree(mockLibrary)}
+						</TreeView>
+					</ListItem>
+					<Divider sx={{ mt: theme.spacing(1), mb: theme.spacing(2) }} />
+					<ListItem>
+						<ListItemIcon>
+							<LabelIcon fontSize="small" />
+						</ListItemIcon>
+						<Typography>
+							The Google Drive folder containing your audiobook library must be
+							accessible to "Anyone with the link".
+						</Typography>
+					</ListItem>
+					<ListItem>
+						<ListItemIcon>
+							<LabelIcon fontSize="small" />
+						</ListItemIcon>
+						<Typography>
+							Audio files must be in one of the following formats: MP3, MPEG,
+							OPUS, OGG, OGA, WAV, AAC, CAF, M4A, MP4, WEBA, WEBM, DOLBY, FLAC.
+						</Typography>
+					</ListItem>
+					<ListItem>
+						<ListItemIcon>
+							<LabelIcon fontSize="small" />
+						</ListItemIcon>
+						<Typography>
+							Many audiobooks are in the .m4b format, which is not supported.
+							However, .m4b files can be converted to .m4a files by simply
+							renaming the file with the .m4a file extension
+						</Typography>
+					</ListItem>
+				</List>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={() => setOpen(false)}>Ok</Button>
