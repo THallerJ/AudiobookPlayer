@@ -138,9 +138,9 @@ const TutorialDialog = ({ open, setOpen }) => {
 							<LabelIcon fontSize="small" />
 						</ListItemIcon>
 						<Typography>
-							Many audiobooks are in the .m4b format, which is not supported.
-							However, .m4b files can be converted to .m4a files by simply
-							renaming the file with the .m4a file extension
+							Many audiobooks are in the M4B format, which is not supported.
+							However, M4B files can be converted to M4A by simply renaming the
+							file with the .m4a file extension.
 						</Typography>
 					</ListItem>
 				</List>
