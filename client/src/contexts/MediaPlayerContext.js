@@ -125,7 +125,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 				return new Howl({
 					src: [
-						`https://docs.google.com/uc?export=download&id=${playingChapter.data.id}`,
+						`https://www.googleapis.com/drive/v3/files/${playingChapter.data.id}/?key=${process.env.REACT_APP_GOOGLE_API_KEY}&alt=media`,
 					],
 					html5: true,
 					preload: true,
