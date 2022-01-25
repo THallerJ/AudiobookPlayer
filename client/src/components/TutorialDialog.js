@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
 	Button,
 	Dialog,
@@ -10,6 +10,7 @@ import {
 	List,
 	ListItem,
 	ListItemIcon,
+	Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -103,7 +104,11 @@ const TutorialDialog = ({ open, setOpen }) => {
 						</Typography>
 					</ListItem>
 					<Divider sx={{ mt: theme.spacing(2), mb: theme.spacing(1) }} />
-					<ListItem>
+					<Box
+						display="flex"
+						justifyContent="center"
+						sx={{ p: theme.spacing(1) }}
+					>
 						<TreeView
 							aria-label="controlled"
 							defaultCollapseIcon={<ExpandMoreIcon />}
@@ -113,7 +118,8 @@ const TutorialDialog = ({ open, setOpen }) => {
 						>
 							{renderTree(mockLibrary)}
 						</TreeView>
-					</ListItem>
+					</Box>
+
 					<Divider sx={{ mt: theme.spacing(1), mb: theme.spacing(2) }} />
 					<ListItem>
 						<ListItemIcon>
