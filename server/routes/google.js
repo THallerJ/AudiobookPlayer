@@ -23,9 +23,23 @@ router.get("/folders", async (req, res) => {
 
 		res.send(response.data.files);
 	} catch (error) {
-		res.status(401).send("invalid access token");
+		res.status(error.code).send("invalid access token");
 	}
 });
+
+async function getBookCovers(bookTitle) {
+	const resp = await axios.get("https://www.googleapis.com/books/v1/volumes", {
+		params: {
+			q: `title="${bookTitle}"`,
+			orderBy: "relevance",
+			printType: "books",
+			fields: "items(volumeInfo(ratingsCount, imageLinks/thumbnail))",
+		},
+	});
+
+	console.log(resp.data.items);
+	return resp.data;
+}
 
 router.get("/library", async (req, res) => {
 	const user = req.user[0];
@@ -75,39 +89,28 @@ router.get("/library", async (req, res) => {
 						chapters.push(chapter);
 					});
 
-					const imageResp = await axios.get(
+					const images = await axios.get(
 						"https://www.googleapis.com/books/v1/volumes",
 						{
 							params: {
 								q: `title="${book.name}"`,
-								maxResults: 1,
+								orderBy: "relevance",
+								printType: "books",
+								fields:
+									"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
+								maxResults: 40,
 							},
 						}
 					);
-
-					const hexColors = [];
-					var coverImageUrl;
-
-					if (imageResp.data.totalItems > 0) {
-						var coverImageUrl =
-							imageResp.data.items[0].volumeInfo.imageLinks.thumbnail;
-
-						const colors = await ColorThief.getPalette(coverImageUrl, 2);
-
-						colors.forEach((color) => {
-							hexColors.push(rgbToHex(color[0], color[1], color[2]));
-						});
-					} else {
-						hexColors.push("#eeeeee", "#eeeeee");
-					}
 
 					const tempBook = {
 						name: book.name,
 						id: book.id,
 						chapters: chapters,
-						coverImageUrl: coverImageUrl ? coverImageUrl : null,
-						imageColors: hexColors,
+						queryResponse: images.data.items,
 					};
+
+					console.log(tempBook);
 
 					library.push(tempBook);
 				})
@@ -115,7 +118,8 @@ router.get("/library", async (req, res) => {
 
 			res.status(200).send(library);
 		} catch (error) {
-			res.status(401).send("invalid access token");
+			console.log(error);
+			res.status(402).send("invalid access token");
 		}
 	} else {
 		res.status(200).send([]);

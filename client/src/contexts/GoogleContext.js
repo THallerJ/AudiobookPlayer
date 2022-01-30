@@ -13,6 +13,7 @@ export const GoogleContextProvider = ({ children }) => {
 		setAuthentication,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
+
 	const [loadingLibrary, setLoadingLibrary] = useState(false);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
@@ -23,6 +24,42 @@ export const GoogleContextProvider = ({ children }) => {
 		if (googleDirectoryExists) {
 			setLoadingLibrary(true);
 			const response = await axiosInstance.get(`/google/library`);
+
+			response.data.forEach((book) => {
+				const obj = book.queryResponse;
+				var imageUrl = null;
+				if (obj) {
+					const objKeys = Object.keys(obj);
+
+					const sortedKeys = objKeys.length
+						? objKeys.sort((a, b) => {
+								const ratingsA = obj[a].volumeInfo.ratingsCount;
+								const ratingsB = obj[b].volumeInfo.ratingsCount;
+
+								var valA =
+									typeof ratingsA == "undefined" ? -Infinity : ratingsA;
+								var valB =
+									typeof ratingsB == "undefined" ? -Infinity : ratingsB;
+								return valB - valA;
+						  })
+						: null;
+
+					sortedKeys.every((elem, i) => {
+						const isSameTitle =
+							obj[i].volumeInfo.title.includes(book.name) ||
+							book.name.includes(obj[i].volumeInfo.title);
+
+						if (isSameTitle) {
+							imageUrl = obj[i].volumeInfo.imageLinks.thumbnail;
+							return false;
+						} else return true;
+					});
+				}
+
+				delete book["queryResponse"];
+				book.coverImageUrl = imageUrl;
+			});
+
 			const sortedLibrary = response.data.sort((book1, book2) =>
 				book1.name.localeCompare(book2.name)
 			);
