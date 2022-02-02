@@ -27,20 +27,6 @@ router.get("/folders", async (req, res) => {
 	}
 });
 
-async function getBookCovers(bookTitle) {
-	const resp = await axios.get("https://www.googleapis.com/books/v1/volumes", {
-		params: {
-			q: `title="${bookTitle}"`,
-			orderBy: "relevance",
-			printType: "books",
-			fields: "items(volumeInfo(ratingsCount, imageLinks/thumbnail))",
-		},
-	});
-
-	console.log(resp.data.items);
-	return resp.data;
-}
-
 router.get("/library", async (req, res) => {
 	const user = req.user[0];
 	const directory = user.rootId;
@@ -89,28 +75,17 @@ router.get("/library", async (req, res) => {
 						chapters.push(chapter);
 					});
 
-					const images = await axios.get(
-						"https://www.googleapis.com/books/v1/volumes",
-						{
-							params: {
-								q: `title="${book.name}"`,
-								orderBy: "relevance",
-								printType: "books",
-								fields:
-									"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
-								maxResults: 40,
-							},
-						}
-					);
+					const coverImageUrl = await getBookCover(book.name);
+
+					const hexColors = await getImageColors(coverImageUrl);
 
 					const tempBook = {
 						name: book.name,
 						id: book.id,
 						chapters: chapters,
-						queryResponse: images.data.items,
+						coverImageUrl: coverImageUrl,
+						imageColors: hexColors,
 					};
-
-					console.log(tempBook);
 
 					library.push(tempBook);
 				})
@@ -119,12 +94,101 @@ router.get("/library", async (req, res) => {
 			res.status(200).send(library);
 		} catch (error) {
 			console.log(error);
-			res.status(402).send("invalid access token");
+			res.status(401).send("invalid access token");
 		}
 	} else {
 		res.status(200).send([]);
 	}
 });
+
+async function getBookCover(bookTitle) {
+	var coverImageUrl = null;
+
+	try {
+		const imageResp = await axios.get(
+			"https://www.googleapis.com/books/v1/volumes",
+			{
+				params: {
+					q: `title="${bookTitle}"`,
+					orderBy: "relevance",
+					printType: "books",
+					fields:
+						"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
+					maxResults: 40,
+				},
+			}
+		);
+
+		const items = imageResp.data.items;
+
+		if (items) {
+			const sortedItems = items.length
+				? items.sort((a, b) => {
+						const ratingsA = a.volumeInfo.ratingsCount;
+						const ratingsB = b.volumeInfo.ratingsCount;
+
+						const valA = typeof ratingsA == "undefined" ? -Infinity : ratingsA;
+						const valB = typeof ratingsB == "undefined" ? -Infinity : ratingsB;
+						return valB - valA;
+				  })
+				: null;
+
+			var coverFoundFlag = false;
+
+			sortedItems.every((elem, i) => {
+				const imageLinks = sortedItems[i].volumeInfo.imageLinks;
+
+				if (imageLinks) {
+					const isSameTitle =
+						bookTitle.localeCompare(
+							sortedItems[i].volumeInfo.title,
+							undefined,
+							{
+								sensitivity: "accent",
+							}
+						) === 0;
+
+					if (isSameTitle) {
+						coverImageUrl = imageLinks.thumbnail;
+						return false;
+					}
+
+					const isSimilarTitle =
+						sortedItems[i].volumeInfo.title.includes(bookTitle) ||
+						bookTitle.includes(sortedItems[i].volumeInfo.title);
+
+					if (isSimilarTitle) {
+						if (!coverFoundFlag) coverImageUrl = imageLinks.thumbnail;
+						coverFoundFlag = true;
+						return true;
+					}
+				}
+
+				return true;
+			});
+		}
+	} catch (error) {
+		console.log(error);
+	}
+
+	return coverImageUrl;
+}
+
+async function getImageColors(imageUrl) {
+	var hexColors = [];
+
+	if (imageUrl) {
+		const colors = await ColorThief.getPalette(imageUrl, 2);
+
+		colors.forEach((color) => {
+			hexColors.push(rgbToHex(color[0], color[1], color[2]));
+		});
+	} else {
+		hexColors.push("#eeeeee", "#eeeeee");
+	}
+
+	return hexColors;
+}
 
 /* returns last integer in a string, not including integers that appear 
    after a period to account for integers that appear in file extensions (i.e. .mp3) */
@@ -151,4 +215,5 @@ function rgbToHex(r, g, b) {
 			.join("")
 	);
 }
+
 module.exports = router;
