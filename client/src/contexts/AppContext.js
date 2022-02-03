@@ -66,6 +66,10 @@ export const AppContextProvider = ({ children }) => {
 		darkModeEnabled === "true" ? setTheme(darkTheme) : setTheme(lightTheme);
 	}, [toggleDarkMode, darkModeEnabled]);
 
+	useEffect(() => {
+		if (authentication.isAuthenticated === false) localStorage.clear();
+	}, [authentication]);
+
 	const checkAuthentication = useCallback(async () => {
 		const response = await axiosInstance.get(`/auth/isLoggedIn`);
 

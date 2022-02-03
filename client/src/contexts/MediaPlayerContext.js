@@ -17,7 +17,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		getBookAndChapter,
 		rootUpdated,
 	} = useGoogle();
-	const { axiosInstance } = useApp();
+	const { axiosInstance, authentication } = useApp();
 	const [sound, setSound] = useState();
 	const [soundLoaded, setSoundLoaded] = useState(false);
 	const [duration, setDuration, durationRef] = useStateRef();
@@ -206,7 +206,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			setUserInputFlag(true);
 		}
 
-		getBookProgress();
+		if (authentication.isAuthenticated) getBookProgress();
 	}, [
 		axiosInstance,
 		getBookAndChapter,
@@ -217,6 +217,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setProgress,
 		rootUpdated,
 		setUserInputFlag,
+		authentication,
 	]);
 
 	useEffect(() => {

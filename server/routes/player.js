@@ -52,9 +52,11 @@ router.post("/setChapterProgress", async (req, res) => {
 router.get("/getBooksProgress", async (req, res) => {
 	const user = req.user ? req.user[0] : null;
 
-	const result = await Chapter.find({
-		googleId: user.googleId,
-	}).sort({ updatedAt: -1 });
+	const result = user
+		? await Chapter.find({
+				googleId: user.googleId,
+		  }).sort({ updatedAt: -1 })
+		: null;
 
 	res.status(200).send(result);
 });

@@ -84,7 +84,6 @@ export const GoogleContextProvider = ({ children }) => {
 		resetMediaPlayer();
 
 		await axiosInstance.post(`/auth/logout`);
-		setLibrary(null);
 		setAuthentication({ isAuthenticated: false });
 	}
 
