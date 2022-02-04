@@ -143,6 +143,7 @@ const StyledDashboardContainer = styled("div")(({ theme }) => ({
 	display: "flex",
 	height: "100vh",
 	width: "100%",
+	overflow: "hidden",
 
 	".appBarRight": {
 		width: `calc(100% - ${theme.drawer.width}px)`,

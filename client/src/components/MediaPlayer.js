@@ -149,7 +149,7 @@ const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 	paddingRight: theme.spacing(4),
 	paddingLeft: theme.spacing(4),
 	paddingTop: theme.spacing(2),
-	paddingBottom: theme.spacing(1),
+	paddingBottom: theme.spacing(2),
 
 	" .MuiSlider-thumb": {
 		height: 0,
