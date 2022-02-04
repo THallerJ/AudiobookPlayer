@@ -196,11 +196,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 				const bookChap = getBookAndChapter(bookId, chapterId);
 
-				setProgress(reduce[bookId].progress);
-				setDuration(reduce[bookId].duration);
-				setPlayingChapter(bookChap.chapter);
-				setPlayingBook(bookChap.book);
-				setCurrentBook(bookChap.book);
+				if (bookChap) {
+					setProgress(reduce[bookId].progress);
+					setDuration(reduce[bookId].duration);
+					setPlayingChapter(bookChap.chapter);
+					setPlayingBook(bookChap.book);
+					setCurrentBook(bookChap.book);
+				}
 			}
 
 			setUserInputFlag(true);

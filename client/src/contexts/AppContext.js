@@ -2,6 +2,7 @@ import React, { useContext, useState, useCallback, useEffect } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import lightTheme from "../themes/lightTheme";
 import darkTheme from "../themes/darkTheme";
+import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
 
 const axios = require("axios");
 
@@ -66,8 +67,8 @@ export const AppContextProvider = ({ children }) => {
 		darkModeEnabled === "true" ? setTheme(darkTheme) : setTheme(lightTheme);
 	}, [toggleDarkMode, darkModeEnabled]);
 
-	useEffect(() => {
-		if (authentication.isAuthenticated === false) localStorage.clear();
+	useEffectSkipFirst(() => {
+		if (!authentication.isAuthenticated) localStorage.clear();
 	}, [authentication]);
 
 	const checkAuthentication = useCallback(async () => {

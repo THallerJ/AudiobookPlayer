@@ -48,16 +48,21 @@ export const GoogleContextProvider = ({ children }) => {
 
 	const getBookAndChapter = useCallback(
 		(bookId, chapterId) => {
-			const book = library.find((element) => element.id === bookId);
-			const chapterIndex = book.chapters.findIndex(
-				(element) => element.id === chapterId
-			);
+			if (library && library.length) {
+				const book = library.find((element) => element.id === bookId);
+				const chapterIndex = book.chapters.findIndex(
+					(element) => element.id === chapterId
+				);
 
-			return {
-				book: book,
-				chapter: { data: book.chapters[chapterIndex], index: chapterIndex },
-			};
+				return {
+					book: book,
+					chapter: { data: book.chapters[chapterIndex], index: chapterIndex },
+				};
+			}
+
+			return null;
 		},
+
 		[library]
 	);
 
