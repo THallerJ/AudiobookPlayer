@@ -8,7 +8,6 @@ const darkTheme = createTheme({
 		mode: "dark",
 		scrollbar: {
 			thumb: "#6b6b6b",
-			//track: "#14171c",
 		},
 		primary: {
 			dark: "#2f60b2",
