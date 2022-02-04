@@ -7,6 +7,7 @@ import {
 	Typography,
 	Divider,
 	Hidden,
+	Tooltip,
 } from "@mui/material";
 import { useDashboard } from "../contexts/DashboardContext";
 import { styled } from "@mui/material/styles";
@@ -41,22 +42,29 @@ const Sidebar = () => {
 				{currentBook
 					? currentBook.chapters.map((chapter, index) => {
 							return (
-								<ListItem
-									className={generateListItemClassName(chapter)}
-									key={chapter.id}
-									divider={true}
-									dense={true}
-									button={true}
-									onClick={() => {
-										setPlayingChapter({ data: chapter, index: index });
-										setPlayingBook(currentBook);
-									}}
+								<Tooltip
+									title={chapter.name}
+									followCursor={true}
+									placement="right-end"
+									enterDelay={1000}
 								>
-									<ListItemText
-										primary={chapter.name}
-										primaryTypographyProps={{ noWrap: true }}
-									/>
-								</ListItem>
+									<ListItem
+										className={generateListItemClassName(chapter)}
+										key={chapter.id}
+										divider={true}
+										dense={true}
+										button={true}
+										onClick={() => {
+											setPlayingChapter({ data: chapter, index: index });
+											setPlayingBook(currentBook);
+										}}
+									>
+										<ListItemText
+											primary={chapter.name}
+											primaryTypographyProps={{ noWrap: true }}
+										/>
+									</ListItem>
+								</Tooltip>
 							);
 					  })
 					: null}
