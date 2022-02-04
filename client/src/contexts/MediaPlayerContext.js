@@ -105,7 +105,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		if (sound && resumeFlag) {
 			sound.once("play", () => {
 				const time = booksProgress[playingBook.id].progress;
-				sound.seek(time < 3 ? 0 : Math.floor(time - 3));
+				sound.seek(getSeekTimeOnResume(time));
 				setResumeFlag(false);
 			});
 		}
@@ -197,7 +197,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				const bookChap = getBookAndChapter(bookId, chapterId);
 
 				if (bookChap) {
-					setProgress(reduce[bookId].progress);
+					const time = reduce[bookId].progress;
+					setProgress(getSeekTimeOnResume(time));
 					setDuration(reduce[bookId].duration);
 					setPlayingChapter(bookChap.chapter);
 					setPlayingBook(bookChap.book);
@@ -239,6 +240,10 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			clearInterval(timer);
 		};
 	}, [setProgress, sound, isPlaying, initializedFlag]);
+
+	function getSeekTimeOnResume(time) {
+		return time < 3 ? 0 : Math.floor(time - 3);
+	}
 
 	function resumePlayback(bookId) {
 		if (bookId) {
