@@ -23,7 +23,7 @@ router.get("/folders", async (req, res) => {
 
 		res.send(response.data.files);
 	} catch (error) {
-		res.status(error.code).send("invalid access token");
+		res.status(error.response.status).send(error.response.statusText);
 	}
 });
 
@@ -93,8 +93,7 @@ router.get("/library", async (req, res) => {
 
 			res.status(200).send(library);
 		} catch (error) {
-			console.log(error);
-			res.status(401).send("invalid access token");
+			res.status(error.response.status).send(error.response.statusText);
 		}
 	} else {
 		res.status(200).send([]);

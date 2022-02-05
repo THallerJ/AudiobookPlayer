@@ -12,11 +12,11 @@ router.post("/rootDirectory", async (req, res) => {
 			{ googleId: user.googleId },
 			{ $set: { rootId: req.body.data.rootId } }
 		);
-	} catch (error) {
-		console.log(error);
-	}
 
-	res.status(200).send({ rootFlag: true });
+		res.status(200).send({ rootFlag: true });
+	} catch (error) {
+		res.status(500).send("Database error");
+	}
 });
 
 router.post("/setChapterProgress", async (req, res) => {
@@ -42,23 +42,27 @@ router.post("/setChapterProgress", async (req, res) => {
 			},
 			{ upsert: true }
 		);
-	} catch (error) {
-		console.log(error);
-	}
 
-	res.sendStatus(200);
+		res.status(200).send("Chapter progress updated");
+	} catch (error) {
+		res.status(500).send("Database error");
+	}
 });
 
 router.get("/getBooksProgress", async (req, res) => {
 	const user = req.user ? req.user[0] : null;
 
-	const result = user
-		? await Chapter.find({
-				googleId: user.googleId,
-		  }).sort({ updatedAt: -1 })
-		: null;
+	try {
+		const result = user
+			? await Chapter.find({
+					googleId: user.googleId,
+			  }).sort({ updatedAt: -1 })
+			: null;
 
-	res.status(200).send(result);
+		res.status(200).send(result);
+	} catch (error) {
+		res.status(500).send("Database error");
+	}
 });
 
 function deleteAllChapterProgress(googleId) {

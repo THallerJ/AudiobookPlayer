@@ -7,7 +7,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 router.get("/failed", (req, res) => {
-	res.send("<h1>Log in Failed :(</h1>");
+	res.status(500).send("Log in failed");
 });
 
 router.get(
@@ -31,30 +31,33 @@ router.get(
 
 router.post("/refresh_token", async (req, res) => {
 	const user = req.user[0];
+	try {
+		const response = await axios.post(
+			"https://accounts.google.com/o/oauth2/token",
+			{
+				grant_type: "refresh_token",
+				client_id: process.env.GOOGLE_CLIENT_ID,
+				client_secret: process.env.GOOGLE_CLIENT_SECRET,
+				refresh_token: decodeURIComponent(user.refreshToken),
+			}
+		);
 
-	const response = await axios.post(
-		"https://accounts.google.com/o/oauth2/token",
-		{
-			grant_type: "refresh_token",
-			client_id: process.env.GOOGLE_CLIENT_ID,
-			client_secret: process.env.GOOGLE_CLIENT_SECRET,
-			refresh_token: decodeURIComponent(user.refreshToken),
-		}
-	);
+		const accessToken = response.data.access_token;
 
-	const accessToken = response.data.access_token;
+		await User.updateOne(
+			{ googleId: user.googleId },
+			{ $set: { accessToken: accessToken } }
+		);
 
-	await User.updateOne(
-		{ googleId: user.googleId },
-		{ $set: { accessToken: accessToken } }
-	);
-
-	res.status(200).send("token refreshed");
+		res.status(200).send("Token refreshed");
+	} catch (error) {
+		res.status(500).send("Token refresh failed");
+	}
 });
 
 router.get("/isLoggedIn", (req, res) => {
 	if (req.user) {
-		if (req.user.length > 0) {
+		if (req.user.length) {
 			res.send({
 				loggedIn: true,
 				rootFlag: req.user[0].rootId ? true : false,
@@ -70,16 +73,20 @@ router.get("/isLoggedIn", (req, res) => {
 router.post("/logout", (req, res) => {
 	const googleId = req.user[0].googleId;
 
-	deleteAllChapterProgress(googleId);
+	try {
+		deleteAllChapterProgress(googleId);
 
-	User.deleteOne({ googleId: googleId }, (err) => {
-		if (err) {
-			console.log(err);
-		}
-	});
+		User.deleteOne({ googleId: googleId }, (err) => {
+			if (err) {
+				console.log(err);
+			}
+		});
 
-	req.logout();
-	res.status(200).send("logged out");
+		req.logout();
+		res.status(200).send("Logged out");
+	} catch (error) {
+		res.status(500).send("Database error");
+	}
 });
 
 module.exports = router;
