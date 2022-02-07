@@ -15,7 +15,7 @@ router.post("/rootDirectory", async (req, res) => {
 
 		res.status(200).send({ rootFlag: true });
 	} catch (error) {
-		res.status(500).send("Database error");
+		res.status(500).send();
 	}
 });
 
@@ -45,7 +45,7 @@ router.post("/setChapterProgress", async (req, res) => {
 
 		res.status(200).send("Chapter progress updated");
 	} catch (error) {
-		res.status(500).send("Database error");
+		res.status(500).send();
 	}
 });
 
@@ -61,7 +61,7 @@ router.get("/getBooksProgress", async (req, res) => {
 
 		res.status(200).send(result);
 	} catch (error) {
-		res.status(500).send("Database error");
+		res.status(500).send();
 	}
 });
 

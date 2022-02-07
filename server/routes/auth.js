@@ -7,7 +7,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 router.get("/failed", (req, res) => {
-	res.status(500).send("Log in failed");
+	res.status(500);
 });
 
 router.get(
@@ -51,7 +51,7 @@ router.post("/refresh_token", async (req, res) => {
 
 		res.status(200).send("Token refreshed");
 	} catch (error) {
-		res.status(500).send("Token refresh failed");
+		res.status(500).send();
 	}
 });
 
@@ -67,7 +67,7 @@ router.get("/isLoggedIn", (req, res) => {
 		}
 	}
 
-	res.send({ loggedIn: false, rootFlag: false });
+	res.status(200).send({ loggedIn: false, rootFlag: false });
 });
 
 router.post("/logout", (req, res) => {
@@ -85,7 +85,7 @@ router.post("/logout", (req, res) => {
 		req.logout();
 		res.status(200).send("Logged out");
 	} catch (error) {
-		res.status(500).send("Database error");
+		res.status(500).send();
 	}
 });
 

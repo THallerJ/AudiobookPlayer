@@ -23,7 +23,7 @@ router.get("/folders", async (req, res) => {
 
 		res.send(response.data.files);
 	} catch (error) {
-		res.status(error.response.status).send(error.response.statusText);
+		res.status(error.response.status).send();
 	}
 });
 
@@ -93,7 +93,7 @@ router.get("/library", async (req, res) => {
 
 			res.status(200).send(library);
 		} catch (error) {
-			res.status(error.response.status).send(error.response.statusText);
+			res.status(error.response.status).send();
 		}
 	} else {
 		res.status(200).send([]);

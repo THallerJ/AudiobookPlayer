@@ -1,4 +1,10 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, {
+	useContext,
+	useState,
+	useCallback,
+	useEffect,
+	useMemo,
+} from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 import lightTheme from "../themes/lightTheme";
 import darkTheme from "../themes/darkTheme";
@@ -13,34 +19,6 @@ const axiosInstance = axios.create({
 	baseURL: process.env.REACT_APP_SERVER_URL,
 });
 
-axiosInstance.interceptors.response.use(
-	function (response) {
-		return response;
-	},
-	async function (error) {
-		// refresh access token
-		if (error.response.status === 401) {
-			const originalReq = error.config;
-
-			await axiosInstance.post(`/auth/refresh_token`);
-
-			return new Promise((resolve, reject) => {
-				axiosInstance
-					.request(originalReq)
-					.then((response) => {
-						resolve(response);
-					})
-					.catch((error) => {
-						reject(error);
-					});
-			});
-		} else {
-			console.log(error);
-			return Promise.reject(error);
-		}
-	}
-);
-
 export const AppContextProvider = ({ children }) => {
 	const [authentication, setAuthentication] = useState({
 		isInitializing: true,
@@ -52,6 +30,40 @@ export const AppContextProvider = ({ children }) => {
 		"false"
 	);
 	const [theme, setTheme] = useState(lightTheme);
+	const [axiosError, setAxiosError] = useState();
+
+	useMemo(() => {
+		axiosInstance.interceptors.response.use(
+			function (response) {
+				return response;
+			},
+			async function (error) {
+				// refresh access token
+				if (error.response.status === 401) {
+					const originalReq = error.config;
+
+					await axiosInstance.post(`/auth/refresh_token`);
+
+					return new Promise((resolve, reject) => {
+						axiosInstance
+							.request(originalReq)
+							.then((response) => {
+								resolve(response);
+							})
+							.catch((error) => {
+								reject(error);
+							});
+					});
+				} else {
+					setAxiosError({
+						code: error.response.status,
+						statusText: error.response.statusText,
+					});
+					return Promise.reject(error);
+				}
+			}
+		);
+	}, []);
 
 	const toggleDarkMode = useCallback(() => {
 		setDarkModeEnabled((prevState) => {
@@ -91,6 +103,8 @@ export const AppContextProvider = ({ children }) => {
 		axiosInstance,
 		theme,
 		toggleDarkMode,
+		axiosError,
+		setAxiosError,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

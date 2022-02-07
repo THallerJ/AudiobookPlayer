@@ -3,7 +3,13 @@ import Login from "./components/Login.js";
 import LoginPrivateRoute from "./components/LoginPrivateRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Dashboard from "./components/Dashboard";
-import { CircularProgress, Box, CssBaseline } from "@mui/material";
+import {
+	CircularProgress,
+	Box,
+	CssBaseline,
+	Snackbar,
+	Alert,
+} from "@mui/material";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
@@ -11,11 +17,25 @@ import { GoogleContextProvider } from "./contexts/GoogleContext";
 import { useApp } from "./contexts/AppContext";
 
 function App() {
-	const { checkAuthentication, authentication, theme } = useApp();
+	const {
+		checkAuthentication,
+		authentication,
+		theme,
+		axiosError,
+		setAxiosError,
+	} = useApp();
 
 	useEffect(() => {
 		checkAuthentication();
 	}, [checkAuthentication]);
+
+	function openSnackbar() {
+		return axiosError;
+	}
+
+	function closeSnackbar() {
+		setAxiosError(null);
+	}
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -23,9 +43,6 @@ function App() {
 				styles={{
 					"*::-webkit-scrollbar": {
 						width: 5,
-					},
-					"*::-webkit-scrollbar-track": {
-						background: theme.palette.scrollbar.track,
 					},
 					"*::-webkit-scrollbar-thumb": {
 						backgroundColor: theme.palette.scrollbar.thumb,
@@ -35,6 +52,19 @@ function App() {
 			<CssBaseline>
 				<DashboardContextProvider>
 					<GoogleContextProvider>
+						{axiosError ? (
+							<Snackbar
+								open={openSnackbar}
+								onClose={closeSnackbar}
+								autoHideDuration={5000}
+								anchorOrigin={{ vertical: "top", horizontal: "center" }}
+							>
+								<Alert
+									onClose={closeSnackbar}
+									severity="error"
+								>{`${axiosError.code}: ${axiosError.statusText}`}</Alert>
+							</Snackbar>
+						) : null}
 						{!authentication.isInitializing ? (
 							<Router>
 								<Route exact path="/login" component={Login} />
