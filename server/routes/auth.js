@@ -7,7 +7,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 router.get("/failed", (req, res) => {
-	res.status(500);
+	res.status(500).send();
 });
 
 router.get(
