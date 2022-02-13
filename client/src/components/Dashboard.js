@@ -41,7 +41,7 @@ const Dashboard = () => {
 				<AppBar className={"appBarRight"} color="inherit" position="fixed">
 					<Toolbar>
 						<Typography noWrap variant="h6">
-							Audiobook Player
+							Stream Audiobook Player
 						</Typography>
 						<IconButton
 							edge="end"
@@ -64,7 +64,7 @@ const Dashboard = () => {
 							<MenuIcon />
 						</IconButton>
 						<Typography noWrap variant="h6">
-							Audiobook Player
+							Stream Audiobook Player
 						</Typography>
 						<IconButton
 							edge="end"

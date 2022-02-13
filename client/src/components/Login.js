@@ -23,7 +23,7 @@ const Login = () => {
 			>
 				<Grid item>
 					<Typography align="center" variant="h3">
-						Audiobook Player
+						Stream Audiobook Player
 					</Typography>
 				</Grid>
 				<Grid item>
