@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useState } from "react";
+import React, { useContext, useCallback, useState, useEffect } from "react";
 import { useApp } from "../contexts/AppContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
@@ -13,7 +13,6 @@ export const GoogleContextProvider = ({ children }) => {
 		setAuthentication,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
-
 	const [loadingLibrary, setLoadingLibrary] = useState(false);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
@@ -21,7 +20,7 @@ export const GoogleContextProvider = ({ children }) => {
 	const [rootUpdated, setRootUpdated] = useState(false);
 
 	const getLibrary = useCallback(async () => {
-		if (googleDirectoryExists) {
+		if (googleDirectoryExists && (!library || !library.length)) {
 			setLoadingLibrary(true);
 			const response = await axiosInstance.get(`/google/library`);
 			const sortedLibrary = response.data.sort((book1, book2) =>
@@ -31,7 +30,11 @@ export const GoogleContextProvider = ({ children }) => {
 			setLoadingLibrary(false);
 			setLibrary(sortedLibrary);
 		}
-	}, [axiosInstance, setLibrary, googleDirectoryExists]);
+	}, [axiosInstance, setLibrary, googleDirectoryExists, library]);
+
+	useEffect(() => {
+		getLibrary();
+	}, [getLibrary, googleDirectoryExists]);
 
 	const getFolders = useCallback(
 		async (directory) => {
