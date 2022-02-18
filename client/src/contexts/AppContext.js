@@ -31,6 +31,7 @@ export const AppContextProvider = ({ children }) => {
 	);
 	const [theme, setTheme] = useState(lightTheme);
 	const [axiosError, setAxiosError] = useState();
+	const [rootUpdated, setRootUpdated] = useState(false);
 
 	useMemo(() => {
 		axiosInstance.interceptors.response.use(
@@ -92,6 +93,7 @@ export const AppContextProvider = ({ children }) => {
 		});
 
 		setGoogleDirectoryExists(response.data.rootFlag);
+		setRootUpdated((prevState) => !prevState);
 	}, [setGoogleDirectoryExists]);
 
 	const value = {
@@ -105,6 +107,8 @@ export const AppContextProvider = ({ children }) => {
 		toggleDarkMode,
 		axiosError,
 		setAxiosError,
+		rootUpdated,
+		setRootUpdated,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
