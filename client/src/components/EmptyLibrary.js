@@ -3,10 +3,12 @@ import { Typography, Button, Box, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDashboard } from "../contexts/DashboardContext";
 import { useGoogle } from "../contexts/GoogleContext";
+import { useApp } from "../contexts/AppContext";
 
 import TutorialDialog from "./TutorialDialog";
 
 const EmptyLibrary = () => {
+	const { googleDirectoryExists } = useApp();
 	const { setOpenRootDialog } = useDashboard();
 	const { loadingLibrary } = useGoogle();
 	const [openTutorialDialog, setOpenTutorialDialog] = useState(false);
@@ -17,10 +19,18 @@ const EmptyLibrary = () => {
 				<CircularProgress />
 			) : (
 				<Box className="body">
-					<Typography>
-						You must select where your where your audiobook library is located
-						on Google Drive.
-					</Typography>
+					{googleDirectoryExists ? (
+						<Typography>
+							Your library either doesn't have any books, or your library is not
+							organized properly.
+						</Typography>
+					) : (
+						<Typography>
+							You must select where your where your audiobook library is located
+							on Google Drive.
+						</Typography>
+					)}
+
 					<Box className="btnContainer">
 						<Button onClick={() => setOpenRootDialog(true)}>
 							Set Drive Directory
