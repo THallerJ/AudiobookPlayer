@@ -29,6 +29,7 @@ passport.use(
 					rootId: null,
 					accessToken: accessToken,
 					refreshToken: refreshToken,
+					notifyFlag: false,
 				});
 
 				user.save((err, result) => {

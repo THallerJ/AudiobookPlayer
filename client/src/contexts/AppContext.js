@@ -92,6 +92,8 @@ export const AppContextProvider = ({ children }) => {
 			isAuthenticated: response.data.loggedIn,
 		});
 
+		if (response.data.loggedIn) axiosInstance.post("/auth/notifyClientActive");
+
 		setGoogleDirectoryExists(response.data.rootFlag);
 		setRootUpdated((prevState) => !prevState);
 	}, [setGoogleDirectoryExists]);

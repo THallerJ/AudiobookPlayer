@@ -70,6 +70,22 @@ router.get("/isLoggedIn", (req, res) => {
 	res.status(200).send({ loggedIn: false, rootFlag: false });
 });
 
+router.post("/notifyClientActive", async (req, res) => {
+	try {
+		if (req.user) {
+			const googleId = req.user[0].googleId;
+
+			await User.findOneAndUpdate({ googleId: googleId }, [
+				{ $set: { notifyFlag: { $eq: [false, "$notifyFlag"] } } },
+			]);
+		}
+	} catch (error) {
+		res.status(500).send();
+	}
+
+	res.status(200).send();
+});
+
 router.post("/logout", (req, res) => {
 	const googleId = req.user[0].googleId;
 
