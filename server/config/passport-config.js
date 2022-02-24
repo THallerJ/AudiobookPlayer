@@ -1,7 +1,8 @@
 require("dotenv").config();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const User = require("./models/User.js");
+const User = require("../models/User.js");
+const encryption = require("../utils/encryption-utils");
 
 passport.serializeUser((user, done) => {
 	done(null, user.id);
@@ -9,6 +10,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
 	User.find({ googleId: id }, (err, user) => {
+		const encryptedAccessToken = user[0].accessToken;
+		const encryptedRefreshToken = user[0].refreshToken;
+
+		user[0].accessToken = encryption.decryptText(encryptedAccessToken);
+		user[0].refreshToken = encryption.decryptText(encryptedRefreshToken);
 		done(err, user);
 	});
 });
@@ -27,8 +33,8 @@ passport.use(
 				const user = new User({
 					googleId: profile.id,
 					rootId: null,
-					accessToken: accessToken,
-					refreshToken: refreshToken,
+					accessToken: encryption.encryptText(accessToken),
+					refreshToken: encryption.encryptText(refreshToken),
 					notifyFlag: false,
 				});
 

@@ -1,19 +1,21 @@
 const express = require("express");
 const passport = require("passport");
-const dbUtils = require("./database-utils");
+const dbConfig = require("./config/database-config");
+const dbUtils = require("./utils/database-utils");
 const authRoute = require("./routes/auth.js");
 const googleRoute = require("./routes/google.js");
 const { playerRoute } = require("./routes/player.js");
-
 const cors = require("cors");
-require("./passport-config");
+require("./config/passport-config");
 
 const app = express();
 
-dbUtils.createDb();
+dbConfig.createDb();
 
-app.use(dbUtils.getSession());
+app.use(dbConfig.getSession());
 app.use(express.json());
+
+dbUtils.deleteExpiredDocuments();
 
 app.use(
 	cors({
