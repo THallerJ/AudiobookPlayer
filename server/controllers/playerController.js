@@ -2,8 +2,8 @@ const User = require("../models/User.js");
 const Chapter = require("../models/Chapter.js");
 const dbUtils = require("../utils/database-utils");
 
-async function rootDirectory(req, res, next) {
-	const user = req.user[0];
+async function setRootDirectory(req, res) {
+	const user = req.authUser;
 	dbUtils.deleteAllChapterProgress(user.googleId);
 
 	try {
@@ -18,8 +18,8 @@ async function rootDirectory(req, res, next) {
 	}
 }
 
-async function setChapterProgress(req, res, next) {
-	const user = req.user[0];
+async function setChapterProgress(req, res) {
+	const user = req.authUser;
 
 	const bookId = req.body.data.bookId;
 	const chapterId = req.body.data.chapterId;
@@ -42,21 +42,19 @@ async function setChapterProgress(req, res, next) {
 			{ upsert: true }
 		);
 
-		res.status(200).send("Chapter progress updated");
+		res.status(200).send();
 	} catch (error) {
 		res.status(500).send();
 	}
 }
 
-async function getBooksProgress(req, res, next) {
-	const user = req.user ? req.user[0] : null;
+async function getBooksProgress(req, res) {
+	const user = req.authUser;
 
 	try {
-		const result = user
-			? await Chapter.find({
-					googleId: user.googleId,
-			  }).sort({ updatedAt: -1 })
-			: null;
+		const result = await Chapter.find({
+			googleId: user.googleId,
+		}).sort({ updatedAt: -1 });
 
 		res.status(200).send(result);
 	} catch (error) {
@@ -65,7 +63,7 @@ async function getBooksProgress(req, res, next) {
 }
 
 module.exports = {
-	rootDirectory,
+	setRootDirectory,
 	setChapterProgress,
 	getBooksProgress,
 };

@@ -7,6 +7,7 @@ const googleRoute = require("./routes/google.js");
 const { playerRoute } = require("./routes/player.js");
 const cors = require("cors");
 require("./config/passport-config");
+const authMiddleware = require("./middleware/auth");
 
 const app = express();
 
@@ -38,7 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoute);
-app.use("/google", googleRoute);
-app.use("/player", playerRoute);
+app.use("/google", authMiddleware.isAuthenticated, googleRoute);
+app.use("/player", authMiddleware.isAuthenticated, playerRoute);
 
 app.listen(process.env.PORT || 5000);

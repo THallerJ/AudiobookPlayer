@@ -3,6 +3,7 @@ const passport = require("passport");
 var router = express.Router();
 require("dotenv").config();
 const authController = require("../controllers/authController");
+const { isAuthenticated } = require("../middleware/auth");
 
 router.get("/failed", (req, res) => {
 	res.status(500).send();
@@ -27,9 +28,13 @@ router.get(
 	}
 );
 
-router.post("/refresh_token", authController.refreshToken);
+router.post("/refresh_token", isAuthenticated, authController.refreshToken);
 router.get("/isLoggedIn", authController.isLoggedIn);
-router.post("/notifyClientActive", authController.notifyClientActive);
-router.post("/logout", authController.logout);
+router.post(
+	"/notifyClientActive",
+	isAuthenticated,
+	authController.notifyClientActive
+);
+router.post("/logout", isAuthenticated, authController.logout);
 
 module.exports = router;

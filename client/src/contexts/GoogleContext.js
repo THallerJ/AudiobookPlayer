@@ -94,7 +94,7 @@ export const GoogleContextProvider = ({ children }) => {
 	async function setRootDirectory(rootId) {
 		resetMediaPlayer();
 
-		const response = await axiosInstance.post(`/player/rootDirectory`, {
+		const response = await axiosInstance.post(`/player/setRootDirectory`, {
 			data: {
 				rootId: rootId,
 			},

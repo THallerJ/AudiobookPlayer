@@ -3,8 +3,8 @@ const encryption = require("../utils/encryption-utils");
 const axios = require("axios");
 const dbUtils = require("../utils/database-utils");
 
-async function refreshToken(req, res, next) {
-	const user = req.user[0];
+async function refreshToken(req, res) {
+	const user = req.authUser;
 
 	try {
 		const response = await axios.post(
@@ -24,36 +24,31 @@ async function refreshToken(req, res, next) {
 			{ $set: { accessToken: encryption.encryptText(accessToken) } }
 		);
 
-		res.status(200).send("Token refreshed");
+		res.status(200).send();
 	} catch (error) {
 		res.status(500).send();
 	}
 }
 
-function isLoggedIn(req, res, next) {
-	if (req.user) {
-		if (req.user.length) {
-			res.send({
-				loggedIn: true,
-				rootFlag: req.user[0].rootId ? true : false,
-			});
+function isLoggedIn(req, res) {
+	var loggedIn = false;
+	var rootFlag = false;
 
-			return;
-		}
+	if (req.user && req.user.length) {
+		loggedIn = true;
+		rootFlag = req.user[0].rootId ? true : false;
 	}
 
-	res.status(200).send({ loggedIn: false, rootFlag: false });
+	res.status(200).send({ loggedIn: loggedIn, rootFlag: rootFlag });
 }
 
-async function notifyClientActive(req, res, next) {
+async function notifyClientActive(req, res) {
 	try {
-		if (req.user) {
-			const googleId = req.user[0].googleId;
+		const googleId = req.authUser.googleId;
 
-			await User.findOneAndUpdate({ googleId: googleId }, [
-				{ $set: { notifyFlag: { $eq: [false, "$notifyFlag"] } } },
-			]);
-		}
+		await User.findOneAndUpdate({ googleId: googleId }, [
+			{ $set: { notifyFlag: { $eq: [false, "$notifyFlag"] } } },
+		]);
 	} catch (error) {
 		res.status(500).send();
 	}
@@ -61,20 +56,15 @@ async function notifyClientActive(req, res, next) {
 	res.status(200).send();
 }
 
-function logout(req, res, next) {
-	const googleId = req.user[0].googleId;
+async function logout(req, res) {
+	const googleId = req.authUser.googleId;
 
 	try {
 		dbUtils.deleteAllChapterProgress(googleId);
-
-		User.deleteOne({ googleId: googleId }, (err) => {
-			if (err) {
-				console.log(err);
-			}
-		});
+		await User.deleteOne({ googleId: googleId });
 
 		req.logout();
-		res.status(200).send("Logged out");
+		res.status(200).send();
 	} catch (error) {
 		res.status(500).send();
 	}

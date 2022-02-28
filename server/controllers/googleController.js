@@ -2,8 +2,8 @@ require("dotenv").config();
 const axios = require("axios");
 const ColorThief = require("colorthief");
 
-async function folders(req, res, next) {
-	const user = req.user[0];
+async function folders(req, res) {
+	const user = req.authUser;
 	const directory = req.query.directory ? req.query.directory : "root";
 
 	try {
@@ -25,8 +25,8 @@ async function folders(req, res, next) {
 	}
 }
 
-async function library(req, res, next) {
-	const user = req.user[0];
+async function library(req, res) {
+	const user = req.authUser;
 	const directory = user.rootId;
 
 	if (directory) {
