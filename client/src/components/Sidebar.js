@@ -47,10 +47,10 @@ const Sidebar = () => {
 									followCursor={true}
 									placement="right-end"
 									enterDelay={1000}
+									key={chapter.id}
 								>
 									<ListItem
 										className={generateListItemClassName(chapter)}
-										key={chapter.id}
 										divider={true}
 										dense={true}
 										button={true}
