@@ -73,7 +73,7 @@ async function library(req, res) {
 						chapters.push(chapter);
 					});
 
-					const coverImageUrl = await getBookCover(book.name);
+					const coverImageUrl = await getBookCover(book.name, user.accessToken);
 
 					const hexColors = await getImageColors(coverImageUrl);
 
@@ -98,74 +98,95 @@ async function library(req, res) {
 	}
 }
 
-async function getBookCover(bookTitle) {
-	var coverImageUrl = null;
-
+async function getBookCover(bookTitle, accessToken) {
 	try {
-		const imageResp = await axios.get(
-			"https://www.googleapis.com/books/v1/volumes",
-			{
-				params: {
-					q: `title="${bookTitle}"`,
-					orderBy: "relevance",
-					printType: "books",
-					fields:
-						"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
-					maxResults: 40,
-				},
-			}
-		);
+		var coverImageUrl = null;
+		const maxResults = 40;
+		var startIndex = 0;
+		var loop = true;
+		var highestRatingsCount = -Infinity;
+		const ratingThreshold = 10;
+		var matchFound = false;
 
-		const items = imageResp.data.items;
-
-		if (items) {
-			const sortedItems = items.length
-				? items.sort((a, b) => {
-						const ratingsA = a.volumeInfo.ratingsCount;
-						const ratingsB = b.volumeInfo.ratingsCount;
-
-						const valA = typeof ratingsA == "undefined" ? -Infinity : ratingsA;
-						const valB = typeof ratingsB == "undefined" ? -Infinity : ratingsB;
-						return valB - valA;
-				  })
-				: null;
-
-			var coverFoundFlag = false;
-
-			sortedItems.every((elem, i) => {
-				const imageLinks = sortedItems[i].volumeInfo.imageLinks;
-
-				if (imageLinks) {
-					const isSameTitle =
-						bookTitle.localeCompare(
-							sortedItems[i].volumeInfo.title,
-							undefined,
-							{
-								sensitivity: "accent",
-							}
-						) === 0;
-
-					if (isSameTitle) {
-						coverImageUrl = imageLinks.thumbnail;
-						return false;
-					}
-
-					const isSimilarTitle =
-						sortedItems[i].volumeInfo.title.includes(bookTitle) ||
-						bookTitle.includes(sortedItems[i].volumeInfo.title);
-
-					if (isSimilarTitle) {
-						if (!coverFoundFlag) coverImageUrl = imageLinks.thumbnail;
-						coverFoundFlag = true;
-						return true;
-					}
+		while (loop) {
+			const imageResp = await axios.get(
+				"https://www.googleapis.com/books/v1/volumes",
+				{
+					params: {
+						q: `title="${bookTitle}"`,
+						orderBy: "relevance",
+						fields:
+							"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
+						maxResults: maxResults,
+						startIndex: startIndex,
+						accessToken: accessToken,
+					},
 				}
+			);
 
-				return true;
-			});
+			startIndex += maxResults;
+
+			const items = imageResp.data.items;
+
+			if (items && items.length) {
+				const sortedItems = items.length
+					? items.sort((a, b) => {
+							const ratingsA = a.volumeInfo.ratingsCount;
+							const ratingsB = b.volumeInfo.ratingsCount;
+
+							const valA =
+								typeof ratingsA == "undefined" ? -Infinity : ratingsA;
+							const valB =
+								typeof ratingsB == "undefined" ? -Infinity : ratingsB;
+							return valB - valA;
+					  })
+					: null;
+
+				sortedItems.every((elem, i) => {
+					const imageLinks = sortedItems[i].volumeInfo.imageLinks;
+
+					if (imageLinks) {
+						const isSameTitle =
+							bookTitle.localeCompare(
+								sortedItems[i].volumeInfo.title,
+								undefined,
+								{
+									sensitivity: "accent",
+								}
+							) === 0;
+
+						const bookRatingsCount = sortedItems[i].volumeInfo.ratingsCount;
+						const meetsThreshold = bookRatingsCount >= ratingThreshold;
+
+						if (isSameTitle && meetsThreshold) {
+							coverImageUrl = imageLinks.thumbnail;
+							loop = false;
+							return false;
+						}
+
+						const isSimilarTitle =
+							sortedItems[i].volumeInfo.title.includes(bookTitle) ||
+							bookTitle.includes(sortedItems[i].volumeInfo.title);
+
+						if (isSimilarTitle || (isSameTitle && !meetsThreshold)) {
+							if (bookRatingsCount > highestRatingsCount && !matchFound) {
+								if (isSameTitle) matchFound = true;
+								coverImageUrl = imageLinks.thumbnail;
+								highestRatingsCount = bookRatingsCount;
+							}
+
+							return true;
+						}
+					}
+
+					return true;
+				});
+			} else {
+				loop = false;
+			}
 		}
 	} catch (error) {
-		console.log(error);
+		return error;
 	}
 
 	return coverImageUrl;
