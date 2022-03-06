@@ -20,11 +20,17 @@ import { styled } from "@mui/material/styles";
 import { useDashboard } from "../contexts/DashboardContext";
 
 const FolderSelectDialog = () => {
-	const { getFolders, setRootDirectory } = useGoogle();
-	const { openRootDialog, setOpenRootDialog } = useDashboard();
+	const { getFolders, setRootDirectory, isLoadingRefresh, isLoadingLibrary } =
+		useGoogle();
+	const { openRootDialog, setOpenRootDialog, setIsFolderSelected } =
+		useDashboard();
 	const [loading, setLoading] = useState(false);
 	const [selectedFolders, setSelectedFolders] = useState([]);
 	const [folders, setFolders] = useState([]);
+
+	useEffect(() => {
+		if (isLoadingLibrary || isLoadingRefresh) setIsFolderSelected(false);
+	}, [isLoadingRefresh, isLoadingLibrary, setIsFolderSelected]);
 
 	const updateFolders = useCallback(
 		async (rootId) => {
@@ -148,6 +154,7 @@ const FolderSelectDialog = () => {
 				<DialogActions>
 					<Button
 						onClick={() => {
+							setIsFolderSelected(true);
 							setRootDirectory(
 								selectedFolders.length > 0
 									? selectedFolders[selectedFolders.length - 1].id

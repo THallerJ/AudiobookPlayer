@@ -6,6 +6,7 @@ export const DashboardContextProvider = ({ children }) => {
 	const [openDrawer, setOpenDrawer] = useState(false);
 	const [showTrackInfo, setShowTrackInfo] = useState(false);
 	const [openRootDialog, setOpenRootDialog] = useState(false);
+	const [isFolderSelected, setIsFolderSelected] = useState(false);
 
 	const value = {
 		openDrawer,
@@ -14,6 +15,8 @@ export const DashboardContextProvider = ({ children }) => {
 		setShowTrackInfo,
 		openRootDialog,
 		setOpenRootDialog,
+		isFolderSelected,
+		setIsFolderSelected,
 	};
 
 	return (

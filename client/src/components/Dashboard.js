@@ -8,6 +8,7 @@ import {
 	useMediaQuery,
 	Menu,
 	MenuItem,
+	LinearProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./Sidebar";
@@ -22,10 +23,9 @@ import FolderSelectDialog from "./FolderSelectDialog";
 const Dashboard = () => {
 	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
 	const { toggleDarkMode } = useApp();
-
 	const [anchorEl, setAnchorEl] = useState(null);
 	const theme = useTheme();
-	const { getLibrary, logout } = useGoogle();
+	const { refreshLibrary, logout, isLoadingRefresh } = useGoogle();
 
 	function handleOpenMenu(event) {
 		setAnchorEl(event.currentTarget);
@@ -51,6 +51,7 @@ const Dashboard = () => {
 							<MoreVert />
 						</IconButton>
 					</Toolbar>
+					{isLoadingRefresh ? <LinearProgress sx={{ zIndex: 1101 }} /> : null}
 				</AppBar>
 			</Hidden>
 			<Hidden mdUp>
@@ -74,6 +75,7 @@ const Dashboard = () => {
 							<MoreVert />
 						</IconButton>
 					</Toolbar>
+					{isLoadingRefresh ? <LinearProgress sx={{ zIndex: 1101 }} /> : null}
 				</AppBar>
 			</Hidden>
 		</div>
@@ -108,7 +110,7 @@ const Dashboard = () => {
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						getLibrary();
+						refreshLibrary();
 						handleCloseMenu();
 					}}
 				>
@@ -160,5 +162,12 @@ const StyledDashboardContainer = styled("div")(({ theme }) => ({
 		marginLeft: theme.drawer.width,
 		width: "100%",
 		height: "100%",
+	},
+
+	".centerProgress": {
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		height: "90%",
 	},
 }));

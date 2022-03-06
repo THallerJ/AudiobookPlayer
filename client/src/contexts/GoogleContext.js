@@ -16,14 +16,15 @@ export const GoogleContextProvider = ({ children }) => {
 		setRootUpdated,
 	} = useApp();
 	const [library, setLibrary] = useLocalStorage("library", []);
-	const [loadingLibrary, setLoadingLibrary] = useState(false);
+	const [isLoadingLibrary, setIsLoadingLibrary] = useState(false);
+	const [isLoadingRefresh, setIsLoadingRefresh] = useState(false);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
 	const [playingChapter, setPlayingChapter] = useState();
 	// eslint-disable-next-line
 	const [initFlag, setInitFlag, initFlagRef] = useStateRef(false);
 
-	const getLibrary = useCallback(async () => {
+	const getBooks = useCallback(async () => {
 		var queryLibraryFlag;
 		if (!initFlagRef.current) {
 			queryLibraryFlag = !library || !library.length ? true : false;
@@ -34,13 +35,11 @@ export const GoogleContextProvider = ({ children }) => {
 		setInitFlag(true);
 
 		if (googleDirectoryExists && queryLibraryFlag) {
-			setLoadingLibrary(true);
 			const response = await axiosInstance.get(`/google/library`);
 			const sortedLibrary = response.data.sort((book1, book2) =>
 				book1.name.localeCompare(book2.name)
 			);
 
-			setLoadingLibrary(false);
 			setLibrary(sortedLibrary);
 		}
 	}, [
@@ -51,6 +50,18 @@ export const GoogleContextProvider = ({ children }) => {
 		initFlagRef,
 		setInitFlag,
 	]);
+
+	async function getLibrary() {
+		setIsLoadingLibrary(true);
+		await getBooks();
+		setIsLoadingLibrary(false);
+	}
+
+	async function refreshLibrary() {
+		setIsLoadingRefresh(true);
+		await getBooks();
+		setIsLoadingRefresh(false);
+	}
 
 	const getFolders = useCallback(
 		async (directory) => {
@@ -120,6 +131,7 @@ export const GoogleContextProvider = ({ children }) => {
 		setRootDirectory,
 		library,
 		getLibrary,
+		refreshLibrary,
 		logout,
 		currentBook,
 		setCurrentBook,
@@ -128,7 +140,8 @@ export const GoogleContextProvider = ({ children }) => {
 		setPlayingChapter,
 		playingChapter,
 		getBookAndChapter,
-		loadingLibrary,
+		isLoadingLibrary,
+		isLoadingRefresh,
 	};
 
 	return (
