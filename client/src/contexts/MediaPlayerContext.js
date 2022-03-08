@@ -16,6 +16,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		playingBook,
 		getBookAndChapter,
 		rootUpdated,
+		isLoadingRefresh,
 	} = useGoogle();
 	const { axiosInstance, authentication } = useApp();
 	const [sound, setSound] = useState();
@@ -30,7 +31,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [booksProgress, setBooksProgress] = useState({});
 	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [resumeFlag, setResumeFlag] = useState(false);
-
+	// eslint-disable-next-line
+	const [refreshFlag, setRefreshFlag, refreshFlagRef] = useStateRef(false);
 	// eslint-disable-next-line
 	const [userInputFlag, setUserInputFlag, userInputFlagRef] =
 		useStateRef(false);
@@ -87,6 +89,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		progressRef,
 		durationRef,
 	]);
+
+	useEffect(() => {
+		if (isLoadingRefresh) {
+			setRefreshFlag(true);
+			setInitializedFlag(false);
+		}
+	}, [isLoadingRefresh, setRefreshFlag]);
 
 	useEffectSkipFirst(() => {
 		// sync when changing tracks
@@ -162,6 +171,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setProgress,
 		setIsPlaying,
 		initializedFlag,
+		refreshFlagRef,
 	]);
 
 	useEffectSkipFirst(() => {
@@ -209,7 +219,10 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			setUserInputFlag(true);
 		}
 
-		if (authentication.isAuthenticated) getBookProgress();
+		if (authentication.isAuthenticated && !refreshFlagRef.current)
+			getBookProgress();
+
+		setRefreshFlag(false);
 	}, [
 		axiosInstance,
 		getBookAndChapter,
@@ -221,6 +234,8 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		rootUpdated,
 		setUserInputFlag,
 		authentication,
+		refreshFlagRef,
+		setRefreshFlag,
 	]);
 
 	useEffect(() => {
@@ -380,7 +395,6 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		booksProgress,
 		resumePlayback,
 		initializedFlag,
-		setInitializedFlag,
 	};
 
 	return (
