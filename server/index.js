@@ -4,7 +4,7 @@ const dbConfig = require("./config/database-config");
 const dbUtils = require("./utils/database-utils");
 const authRoute = require("./routes/auth.js");
 const googleRoute = require("./routes/google.js");
-const { playerRoute } = require("./routes/player.js");
+const { user } = require("./routes/user.js");
 const cors = require("cors");
 require("./config/passport-config");
 const authMiddleware = require("./middleware/auth");
@@ -40,6 +40,6 @@ app.use(passport.session());
 
 app.use("/auth", authRoute);
 app.use("/google", authMiddleware.isAuthenticated, googleRoute);
-app.use("/player", authMiddleware.isAuthenticated, playerRoute);
+app.use("/user", authMiddleware.isAuthenticated, userRoute);
 
 app.listen(process.env.PORT || 5000);

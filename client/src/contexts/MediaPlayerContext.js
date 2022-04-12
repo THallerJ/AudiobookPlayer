@@ -40,7 +40,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const syncChapterProgress = useCallback(
 		(book, chapter, progress, duration) => {
 			if (book && chapter) {
-				axiosInstance.post(`/player/setChapterProgress`, {
+				axiosInstance.post(`/user/setChapterProgress`, {
 					data: {
 						bookId: book.id,
 						chapterId: chapter.data.id,
@@ -187,7 +187,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		async function getBookProgress() {
-			const response = await axiosInstance.get(`/player/getBooksProgress`);
+			const response = await axiosInstance.get(`/user/getBooksProgress`);
 
 			if (response.data.length) {
 				const reduce = response.data.reduce((map, obj) => {
