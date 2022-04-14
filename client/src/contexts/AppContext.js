@@ -16,7 +16,6 @@ const AppContext = React.createContext();
 
 const axiosInstance = axios.create({
 	withCredentials: true,
-	baseURL: process.env.REACT_APP_SERVER_URL,
 });
 
 export const AppContextProvider = ({ children }) => {
@@ -32,6 +31,7 @@ export const AppContextProvider = ({ children }) => {
 	const [theme, setTheme] = useState(lightTheme);
 	const [axiosError, setAxiosError] = useState();
 	const [rootUpdated, setRootUpdated] = useState(false);
+	const [serverHostName, setServerHostName] = useState();
 
 	useMemo(() => {
 		axiosInstance.interceptors.response.use(
@@ -84,6 +84,10 @@ export const AppContextProvider = ({ children }) => {
 		if (!authentication.isAuthenticated) localStorage.clear();
 	}, [authentication]);
 
+	useEffect(() => {
+		getHostName();
+	}, []);
+
 	const checkAuthentication = useCallback(async () => {
 		const response = await axiosInstance.get(`/auth/isLoggedIn`);
 
@@ -98,6 +102,15 @@ export const AppContextProvider = ({ children }) => {
 		setRootUpdated((prevState) => !prevState);
 	}, [setGoogleDirectoryExists]);
 
+	async function getHostName() {
+		if (process.env.REACT_APP_SERVER_URL) {
+			setServerHostName(process.env.REACT_APP_SERVER_URL);
+		} else {
+			const hostname = await axiosInstance.get("/general/hostname");
+			setServerHostName(`https://${hostname.data}`);
+		}
+	}
+
 	const value = {
 		authentication,
 		setAuthentication,
@@ -111,6 +124,7 @@ export const AppContextProvider = ({ children }) => {
 		setAxiosError,
 		rootUpdated,
 		setRootUpdated,
+		serverHostName,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

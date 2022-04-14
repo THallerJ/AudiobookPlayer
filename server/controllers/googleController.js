@@ -1,5 +1,6 @@
 require("dotenv").config();
 const axios = require("axios");
+require("dotenv").config();
 const ColorThief = require("colorthief");
 
 async function folders(req, res) {
@@ -20,6 +21,18 @@ async function folders(req, res) {
 		);
 
 		res.send(response.data.files);
+	} catch (error) {
+		res.status(error.response.status).send();
+	}
+}
+
+async function stream(req, res) {
+	const fileId = req.params.id;
+
+	try {
+		const trackUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/?key=${process.env.GOOGLE_API_KEY}&alt=media`;
+
+		res.redirect(302, trackUrl);
 	} catch (error) {
 		res.status(error.response.status).send();
 	}
@@ -55,6 +68,7 @@ async function library(req, res) {
 							},
 							params: {
 								q: `\"${book.id}\" in parents and trashed = false`,
+								fields: "files(id, name)",
 							},
 						}
 					);
@@ -69,7 +83,11 @@ async function library(req, res) {
 					});
 
 					sortedChaps.forEach((chap) => {
-						const chapter = { name: chap.name, id: chap.id };
+						const chapter = {
+							name: chap.name,
+							id: chap.id,
+						};
+
 						chapters.push(chapter);
 					});
 
@@ -237,4 +255,5 @@ function rgbToHex(r, g, b) {
 module.exports = {
 	folders,
 	library,
+	stream,
 };

@@ -124,7 +124,18 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		};
 	}, [sound, resumeFlag]);
 
-	useEffectSkipFirst(() => {
+	useEffectSkipFirst(async () => {
+		async function getHost() {
+			if (process.env.REACT_APP_SERVER_URL) {
+				return process.env.REACT_APP_SERVER_URL;
+			} else {
+				const hostname = await axiosInstance.get("/general/hostname");
+				return `https://${hostname.data}`;
+			}
+		}
+
+		const serverUrl = await getHost();
+
 		if (playingChapter) {
 			setSound((prevState) => {
 				if (prevState) {
@@ -133,9 +144,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				}
 
 				return new Howl({
-					src: [
-						`https://www.googleapis.com/drive/v3/files/${playingChapter.data.id}/?key=${process.env.REACT_APP_GOOGLE_API_KEY}&alt=media`,
-					],
+					src: [`${serverUrl}/google/stream/${playingChapter.data.id}`],
 					html5: true,
 					preload: true,
 					volume: 0.5,

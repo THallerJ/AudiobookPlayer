@@ -24,7 +24,7 @@ router.get(
 		failureRedirect: "/failed",
 	}),
 	(req, res) => {
-		res.redirect(process.env.CLIENT_URL);
+		res.redirect(process.env.SERVER_URL);
 	}
 );
 

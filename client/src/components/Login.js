@@ -2,9 +2,11 @@ import React from "react";
 import { Button, Grid, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useTheme } from "@mui/material/styles";
+import { useApp } from "../contexts/AppContext";
 
 const Login = () => {
 	const theme = useTheme();
+	const { serverHostName } = useApp();
 
 	return (
 		<Grid
@@ -28,11 +30,8 @@ const Login = () => {
 				</Grid>
 				<Grid item>
 					<Button
-						onClick={() => {
-							window.open(
-								`${process.env.REACT_APP_SERVER_URL}/auth/google`,
-								"_self"
-							);
+						onClick={async () => {
+							window.open(`${serverHostName}/auth/google`, "_self");
 						}}
 						startIcon={<GoogleIcon />}
 						variant="contained"
