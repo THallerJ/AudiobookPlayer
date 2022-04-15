@@ -76,7 +76,9 @@ const StyledContainer = styled(Box)(({ theme }) => ({
 
 	".btnContainer": {
 		display: "flex",
-		paddingTop: theme.spacing(2),
+		alignItems: "center",
+		justifyContent: "center",
+		paddingTop: theme.spacing(1),
 	},
 
 	".centerProgress": {
