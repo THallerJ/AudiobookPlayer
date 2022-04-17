@@ -18,7 +18,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		rootUpdated,
 		isLoadingRefresh,
 	} = useGoogle();
-	const { axiosInstance, authentication } = useApp();
+	const { axiosInstance, authentication, serverHostName } = useApp();
 	const [sound, setSound] = useState();
 	const [soundLoaded, setSoundLoaded] = useState(false);
 	const [duration, setDuration, durationRef] = useStateRef();
@@ -125,17 +125,6 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	}, [sound, resumeFlag]);
 
 	useEffectSkipFirst(async () => {
-		async function getHost() {
-			if (process.env.REACT_APP_SERVER_URL) {
-				return process.env.REACT_APP_SERVER_URL;
-			} else {
-				const hostname = await axiosInstance.get("/general/hostname");
-				return `https://${hostname.data}`;
-			}
-		}
-
-		const serverUrl = await getHost();
-
 		if (playingChapter) {
 			setSound((prevState) => {
 				if (prevState) {
@@ -144,7 +133,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				}
 
 				return new Howl({
-					src: [`${serverUrl}/google/stream/${playingChapter.data.id}`],
+					src: [`${serverHostName}/google/stream/${playingChapter.data.id}`],
 					html5: true,
 					preload: true,
 					volume: 0.5,
@@ -164,6 +153,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		playingBook,
 		setInitializedFlag,
 		rateRef,
+		serverHostName,
 	]);
 
 	useEffectSkipFirst(() => {
