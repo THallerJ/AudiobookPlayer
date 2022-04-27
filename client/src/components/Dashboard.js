@@ -19,6 +19,7 @@ import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
 import { useGoogle } from "../contexts/GoogleContext";
 import FolderSelectDialog from "./FolderSelectDialog";
+import Div100vh from "react-div-100vh";
 
 const Dashboard = () => {
 	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
@@ -82,59 +83,61 @@ const Dashboard = () => {
 	);
 
 	return (
-		<StyledDashboardContainer>
-			<Sidebar />
-			{appBar}
-			<div
-				className={
-					useMediaQuery(theme.breakpoints.up("md")) ? "bodyRight" : "body"
-				}
-			>
-				<Body />
-			</div>
-			<Menu
-				anchorEl={anchorEl}
-				keepMounted
-				open={Boolean(anchorEl)}
-				onClose={handleCloseMenu}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-				transformOrigin={{ horizontal: "center", vertical: "top" }}
-			>
-				<MenuItem
-					onClick={() => {
-						setOpenRootDialog(true);
-						handleCloseMenu();
-					}}
+		<Div100vh>
+			<StyledDashboardContainer>
+				<Sidebar />
+				{appBar}
+				<div
+					className={
+						useMediaQuery(theme.breakpoints.up("md")) ? "bodyRight" : "body"
+					}
 				>
-					Set Drive Directory
-				</MenuItem>
-				<MenuItem
-					onClick={() => {
-						refreshLibrary();
-						handleCloseMenu();
-					}}
+					<Body />
+				</div>
+				<Menu
+					anchorEl={anchorEl}
+					keepMounted
+					open={Boolean(anchorEl)}
+					onClose={handleCloseMenu}
+					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+					transformOrigin={{ horizontal: "center", vertical: "top" }}
 				>
-					Refresh Library
-				</MenuItem>
-				<MenuItem
-					onClick={() => {
-						toggleDarkMode();
-						handleCloseMenu();
-					}}
-				>
-					Toggle Dark Mode
-				</MenuItem>
-				<MenuItem
-					onClick={() => {
-						logout();
-						handleCloseMenu();
-					}}
-				>
-					Log Out
-				</MenuItem>
-			</Menu>
-			<FolderSelectDialog />
-		</StyledDashboardContainer>
+					<MenuItem
+						onClick={() => {
+							setOpenRootDialog(true);
+							handleCloseMenu();
+						}}
+					>
+						Set Drive Directory
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							refreshLibrary();
+							handleCloseMenu();
+						}}
+					>
+						Refresh Library
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							toggleDarkMode();
+							handleCloseMenu();
+						}}
+					>
+						Toggle Dark Mode
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							logout();
+							handleCloseMenu();
+						}}
+					>
+						Log Out
+					</MenuItem>
+				</Menu>
+				<FolderSelectDialog />
+			</StyledDashboardContainer>
+		</Div100vh>
 	);
 };
 
@@ -143,7 +146,7 @@ export default Dashboard;
 // Styled Components
 const StyledDashboardContainer = styled("div")(({ theme }) => ({
 	display: "flex",
-	height: "100vh",
+	height: "100%",
 	width: "100%",
 	overflow: "hidden",
 
