@@ -13,12 +13,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import Sidebar from "./Sidebar";
 import Body from "./Body";
-import { useDashboard } from "../contexts/DashboardContext";
-import { useApp } from "../contexts/AppContext";
+import { useDashboard } from "../../contexts/DashboardContext";
+import { useApp } from "../../contexts/AppContext";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
-import { useGoogle } from "../contexts/GoogleContext";
-import FolderSelectDialog from "./FolderSelectDialog";
+import { useGoogle } from "../../contexts/GoogleContext";
+import FolderSelectDialog from "../Dialogs/FolderSelectDialog";
 import Div100vh from "react-div-100vh";
 
 const Dashboard = () => {

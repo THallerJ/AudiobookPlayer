@@ -9,9 +9,9 @@ import {
 	Hidden,
 	Tooltip,
 } from "@mui/material";
-import { useDashboard } from "../contexts/DashboardContext";
+import { useDashboard } from "../../contexts/DashboardContext";
 import { styled } from "@mui/material/styles";
-import { useGoogle } from "../contexts/GoogleContext";
+import { useGoogle } from "../../contexts/GoogleContext";
 
 const Sidebar = () => {
 	const { openDrawer, setOpenDrawer } = useDashboard();

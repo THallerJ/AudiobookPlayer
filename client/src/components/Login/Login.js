@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Grid, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useTheme } from "@mui/material/styles";
-import { useApp } from "../contexts/AppContext";
+import { useApp } from "../../contexts/AppContext";
 
 const Login = () => {
 	const theme = useTheme();
