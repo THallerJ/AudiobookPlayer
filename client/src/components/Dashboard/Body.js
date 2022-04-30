@@ -1,17 +1,17 @@
 import React from "react";
-import MediaPlayer from "./MediaPlayer";
-import SmallMediaPlayer from "./SmallMediaPlayer";
-import BookList from "./BookList";
-import TrackInfo from "./TrackInfo";
+import MediaPlayer from "../MediaPlayer/MediaPlayer";
+import SmallMediaPlayer from "../MediaPlayer/SmallMediaPlayer";
+import BookList from "../Books/BookList";
+import TrackController from "../MediaPlayer/TrackController";
 import { Box } from "@mui/system";
 import { Paper, Hidden, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { MediaPlayerContextProvider } from "../contexts/MediaPlayerContext";
-import { useDashboard } from "../contexts/DashboardContext";
+import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
+import { useDashboard } from "../../contexts/DashboardContext";
 
 const Body = () => {
 	const theme = useTheme();
-	const { showTrackInfo } = useDashboard();
+	const { showTrackController } = useDashboard();
 
 	return (
 		<MediaPlayerContextProvider>
@@ -25,17 +25,17 @@ const Body = () => {
 			>
 				<Box
 					sx={{
-						height: showTrackInfo ? "100%" : "90%",
+						height: showTrackController ? "100%" : "90%",
 						overflow: "auto",
 					}}
 				>
-					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
+					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
 						<BookList />
 					) : (
-						<TrackInfo />
+						<TrackController />
 					)}
 				</Box>
-				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackInfo ? (
+				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
 					<Box boxShadow={6}>
 						<Paper elevation={0} sx={{ overflow: "hidden" }}>
 							<Hidden smDown>

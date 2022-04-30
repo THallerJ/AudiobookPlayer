@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Card, CardMedia, Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useGoogle } from "../contexts/GoogleContext";
-import { useMediaPlayer } from "../contexts/MediaPlayerContext";
-import defaultBookCover from "../assets/images/defaultBookCover.jpg";
+import { useGoogle } from "../../contexts/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import defaultBookCover from "../../assets/images/defaultBookCover.jpg";
 
 const Book = ({ book }) => {
 	const [showTitleOverlay, setShowTitleOverlay] = useState();

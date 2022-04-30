@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import { IconButton, Typography, Grid, LinearProgress } from "@mui/material";
-import { useGoogle } from "../contexts/GoogleContext";
-import { useMediaPlayer } from "../contexts/MediaPlayerContext";
+import { useGoogle } from "../../contexts/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
 import PlayIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import { useDashboard } from "../contexts/DashboardContext";
+import { useDashboard } from "../../contexts/DashboardContext";
 
 const SmallMediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();
-	const { setShowTrackInfo } = useDashboard();
+	const { setShowTrackController } = useDashboard();
 	const {
 		isPlaying,
 		duration,
@@ -29,7 +29,7 @@ const SmallMediaPlayer = () => {
 			<LinearProgress variant="determinate" value={progressPercent} />
 			<StyledMediaPlayerContainer
 				onClick={() => {
-					if (playingBook) setShowTrackInfo((prevState) => !prevState);
+					if (playingBook) setShowTrackController((prevState) => !prevState);
 				}}
 			>
 				<Grid container>

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import Login from "./components/Login.js";
-import LoginPrivateRoute from "./components/LoginPrivateRoute";
+import Login from "./components/Login/Login.js";
+import LoginPrivateRoute from "./components/Login/LoginPrivateRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 import {
 	CircularProgress,
 	Box,

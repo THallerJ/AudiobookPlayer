@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Typography, Button, Box, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useDashboard } from "../contexts/DashboardContext";
-import { useApp } from "../contexts/AppContext";
-import { useGoogle } from "../contexts/GoogleContext";
-import TutorialDialog from "./TutorialDialog";
+import { useDashboard } from "../../contexts/DashboardContext";
+import { useApp } from "../../contexts/AppContext";
+import { useGoogle } from "../../contexts/GoogleContext";
+import TutorialDialog from "../Dialogs/TutorialDialog";
 
 const EmptyLibrary = () => {
 	const { googleDirectoryExists } = useApp();

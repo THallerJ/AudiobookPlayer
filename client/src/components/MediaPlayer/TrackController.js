@@ -19,14 +19,14 @@ import Replay5Icon from "@mui/icons-material/Replay5";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useDashboard } from "../contexts/DashboardContext";
-import { useGoogle } from "../contexts/GoogleContext";
-import { useMediaPlayer } from "../contexts/MediaPlayerContext";
+import { useDashboard } from "../../contexts/DashboardContext";
+import { useGoogle } from "../../contexts/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
 import tinyColor from "tinycolor2";
-import defaultBookCover from "../assets/images/defaultBookCover.jpg";
+import defaultBookCover from "../../assets/images/defaultBookCover.jpg";
 
-const TrackInfo = () => {
-	const { setShowTrackInfo } = useDashboard();
+const TrackController = () => {
+	const { setShowTrackController } = useDashboard();
 	const [brightness, setBrightness] = useState();
 	const { playingBook, playingChapter } = useGoogle();
 	const [hasCover, setHasCover] = useState();
@@ -62,7 +62,7 @@ const TrackInfo = () => {
 				overflow: "hidden",
 			}}
 		>
-			<TrackInfoContainer
+			<TrackContollerContainer
 				bright={brightness}
 				colors={playingBook.imageColors}
 				hasCover={hasCover}
@@ -71,7 +71,9 @@ const TrackInfo = () => {
 					<Grid item xs={12} sx={{ display: "flex" }}>
 						<Grid item xs={6} align="start">
 							<IconButton
-								onClick={() => setShowTrackInfo((prevState) => !prevState)}
+								onClick={() =>
+									setShowTrackController((prevState) => !prevState)
+								}
 							>
 								<ArrowBackIosIcon className="topIcon" />
 							</IconButton>
@@ -165,15 +167,15 @@ const TrackInfo = () => {
 						</IconButton>
 					</Grid>
 				</Grid>
-			</TrackInfoContainer>
+			</TrackContollerContainer>
 		</Box>
 	);
 };
 
-export default TrackInfo;
+export default TrackController;
 
 // Styled Components
-const TrackInfoContainer = styled(Box)(
+const TrackContollerContainer = styled(Box)(
 	({ theme, bright, colors, hasCover }) => ({
 		display: "flex",
 		height: "100%",

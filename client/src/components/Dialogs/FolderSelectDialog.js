@@ -15,9 +15,9 @@ import {
 	CircularProgress,
 	Box,
 } from "@mui/material";
-import { useGoogle } from "../contexts/GoogleContext";
+import { useGoogle } from "../../contexts/GoogleContext";
 import { styled } from "@mui/material/styles";
-import { useDashboard } from "../contexts/DashboardContext";
+import { useDashboard } from "../../contexts/DashboardContext";
 
 const FolderSelectDialog = () => {
 	const { getFolders, setRootDirectory, isLoadingRefresh, isLoadingLibrary } =
