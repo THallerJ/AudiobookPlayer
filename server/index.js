@@ -20,7 +20,7 @@ app.use(express.json());
 
 dbUtils.deleteExpiredDocuments();
 
-app.use(express.static(path.join(__dirname, "/../client/build")));
+app.use(express.static(path.join(__dirname, "/../client/dist")));
 
 app.use(
 	cors({
@@ -47,6 +47,6 @@ app.use("/user", authMiddleware.isAuthenticated, userRoute);
 app.use("/general", generalRoute);
 
 app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname + "/../client/build/index.html"));
+	res.sendFile(path.join(__dirname + "/../client/dist/index.html"));
 });
 app.listen(process.env.PORT || 5000);
