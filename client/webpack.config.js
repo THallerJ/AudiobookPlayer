@@ -1,5 +1,6 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
 	entry: "./src/index.js",
@@ -21,7 +22,7 @@ module.exports = {
 				use: ["style-loader", "css-loader"],
 			},
 			{
-				test: /\.(|png|jpe?g)$/,
+				test: /\.(png|jpe?g)$/,
 				use: [
 					{
 						loader: "file-loader",
@@ -33,6 +34,10 @@ module.exports = {
 	plugins: [
 		new CopyPlugin({
 			patterns: [{ from: "public" }],
+		}),
+		new CompressionPlugin({
+			algorithm: "gzip",
+			deleteOriginalAssets: true,
 		}),
 	],
 };

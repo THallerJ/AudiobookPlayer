@@ -1,7 +1,6 @@
 const express = require("express");
 const passport = require("passport");
 const dbConfig = require("./config/database-config");
-const dbUtils = require("./utils/database-utils");
 const authRoute = require("./routes/auth.js");
 const googleRoute = require("./routes/google.js");
 const { userRoute } = require("./routes/user.js");
@@ -10,17 +9,16 @@ const cors = require("cors");
 require("./config/passport-config");
 const authMiddleware = require("./middleware/auth");
 const path = require("path");
+const expressStaticGzip = require("express-static-gzip");
 
 const app = express();
 
 dbConfig.createDb();
 
+app.use("/", expressStaticGzip(path.join(__dirname, "/../client", "dist")));
+
 app.use(dbConfig.getSession());
 app.use(express.json());
-
-dbUtils.deleteExpiredDocuments();
-
-app.use(express.static(path.join(__dirname, "/../client/dist")));
 
 app.use(
 	cors({
@@ -46,7 +44,4 @@ app.use("/google", authMiddleware.isAuthenticated, googleRoute);
 app.use("/user", authMiddleware.isAuthenticated, userRoute);
 app.use("/general", generalRoute);
 
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname + "/../client/dist/index.html"));
-});
 app.listen(process.env.PORT || 5000);
