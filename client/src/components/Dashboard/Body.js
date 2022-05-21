@@ -1,13 +1,18 @@
-import React from "react";
-import MediaPlayer from "../MediaPlayer/MediaPlayer";
-import SmallMediaPlayer from "../MediaPlayer/SmallMediaPlayer";
+import React, { Suspense } from "react";
 import BookList from "../Books/BookList";
-import TrackController from "../MediaPlayer/TrackController";
 import { Box } from "@mui/system";
 import { Paper, Hidden, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
 import { useDashboard } from "../../contexts/DashboardContext";
+
+const TrackController = React.lazy(() =>
+	import("../MediaPlayer/TrackController")
+);
+const SmallMediaPlayer = React.lazy(() =>
+	import("../MediaPlayer/SmallMediaPlayer")
+);
+const MediaPlayer = React.lazy(() => import("../MediaPlayer/MediaPlayer"));
 
 const Body = () => {
 	const theme = useTheme();
@@ -32,17 +37,23 @@ const Body = () => {
 					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
 						<BookList />
 					) : (
-						<TrackController />
+						<Suspense fallback={null}>
+							<TrackController />
+						</Suspense>
 					)}
 				</Box>
 				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
 					<Box boxShadow={6}>
 						<Paper elevation={0} sx={{ overflow: "hidden" }}>
 							<Hidden smDown>
-								<MediaPlayer />
+								<Suspense fallback={null}>
+									<MediaPlayer />
+								</Suspense>
 							</Hidden>
 							<Hidden smUp>
-								<SmallMediaPlayer />
+								<Suspense fallback={null}>
+									<SmallMediaPlayer />
+								</Suspense>
 							</Hidden>
 						</Paper>
 					</Box>

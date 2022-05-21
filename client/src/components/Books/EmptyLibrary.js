@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Typography, Button, Box, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { useApp } from "../../contexts/AppContext";
 import { useGoogle } from "../../contexts/GoogleContext";
-import TutorialDialog from "../Dialogs/TutorialDialog";
+
+const TutorialDialog = React.lazy(() => import("../Dialogs/TutorialDialog"));
 
 const EmptyLibrary = () => {
 	const { googleDirectoryExists } = useApp();
@@ -41,10 +42,12 @@ const EmptyLibrary = () => {
 							Tutorial
 						</Button>
 					</Box>
-					<TutorialDialog
-						open={openTutorialDialog}
-						setOpen={setOpenTutorialDialog}
-					/>
+					<Suspense fallback={null}>
+						<TutorialDialog
+							open={openTutorialDialog}
+							setOpen={setOpenTutorialDialog}
+						/>
+					</Suspense>
 				</div>
 			);
 		}

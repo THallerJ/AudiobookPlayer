@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import Login from "./components/Login/Login.js";
 import LoginPrivateRoute from "./components/Login/LoginPrivateRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
@@ -10,7 +10,7 @@ import {
 	Snackbar,
 	Alert,
 } from "@mui/material";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
 import { GoogleContextProvider } from "./contexts/GoogleContext";
@@ -67,15 +67,25 @@ function App() {
 						) : null}
 						{!authentication.isInitializing ? (
 							<Router>
-								<Route exact path="/login" component={Login} />
-								<Switch>
-									<LoginPrivateRoute
-										exact
-										path="/"
-										component={Dashboard}
-										isAuthenticated={authentication.isAuthenticated}
-									/>
-								</Switch>
+								<Route
+									exact
+									path="/login"
+									render={() => (
+										<Suspense fallback={null}>
+											<Login />
+										</Suspense>
+									)}
+								/>
+								<LoginPrivateRoute
+									exact
+									path="/"
+									component={() => (
+										<Suspense fallback={null}>
+											<Dashboard />
+										</Suspense>
+									)}
+									isAuthenticated={authentication.isAuthenticated}
+								/>
 							</Router>
 						) : (
 							<Box
