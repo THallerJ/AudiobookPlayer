@@ -110,7 +110,7 @@ const TutorialDialog = ({ open, setOpen }) => {
 						sx={{ p: theme.spacing(1) }}
 					>
 						<TreeView
-							aria-label="controlled"
+							aria-label="tree"
 							defaultCollapseIcon={<ExpandMoreIcon />}
 							defaultExpandIcon={<ChevronRightIcon />}
 							multiSelect
@@ -152,7 +152,9 @@ const TutorialDialog = ({ open, setOpen }) => {
 				</List>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => setOpen(false)}>Ok</Button>
+				<Button aria-label="Ok" onClick={() => setOpen(false)}>
+					Ok
+				</Button>
 			</DialogActions>
 		</Dialog>
 	);

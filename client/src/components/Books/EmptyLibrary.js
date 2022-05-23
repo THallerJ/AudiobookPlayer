@@ -35,10 +35,16 @@ const EmptyLibrary = () => {
 						</Typography>
 					)}
 					<Box className="btnContainer">
-						<Button onClick={() => setOpenRootDialog(true)}>
+						<Button
+							onClick={() => setOpenRootDialog(true)}
+							aria-label="Set drive directory"
+						>
 							Set Drive Directory
 						</Button>
-						<Button onClick={() => setOpenTutorialDialog(true)}>
+						<Button
+							onClick={() => setOpenTutorialDialog(true)}
+							aria-label="Tutorial"
+						>
 							Tutorial
 						</Button>
 					</Box>

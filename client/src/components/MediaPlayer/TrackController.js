@@ -41,6 +41,7 @@ const TrackController = () => {
 		rate,
 		progress,
 		seekBackward,
+		seekForward,
 		previousTrack,
 		nextTrack,
 	} = useMediaPlayer();
@@ -71,6 +72,7 @@ const TrackController = () => {
 					<Grid item xs={12} sx={{ display: "flex" }}>
 						<Grid item xs={6} align="start">
 							<IconButton
+								aria-label="Go back"
 								onClick={() =>
 									setShowTrackController((prevState) => !prevState)
 								}
@@ -88,7 +90,7 @@ const TrackController = () => {
 								flexWrap: "wrap",
 							}}
 						>
-							<IconButton onClick={decreaseRate}>
+							<IconButton onClick={decreaseRate} aria-label="Decrease rate">
 								<RemoveIcon className="topIcon" fontSize="small" />
 							</IconButton>
 							<Chip
@@ -96,7 +98,7 @@ const TrackController = () => {
 								label={`${rate.toFixed(2)}x`}
 								sx={{ backgroundColor: "white", color: "black" }}
 							/>
-							<IconButton onClick={increaseRate}>
+							<IconButton onClick={increaseRate} aria-label="Increase rate">
 								<AddIcon className="topIcon" fontSize="small" />
 							</IconButton>
 						</Grid>
@@ -130,6 +132,7 @@ const TrackController = () => {
 							max={duration ? duration : 100}
 							value={progress}
 							onChangeCommitted={(e, v) => handleSeek(v)}
+							aria-label="Progress"
 						/>
 					</Grid>
 					<Grid
@@ -146,23 +149,29 @@ const TrackController = () => {
 						</Typography>
 					</Grid>
 					<Grid item xs={12} align="center">
-						<IconButton onClick={previousTrack}>
+						<IconButton onClick={previousTrack} aria-label="Previous track">
 							<PreviousIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
-						<IconButton onClick={seekBackward}>
+						<IconButton
+							onClick={seekBackward}
+							aria-label="Go back five seconds"
+						>
 							<Replay5Icon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
-						<IconButton onClick={() => togglePlay()}>
+						<IconButton onClick={() => togglePlay()} aria-label="Toggle play">
 							{isPlaying ? (
 								<PauseIcon className="bottomIcon" sx={{ fontSize: "50px" }} />
 							) : (
 								<PlayIcon className="bottomIcon" sx={{ fontSize: "50px" }} />
 							)}
 						</IconButton>
-						<IconButton>
+						<IconButton
+							onClick={seekForward}
+							aria-label="Go forward five seconds"
+						>
 							<Forward5Icon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
-						<IconButton onClick={nextTrack}>
+						<IconButton onClick={nextTrack} aria-label="Next track">
 							<NextIcon className="bottomIcon" sx={{ fontSize: "35px" }} />
 						</IconButton>
 					</Grid>

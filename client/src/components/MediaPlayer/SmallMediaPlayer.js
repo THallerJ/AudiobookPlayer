@@ -43,6 +43,7 @@ const SmallMediaPlayer = () => {
 					</Grid>
 					<Grid item xs={2}>
 						<IconButton
+							aria-label="Toggle play"
 							onClick={(e) => {
 								initializedFlag ? togglePlay() : resumePlayback();
 								e.stopPropagation();

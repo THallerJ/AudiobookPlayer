@@ -59,6 +59,7 @@ const Book = ({ book }) => {
 				fullWidth
 				size="small"
 				variant="contained"
+				aria-label="resume"
 				onClick={() => {
 					resumePlayback(book.id);
 					setCurrentBook(book);
@@ -76,6 +77,7 @@ const Book = ({ book }) => {
 			onMouseLeave={onMouseLeave}
 		>
 			<CardMedia
+				title={book.name}
 				component="img"
 				image={hasCover ? book.coverImageUrl : defaultBookCover}
 				onClick={(e) => {
@@ -106,5 +108,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 	".MuiCardMedia-root": {
 		width: 150,
+		height: 225,
 	},
 }));

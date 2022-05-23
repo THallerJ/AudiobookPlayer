@@ -35,6 +35,7 @@ const Login = () => {
 						}}
 						startIcon={<GoogleIcon />}
 						variant="contained"
+						aria-label="Login with Google"
 					>
 						Login with Google
 					</Button>

@@ -54,14 +54,15 @@ const MediaPlayer = () => {
 					</Typography>
 				</Grid>
 				<Grid item xs={4} sm={5} align="center">
-					<IconButton onClick={previousTrack}>
+					<IconButton onClick={previousTrack} aria-label="Previous Track">
 						<PreviousIcon />
 					</IconButton>
-					<IconButton onClick={seekBackward}>
+					<IconButton onClick={seekBackward} aria-label="Go back five seconds">
 						<Replay5Icon />
 					</IconButton>
 					<IconButton
 						onClick={() => (initializedFlag ? togglePlay() : resumePlayback())}
+						aria-label="Toggle play"
 					>
 						{isPlaying ? (
 							<PauseIcon fontSize="large" />
@@ -69,10 +70,13 @@ const MediaPlayer = () => {
 							<PlayIcon fontSize="large" />
 						)}
 					</IconButton>
-					<IconButton onClick={seekForward}>
+					<IconButton
+						onClick={seekForward}
+						aria-label="Go forward five seconds"
+					>
 						<Forward5Icon />
 					</IconButton>
-					<IconButton onClick={nextTrack}>
+					<IconButton onClick={nextTrack} aria-label="Next track">
 						<NextIcon />
 					</IconButton>
 				</Grid>
@@ -83,11 +87,17 @@ const MediaPlayer = () => {
 					justifyContent="flex-end"
 					sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
 				>
-					<IconButton onClick={decreaseRate}>
+					<IconButton
+						onClick={decreaseRate}
+						aria-label="Decrease playback rate"
+					>
 						<RemoveIcon fontSize="small" />
 					</IconButton>
 					<Chip variant="outlined" label={`${rate.toFixed(2)}x`} />
-					<IconButton onClick={increaseRate}>
+					<IconButton
+						onClick={increaseRate}
+						aria-label="Increase playback rate"
+					>
 						<AddIcon fontSize="small" />
 					</IconButton>
 				</Grid>
@@ -102,6 +112,7 @@ const MediaPlayer = () => {
 						disabled={sound ? false : true}
 						value={progress}
 						onChangeCommitted={(e, v) => handleSeek(v)}
+						aria-label="Progress"
 					/>
 					<Typography
 						variant="caption"
@@ -118,6 +129,7 @@ const MediaPlayer = () => {
 				>
 					<IconButton
 						onClick={toggleMute}
+						aria-label="Toggle mute"
 						sx={{ pr: theme.spacing(1), pt: theme.spacing(0) }}
 					>
 						{isMuted ? (
@@ -135,6 +147,7 @@ const MediaPlayer = () => {
 						size="small"
 						valueLabelDisplay="auto"
 						value={volume}
+						aria-label="Volume"
 					/>
 				</Grid>
 			</Grid>

@@ -51,6 +51,7 @@ const Dashboard = () => {
 							edge="end"
 							sx={{ marginLeft: "auto" }}
 							onClick={handleOpenMenu}
+							aria-label="menu"
 						>
 							<MoreVert />
 						</IconButton>
@@ -64,6 +65,7 @@ const Dashboard = () => {
 						<IconButton
 							color="inherit"
 							edge="start"
+							aria-label="Toggle drawer"
 							onClick={() => setOpenDrawer(true)}
 						>
 							<MenuIcon />
@@ -75,6 +77,7 @@ const Dashboard = () => {
 							edge="end"
 							sx={{ marginLeft: "auto" }}
 							onClick={handleOpenMenu}
+							aria-label="menu"
 						>
 							<MoreVert />
 						</IconButton>
