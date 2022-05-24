@@ -177,7 +177,7 @@ async function getBookCover(bookTitle, accessToken) {
 						const meetsThreshold = bookRatingsCount >= ratingThreshold;
 
 						if (isSameTitle && meetsThreshold) {
-							coverImageUrl = imageLinks.thumbnail;
+							coverImageUrl = imageLinks.thumbnail.replace("http", "https");
 							loop = false;
 							return false;
 						}
@@ -189,7 +189,7 @@ async function getBookCover(bookTitle, accessToken) {
 						if (isSimilarTitle || (isSameTitle && !meetsThreshold)) {
 							if (bookRatingsCount > highestRatingsCount && !matchFound) {
 								if (isSameTitle) matchFound = true;
-								coverImageUrl = imageLinks.thumbnail;
+								coverImageUrl = imageLinks.thumbnail.replace("http", "https");
 								highestRatingsCount = bookRatingsCount;
 							}
 
