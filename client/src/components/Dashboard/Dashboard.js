@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import {
 	Typography,
 	Hidden,
@@ -11,15 +11,18 @@ import {
 	LinearProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Sidebar from "./Sidebar";
 import Body from "./Body";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { useApp } from "../../contexts/AppContext";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
 import { useGoogle } from "../../contexts/GoogleContext";
-import FolderSelectDialog from "../Dialogs/FolderSelectDialog";
 import Div100vh from "react-div-100vh";
+
+const FolderSelectDialog = React.lazy(() =>
+	import("../Dialogs/FolderSelectDialog")
+);
+const Sidebar = React.lazy(() => import("./Sidebar"));
 
 const Dashboard = () => {
 	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
@@ -48,6 +51,7 @@ const Dashboard = () => {
 							edge="end"
 							sx={{ marginLeft: "auto" }}
 							onClick={handleOpenMenu}
+							aria-label="menu"
 						>
 							<MoreVert />
 						</IconButton>
@@ -61,6 +65,7 @@ const Dashboard = () => {
 						<IconButton
 							color="inherit"
 							edge="start"
+							aria-label="Toggle drawer"
 							onClick={() => setOpenDrawer(true)}
 						>
 							<MenuIcon />
@@ -72,6 +77,7 @@ const Dashboard = () => {
 							edge="end"
 							sx={{ marginLeft: "auto" }}
 							onClick={handleOpenMenu}
+							aria-label="menu"
 						>
 							<MoreVert />
 						</IconButton>
@@ -85,7 +91,9 @@ const Dashboard = () => {
 	return (
 		<Div100vh>
 			<StyledDashboardContainer>
-				<Sidebar />
+				<Suspense fallback={null}>
+					<Sidebar />
+				</Suspense>
 				{appBar}
 				<div
 					className={
@@ -135,7 +143,9 @@ const Dashboard = () => {
 						Log Out
 					</MenuItem>
 				</Menu>
-				<FolderSelectDialog />
+				<Suspense fallback={null}>
+					<FolderSelectDialog />
+				</Suspense>
 			</StyledDashboardContainer>
 		</Div100vh>
 	);

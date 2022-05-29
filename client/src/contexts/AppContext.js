@@ -31,7 +31,7 @@ export const AppContextProvider = ({ children }) => {
 	const [theme, setTheme] = useState(lightTheme);
 	const [axiosError, setAxiosError] = useState();
 	const [rootUpdated, setRootUpdated] = useState(false);
-	const [serverHostName, setServerHostName] = useState();
+	const [serverUrl, setServerUrl] = useState();
 
 	useMemo(() => {
 		axiosInstance.interceptors.response.use(
@@ -85,7 +85,7 @@ export const AppContextProvider = ({ children }) => {
 	}, [authentication]);
 
 	useEffect(() => {
-		getHostName();
+		getServerUrl();
 	}, []);
 
 	const checkAuthentication = useCallback(async () => {
@@ -102,13 +102,9 @@ export const AppContextProvider = ({ children }) => {
 		setRootUpdated((prevState) => !prevState);
 	}, [setGoogleDirectoryExists]);
 
-	async function getHostName() {
-		if (process.env.REACT_APP_SERVER_URL) {
-			setServerHostName(process.env.REACT_APP_SERVER_URL);
-		} else {
-			const hostname = await axiosInstance.get("/general/hostname");
-			setServerHostName(`https://${hostname.data}`);
-		}
+	async function getServerUrl() {
+		const url = await axiosInstance.get("/general/serverUrl");
+		setServerUrl(url.data);
 	}
 
 	const value = {
@@ -124,7 +120,7 @@ export const AppContextProvider = ({ children }) => {
 		setAxiosError,
 		rootUpdated,
 		setRootUpdated,
-		serverHostName,
+		serverUrl,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

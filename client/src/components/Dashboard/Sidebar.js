@@ -8,6 +8,7 @@ import {
 	Divider,
 	Hidden,
 	Tooltip,
+	ListItemButton,
 } from "@mui/material";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { styled } from "@mui/material/styles";
@@ -49,11 +50,10 @@ const Sidebar = () => {
 									enterDelay={1000}
 									key={chapter.id}
 								>
-									<ListItem
+									<ListItemButton
 										className={generateListItemClassName(chapter)}
 										divider={true}
 										dense={true}
-										button={true}
 										onClick={() => {
 											setPlayingChapter({ data: chapter, index: index });
 											setPlayingBook(currentBook);
@@ -63,7 +63,7 @@ const Sidebar = () => {
 											primary={chapter.name}
 											primaryTypographyProps={{ noWrap: true }}
 										/>
-									</ListItem>
+									</ListItemButton>
 								</Tooltip>
 							);
 					  })

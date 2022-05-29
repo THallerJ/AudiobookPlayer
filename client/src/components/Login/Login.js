@@ -6,7 +6,7 @@ import { useApp } from "../../contexts/AppContext";
 
 const Login = () => {
 	const theme = useTheme();
-	const { serverHostName } = useApp();
+	const { serverUrl } = useApp();
 
 	return (
 		<Grid
@@ -31,10 +31,11 @@ const Login = () => {
 				<Grid item>
 					<Button
 						onClick={async () => {
-							window.open(`${serverHostName}/auth/google`, "_self");
+							window.open(`${serverUrl}/auth/google`, "_self");
 						}}
 						startIcon={<GoogleIcon />}
 						variant="contained"
+						aria-label="Login with Google"
 					>
 						Login with Google
 					</Button>

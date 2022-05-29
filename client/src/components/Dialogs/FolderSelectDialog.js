@@ -163,10 +163,15 @@ const FolderSelectDialog = () => {
 							setOpenRootDialog(false);
 						}}
 						variant="text"
+						aria-label="Ok"
 					>
 						OK
 					</Button>
-					<Button onClick={() => setOpenRootDialog(false)} variant="text">
+					<Button
+						onClick={() => setOpenRootDialog(false)}
+						variant="text"
+						aria-label="Cancel"
+					>
 						Cancel
 					</Button>
 				</DialogActions>

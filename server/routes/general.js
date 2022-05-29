@@ -3,6 +3,6 @@ var router = express.Router();
 require("dotenv").config();
 const generalController = require("../controllers/generalController");
 
-router.get("/hostname", generalController.getHostname);
+router.get("/serverUrl", generalController.getServerUrl);
 
 module.exports = router;

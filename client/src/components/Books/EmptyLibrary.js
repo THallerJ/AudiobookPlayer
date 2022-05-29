@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Typography, Button, Box, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { useApp } from "../../contexts/AppContext";
 import { useGoogle } from "../../contexts/GoogleContext";
-import TutorialDialog from "../Dialogs/TutorialDialog";
+
+const TutorialDialog = React.lazy(() => import("../Dialogs/TutorialDialog"));
 
 const EmptyLibrary = () => {
 	const { googleDirectoryExists } = useApp();
@@ -34,17 +35,25 @@ const EmptyLibrary = () => {
 						</Typography>
 					)}
 					<Box className="btnContainer">
-						<Button onClick={() => setOpenRootDialog(true)}>
+						<Button
+							onClick={() => setOpenRootDialog(true)}
+							aria-label="Set drive directory"
+						>
 							Set Drive Directory
 						</Button>
-						<Button onClick={() => setOpenTutorialDialog(true)}>
+						<Button
+							onClick={() => setOpenTutorialDialog(true)}
+							aria-label="Tutorial"
+						>
 							Tutorial
 						</Button>
 					</Box>
-					<TutorialDialog
-						open={openTutorialDialog}
-						setOpen={setOpenTutorialDialog}
-					/>
+					<Suspense fallback={null}>
+						<TutorialDialog
+							open={openTutorialDialog}
+							setOpen={setOpenTutorialDialog}
+						/>
+					</Suspense>
 				</div>
 			);
 		}
