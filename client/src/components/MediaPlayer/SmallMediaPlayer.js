@@ -26,7 +26,11 @@ const SmallMediaPlayer = () => {
 
 	return (
 		<div>
-			<LinearProgress variant="determinate" value={progressPercent} />
+			<LinearProgress
+				variant="determinate"
+				value={progressPercent}
+				aria-label="Progress"
+			/>
 			<StyledMediaPlayerContainer
 				onClick={() => {
 					if (playingBook) setShowTrackController((prevState) => !prevState);
