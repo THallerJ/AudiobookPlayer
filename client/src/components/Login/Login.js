@@ -1,8 +1,8 @@
 import React from "react";
-import { Button, Grid, Typography } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
+import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useApp } from "../../contexts/AppContext";
+import GoogleButton from "react-google-button";
 
 const Login = () => {
 	const theme = useTheme();
@@ -29,16 +29,12 @@ const Login = () => {
 					</Typography>
 				</Grid>
 				<Grid item>
-					<Button
+					<GoogleButton
 						onClick={async () => {
 							window.open(`${serverUrl}/auth/google`, "_self");
 						}}
-						startIcon={<GoogleIcon />}
-						variant="contained"
-						aria-label="Login with Google"
-					>
-						Login with Google
-					</Button>
+						aria-label="Sign in with Google"
+					/>
 				</Grid>
 			</Grid>
 		</Grid>
