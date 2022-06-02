@@ -56,12 +56,22 @@ async function notifyClientActive(req, res) {
 	res.status(200).send();
 }
 
+async function revokeAccess(accessToken) {
+	axios.get("https://accounts.google.com/o/oauth2/revoke", {
+		params: {
+			token: accessToken,
+		},
+	});
+}
+
 async function logout(req, res) {
-	const googleId = req.authUser.googleId;
+	const authUser = req.authUser;
 
 	try {
-		dbUtils.deleteAllChapterProgress(googleId);
-		await User.deleteOne({ googleId: googleId });
+		dbUtils.deleteAllChapterProgress(authUser.googleId);
+		await User.deleteOne({ googleId: authUser.googleId });
+
+		revokeAccess(authUser.accessToken);
 
 		req.logout();
 		res.status(200).send();
