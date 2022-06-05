@@ -1,8 +1,9 @@
 import React, { Suspense, useEffect } from "react";
 import Login from "./components/Login/Login.js";
-import LoginPrivateRoute from "./components/Login/LoginPrivateRoute";
+import AuthPrivateRoute from "./components/Login/AuthPrivateRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Dashboard from "./components/Dashboard/Dashboard";
+import About from "./components/Dashboard/About";
 import {
 	CircularProgress,
 	Box,
@@ -10,7 +11,7 @@ import {
 	Snackbar,
 	Alert,
 } from "@mui/material";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { DashboardContextProvider } from "./contexts/DashboardContext";
 import { GoogleContextProvider } from "./contexts/GoogleContext";
@@ -69,22 +70,34 @@ function App() {
 							<Router>
 								<Route
 									exact
-									path="/login"
+									path="/about"
 									render={() => (
+										<Suspense fallback={null}>
+											<About />
+										</Suspense>
+									)}
+								/>
+								<AuthPrivateRoute
+									exact
+									path="/login"
+									redirect="/"
+									doRedirect={authentication.isAuthenticated}
+									component={() => (
 										<Suspense fallback={null}>
 											<Login />
 										</Suspense>
 									)}
 								/>
-								<LoginPrivateRoute
+								<AuthPrivateRoute
 									exact
 									path="/"
+									redirect="/login"
+									doRedirect={!authentication.isAuthenticated}
 									component={() => (
 										<Suspense fallback={null}>
 											<Dashboard />
 										</Suspense>
 									)}
-									isAuthenticated={authentication.isAuthenticated}
 								/>
 							</Router>
 						) : (
