@@ -21,8 +21,10 @@
 		"start": "node server",
 		"dev": "nodemon server",
 		"create": "npm install && cd client && npm install && npm run build && cd .. && npm run start",
-		"create-dev": "npm install && cd client && npm install && npm run build && cd .. && npm run dev",
-		"heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
+		"heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
+		"install-deps": "npm install && cd client && npm install",
+		"build": "cd client && npm run build",
+		"watch": "cd client && npm run watch"
 	},
 	"keywords": [],
 	"author": "",
