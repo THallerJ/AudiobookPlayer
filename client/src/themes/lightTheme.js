@@ -15,6 +15,10 @@ const lightTheme = createTheme({
 			dark: "#6e6e6e",
 			contrastText: "#000",
 		},
+		background: {
+			alt: "#e1e1e1",
+			container: "white",
+		},
 	},
 });
 
