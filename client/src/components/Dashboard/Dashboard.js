@@ -18,6 +18,7 @@ import MoreVert from "@mui/icons-material/MoreVert";
 import { styled, useTheme } from "@mui/material/styles";
 import { useGoogle } from "../../contexts/GoogleContext";
 import Div100vh from "react-div-100vh";
+import { useHistory } from "react-router-dom";
 
 const FolderSelectDialog = React.lazy(() =>
 	import("../Dialogs/FolderSelectDialog")
@@ -25,10 +26,12 @@ const FolderSelectDialog = React.lazy(() =>
 const Sidebar = React.lazy(() => import("./Sidebar"));
 
 const Dashboard = () => {
+	const theme = useTheme();
+	const history = useHistory();
+
 	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
 	const { toggleDarkMode } = useApp();
 	const [anchorEl, setAnchorEl] = useState(null);
-	const theme = useTheme();
 	const { refreshLibrary, logout, isLoadingRefresh } = useGoogle();
 
 	function handleOpenMenu(event) {
@@ -133,6 +136,13 @@ const Dashboard = () => {
 						}}
 					>
 						Toggle Dark Mode
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							history.push("/about");
+						}}
+					>
+						App Information
 					</MenuItem>
 					<MenuItem
 						onClick={() => {
