@@ -5,6 +5,6 @@ const googleController = require("../controllers/googleController");
 
 router.get("/folders", googleController.folders);
 router.get("/library", googleController.library);
-router.get("/stream/:id", googleController.stream);
+router.get("/stream/:id", googleController.streamProxy);
 
 module.exports = router;

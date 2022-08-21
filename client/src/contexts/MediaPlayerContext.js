@@ -135,6 +135,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				return new Howl({
 					src: [`${serverUrl}/google/stream/${playingChapter.data.id}`],
 					html5: true,
+					format: [".mp3", ".m4a", ".aac", ".ogg"],
 					preload: true,
 					volume: 0.5,
 					rate: rateRef.current,
@@ -145,16 +146,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				});
 			});
 		}
-	}, [
-		setDuration,
-		setIsPlaying,
-		playingChapter,
-		setResumeFlag,
-		playingBook,
-		setInitializedFlag,
-		rateRef,
-		serverUrl,
-	]);
+	}, [playingChapter, playingBook, rateRef, serverUrl]);
 
 	useEffectSkipFirst(() => {
 		if (sound && initializedFlag) {
@@ -163,15 +155,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			setIsMuted(false);
 			sound.play();
 		}
-	}, [
-		sound,
-		setVolume,
-		setIsMuted,
-		setProgress,
-		setIsPlaying,
-		initializedFlag,
-		refreshFlagRef,
-	]);
+	}, [sound, initializedFlag, refreshFlagRef]);
 
 	useEffectSkipFirst(() => {
 		// handles when root directory is changed

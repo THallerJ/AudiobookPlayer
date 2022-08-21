@@ -3,8 +3,8 @@ import BookList from "../Books/BookList";
 import { Box } from "@mui/system";
 import { Paper, Hidden, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
 import { useDashboard } from "../../contexts/DashboardContext";
+import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
 
 const TrackController = React.lazy(() =>
 	import("../MediaPlayer/TrackController")

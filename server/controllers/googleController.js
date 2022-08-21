@@ -2,6 +2,19 @@ require("dotenv").config();
 const axios = require("axios");
 require("dotenv").config();
 const ColorThief = require("colorthief");
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
+const streamProxy = createProxyMiddleware({
+	target: "https://www.googleapis.com",
+	changeOrigin: true,
+	pathRewrite: (path, req) => {
+		const fileId = req.params.id;
+		return path.replace(
+			`/google/stream/${fileId}`,
+			`/drive/v3/files/${fileId}/?key=${process.env.GOOGLE_API_KEY}&alt=media`
+		);
+	},
+});
 
 async function folders(req, res) {
 	const user = req.authUser;
@@ -21,18 +34,6 @@ async function folders(req, res) {
 		);
 
 		res.send(response.data.files);
-	} catch (error) {
-		res.status(error.response.status).send();
-	}
-}
-
-async function stream(req, res) {
-	const fileId = req.params.id;
-
-	try {
-		const trackUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/?key=${process.env.GOOGLE_API_KEY}&alt=media`;
-
-		res.redirect(302, trackUrl);
 	} catch (error) {
 		res.status(error.response.status).send();
 	}
@@ -255,5 +256,5 @@ function rgbToHex(r, g, b) {
 module.exports = {
 	folders,
 	library,
-	stream,
+	streamProxy,
 };

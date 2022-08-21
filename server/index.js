@@ -42,9 +42,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoute);
-app.use("/google", authMiddleware.isAuthenticated, googleRoute);
 app.use("/user", authMiddleware.isAuthenticated, userRoute);
 app.use("/general", generalRoute);
+app.use("/google", authMiddleware.isAuthenticated, googleRoute);
 
 app.use("*", expressStaticGzip(dist));
 

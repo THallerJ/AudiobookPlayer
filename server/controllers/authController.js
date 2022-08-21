@@ -57,11 +57,15 @@ async function notifyClientActive(req, res) {
 }
 
 async function revokeAccess(accessToken) {
-	await axios.get("https://accounts.google.com/o/oauth2/revoke", {
-		params: {
-			token: accessToken,
-		},
-	});
+	try {
+		await axios.get("https://accounts.google.com/o/oauth2/revoke", {
+			params: {
+				token: accessToken,
+			},
+		});
+	} catch (error) {
+		return error;
+	}
 }
 
 async function logout(req, res) {
@@ -72,12 +76,22 @@ async function logout(req, res) {
 		await User.deleteOne({ googleId: authUser.googleId });
 
 		await revokeAccess(authUser.accessToken);
-
-		req.logout();
-		res.status(200).send();
 	} catch (error) {
-		res.status(500).send();
+		if (error.response.status !== 400) {
+			res.status(error.response.status).send();
+		}
 	}
+
+	await req.logout((err) => {
+		if (err) return next(err);
+	});
+	req.session.destroy((err) => {
+		if (!err) {
+			res.status(200).clearCookie("connect.sid").send();
+		} else {
+			res.status(500).send();
+		}
+	});
 }
 
 module.exports = {
