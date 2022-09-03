@@ -73,9 +73,8 @@ async function logout(req, res) {
 
 	try {
 		dbUtils.deleteAllChapterProgress(authUser.googleId);
-		await User.deleteOne({ googleId: authUser.googleId });
-
 		await revokeAccess(authUser.accessToken);
+		await User.deleteOne({ googleId: authUser.googleId });
 	} catch (error) {
 		if (error.response.status !== 400) {
 			res.status(error.response.status).send();
