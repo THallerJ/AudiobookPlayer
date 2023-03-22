@@ -16,7 +16,34 @@ const streamProxy = createProxyMiddleware({
 	},
 });
 
-async function folders(req, res) {
+const fetchBooks = async (accessToken, directory) => {
+	const resp = await axios.get("https://www.googleapis.com/drive/v3/files", {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+		},
+		params: {
+			q: `\"${directory}\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
+		},
+	});
+
+	return resp;
+};
+
+const fetchChapters = async (accessToken, bookId) => {
+	const resp = await axios.get("https://www.googleapis.com/drive/v3/files", {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+		},
+		params: {
+			q: `\"${bookId}\" in parents and trashed = false`,
+			fields: "files(id, name)",
+		},
+	});
+
+	return resp;
+};
+
+const fetchFolders = async (req, res) => {
 	const user = req.authUser;
 	const directory = req.query.directory ? req.query.directory : "root";
 
@@ -35,53 +62,95 @@ async function folders(req, res) {
 
 		res.send(response.data.files);
 	} catch (error) {
-		res.status(error.response.status).send();
+		res
+			.status(error.response.status)
+			.send({ error: "There was a problem loading the folders" });
 	}
-}
+};
 
-async function library(req, res) {
+const fetchBookCovers = async (
+	accessToken,
+	bookTitle,
+	startIndex,
+	maxResults
+) => {
+	const resp = await axios.get("https://www.googleapis.com/books/v1/volumes", {
+		params: {
+			q: `title:${bookTitle}`,
+			orderBy: "relevance",
+			fields: "items(volumeInfo(imageLinks/thumbnail))",
+			startIndex: startIndex,
+			maxResults: maxResults,
+			accessToken: accessToken,
+		},
+	});
+
+	return resp;
+};
+
+// return an array of book covers
+const getBookCovers = async (req, res) => {
+	try {
+		const accessToken = req.authUser.accessToken;
+		const title = req.query.title;
+		const page = req.query.page;
+		const maxResults = 15;
+		const startIndex = page * maxResults;
+
+		const response = await fetchBookCovers(
+			accessToken,
+			title,
+			startIndex,
+			maxResults
+		);
+
+		const didFindCovers = response.data && response.data.items;
+
+		if (didFindCovers) {
+			response.data.items.forEach((item) => {
+				const thumbnail = item.volumeInfo.imageLinks.thumbnail;
+				item.volumeInfo.imageLinks.thumbnail = thumbnail.replace(
+					"http",
+					"https"
+				);
+			});
+		}
+
+		res.status(200).send(didFindCovers ? response.data.items : []);
+	} catch (error) {
+		res
+			.status(error.response.status)
+			.send({ error: "There was a problem retrieving the book covers" });
+	}
+};
+
+// returns one book cover
+const getBookCover = async (bookTitle, accessToken) => {
+	const imageResp = await fetchBookCovers(accessToken, bookTitle, 0, 1);
+
+	if (imageResp.data && imageResp.data.items && imageResp.data.items.length) {
+		const links = imageResp.data.items[0].volumeInfo.imageLinks;
+		return links.thumbnail.replace("http", "https");
+	}
+
+	return null;
+};
+
+const getLibrary = async (req, res) => {
 	const user = req.authUser;
 	const directory = user.rootId;
 
 	if (directory) {
 		try {
-			const bookResp = await axios.get(
-				"https://www.googleapis.com/drive/v3/files",
-				{
-					headers: {
-						Authorization: `Bearer ${user.accessToken}`,
-					},
-					params: {
-						q: `\"${directory}\" in parents and mimeType=\"application/vnd.google-apps.folder\" and trashed = false`,
-					},
-				}
-			);
-
+			const bookResp = await fetchBooks(user.accessToken, directory);
 			const library = [];
 
 			await Promise.all(
 				bookResp.data.files.map(async (book) => {
-					const chapResp = await axios.get(
-						"https://www.googleapis.com/drive/v3/files",
-						{
-							headers: {
-								Authorization: `Bearer ${user.accessToken}`,
-							},
-							params: {
-								q: `\"${book.id}\" in parents and trashed = false`,
-								fields: "files(id, name)",
-							},
-						}
-					);
-
+					const chapResp = await fetchChapters(user.accessToken, book.id);
 					const chapters = [];
 
-					const sortedChaps = chapResp.data.files.sort((chap1, chap2) => {
-						const num1 = extractLastNumber(chap1.name);
-						const num2 = extractLastNumber(chap2.name);
-
-						return num1 && num2 ? num1 - num2 : 0;
-					});
+					const sortedChaps = sortChapters(chapResp.data.files);
 
 					sortedChaps.forEach((chap) => {
 						const chapter = {
@@ -107,112 +176,28 @@ async function library(req, res) {
 					library.push(tempBook);
 				})
 			);
-
 			res.status(200).send(library);
 		} catch (error) {
-			res.status(error.response.status).send();
+			res
+				.status(error.response.status)
+				.send({ error: "There was a problem loading the library" });
 		}
 	} else {
 		res.status(200).send([]);
 	}
-}
+};
 
-async function getBookCover(bookTitle, accessToken) {
-	try {
-		var coverImageUrl = null;
-		const maxResults = 40;
-		var startIndex = 0;
-		var loop = true;
-		var highestRatingsCount = -Infinity;
-		const ratingThreshold = 10;
-		var matchFound = false;
+const sortChapters = (chaps) => {
+	return chaps.sort((chap1, chap2) => {
+		const num1 = extractLastNumber(chap1.name);
+		const num2 = extractLastNumber(chap2.name);
 
-		while (loop) {
-			const imageResp = await axios.get(
-				"https://www.googleapis.com/books/v1/volumes",
-				{
-					params: {
-						q: `title="${bookTitle}"`,
-						orderBy: "relevance",
-						fields:
-							"items(volumeInfo(ratingsCount, imageLinks/thumbnail, title))",
-						maxResults: maxResults,
-						startIndex: startIndex,
-						accessToken: accessToken,
-					},
-				}
-			);
+		return num1 && num2 ? num1 - num2 : 0;
+	});
+};
 
-			startIndex += maxResults;
-
-			const items = imageResp.data.items;
-
-			if (items && items.length) {
-				const sortedItems = items.length
-					? items.sort((a, b) => {
-							const ratingsA = a.volumeInfo.ratingsCount;
-							const ratingsB = b.volumeInfo.ratingsCount;
-
-							const valA =
-								typeof ratingsA == "undefined" ? -Infinity : ratingsA;
-							const valB =
-								typeof ratingsB == "undefined" ? -Infinity : ratingsB;
-							return valB - valA;
-					  })
-					: null;
-
-				sortedItems.every((elem, i) => {
-					const imageLinks = sortedItems[i].volumeInfo.imageLinks;
-
-					if (imageLinks) {
-						const isSameTitle =
-							bookTitle.localeCompare(
-								sortedItems[i].volumeInfo.title,
-								undefined,
-								{
-									sensitivity: "accent",
-								}
-							) === 0;
-
-						const bookRatingsCount = sortedItems[i].volumeInfo.ratingsCount;
-						const meetsThreshold = bookRatingsCount >= ratingThreshold;
-
-						if (isSameTitle && meetsThreshold) {
-							coverImageUrl = imageLinks.thumbnail.replace("http", "https");
-							loop = false;
-							return false;
-						}
-
-						const isSimilarTitle =
-							sortedItems[i].volumeInfo.title.includes(bookTitle) ||
-							bookTitle.includes(sortedItems[i].volumeInfo.title);
-
-						if (isSimilarTitle || (isSameTitle && !meetsThreshold)) {
-							if (bookRatingsCount > highestRatingsCount && !matchFound) {
-								if (isSameTitle) matchFound = true;
-								coverImageUrl = imageLinks.thumbnail.replace("http", "https");
-								highestRatingsCount = bookRatingsCount;
-							}
-
-							return true;
-						}
-					}
-
-					return true;
-				});
-			} else {
-				loop = false;
-			}
-		}
-	} catch (error) {
-		return error;
-	}
-
-	return coverImageUrl;
-}
-
-async function getImageColors(imageUrl) {
-	var hexColors = [];
+const getImageColors = async (imageUrl) => {
+	let hexColors = [];
 
 	if (imageUrl) {
 		const colors = await ColorThief.getPalette(imageUrl, 2);
@@ -225,12 +210,12 @@ async function getImageColors(imageUrl) {
 	}
 
 	return hexColors;
-}
+};
 
 /* returns last integer in a string, not including integers that appear 
    after a period to account for integers that appear in file extensions (i.e. .mp3) */
-function extractLastNumber(a) {
-	var numStr;
+const extractLastNumber = (a) => {
+	let numStr;
 
 	if (a.includes(".")) {
 		numStr = a.substr(0, a.indexOf(".")).match(/\d+$/);
@@ -239,22 +224,23 @@ function extractLastNumber(a) {
 	}
 
 	return numStr ? parseInt(numStr[0]) : null;
-}
+};
 
-function rgbToHex(r, g, b) {
-	return (
-		"#" +
-		[r, g, b]
-			.map((x) => {
-				const hex = x.toString(16);
-				return hex.length === 1 ? "0" + hex : hex;
-			})
-			.join("")
-	);
-}
+const rgbToHex = (r, g, b) => {
+	const rgb = [r, g, b];
+	const hex = ["#"];
+
+	rgb.forEach((color) => {
+		const hexValue = color.toString(16);
+		hex.push(hexValue.length === 1 ? "0" + hexValue : hexValue);
+	});
+
+	return hex.join("");
+};
 
 module.exports = {
-	folders,
-	library,
+	fetchFolders,
+	getLibrary,
 	streamProxy,
+	getBookCovers,
 };

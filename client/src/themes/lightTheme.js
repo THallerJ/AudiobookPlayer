@@ -4,10 +4,18 @@ const lightTheme = createTheme({
 	drawer: {
 		width: 240,
 	},
+	scrollbar: {
+		width: 12,
+		smallWidth: 4,
+	},
 	palette: {
+		mode: "light",
 		scrollbar: {
-			thumb: "#c3c3c3",
-			track: "#f4f4f4",
+			thumb: "#8e8e93",
+			thumbAlt: "#c7c7cc",
+		},
+		primary: {
+			main: "#787aff",
 		},
 		secondary: {
 			light: "#b1b1b1",
@@ -16,8 +24,20 @@ const lightTheme = createTheme({
 			contrastText: "#000",
 		},
 		background: {
-			alt: "#e1e1e1",
-			container: "white",
+			default: "#F2F2F7FF",
+			paper: "#FFFFFFFF",
+			alt: "#F2F2F7FF",
+			container: "#FFFFFFFF",
+		},
+	},
+	components: {
+		MuiAppBar: {
+			styleOverrides: {
+				colorPrimary: {
+					backgroundColor: "white",
+					color: "black",
+				},
+			},
 		},
 	},
 });

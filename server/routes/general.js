@@ -1,5 +1,5 @@
 const express = require("express");
-var router = express.Router();
+const router = express.Router();
 require("dotenv").config();
 const generalController = require("../controllers/generalController");
 

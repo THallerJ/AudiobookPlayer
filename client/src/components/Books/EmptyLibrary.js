@@ -1,24 +1,30 @@
 import React, { useState, Suspense } from "react";
-import { Typography, Button, Box, CircularProgress } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import {
+	Typography,
+	Button,
+	Box,
+	CircularProgress,
+	styled,
+} from "@mui/material";
 import { useDashboard } from "../../contexts/DashboardContext";
-import { useApp } from "../../contexts/AppContext";
 import { useGoogle } from "../../contexts/GoogleContext";
+import { useApp } from "../../contexts/AppContext";
+import CenterWrapper from "../styled_components/CenterWrapper";
 
-const TutorialDialog = React.lazy(() => import("../Dialogs/TutorialDialog"));
+const TutorialDialog = React.lazy(() => import("../dialogs/TutorialDialog"));
 
 const EmptyLibrary = () => {
 	const { googleDirectoryExists } = useApp();
-	const { setOpenRootDialog, isFolderSelected } = useDashboard();
-	const [openTutorialDialog, setOpenTutorialDialog] = useState(false);
+	const { setOpenFolderDialog } = useDashboard();
 	const { isLoadingLibrary } = useGoogle();
+	const [openTutorialDialog, setOpenTutorialDialog] = useState(false);
 
-	function renderBody() {
-		if (isLoadingLibrary || isFolderSelected) {
+	const renderBody = () => {
+		if (isLoadingLibrary) {
 			return (
-				<Box className="centerProgress">
+				<CenterWrapper>
 					<CircularProgress />
-				</Box>
+				</CenterWrapper>
 			);
 		} else {
 			return (
@@ -29,14 +35,14 @@ const EmptyLibrary = () => {
 							organized properly.
 						</Typography>
 					) : (
-						<Typography>
+						<Typography align="center">
 							You must select where your where your audiobook library is located
 							on Google Drive.
 						</Typography>
 					)}
 					<Box className="btnContainer">
 						<Button
-							onClick={() => setOpenRootDialog(true)}
+							onClick={() => setOpenFolderDialog(true)}
 							aria-label="Set drive directory"
 						>
 							Set Drive Directory
@@ -57,10 +63,10 @@ const EmptyLibrary = () => {
 				</div>
 			);
 		}
-	}
+	};
 	return (
 		<StyledContainer>
-			<Box className="body">{renderBody()}</Box>
+			<CenterWrapper>{renderBody()}</CenterWrapper>
 		</StyledContainer>
 	);
 };
@@ -70,30 +76,15 @@ export default EmptyLibrary;
 // Styled Components
 const StyledContainer = styled(Box)(({ theme }) => ({
 	height: "60vh",
-	padding: theme.spacing(3),
+	padding: theme.spacing(4),
 	display: "flex",
 	flexDirection: "column",
 	alignItems: "center",
 	justifyContent: "center",
 
-	".body": {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-
 	".btnContainer": {
 		display: "flex",
-		alignItems: "center",
 		justifyContent: "center",
 		paddingTop: theme.spacing(1),
-	},
-
-	".centerProgress": {
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		height: "90%",
 	},
 }));

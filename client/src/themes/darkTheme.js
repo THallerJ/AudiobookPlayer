@@ -4,15 +4,17 @@ const darkTheme = createTheme({
 	drawer: {
 		width: 240,
 	},
+	scrollbar: {
+		width: 12,
+		smallWidth: 4,
+	},
 	palette: {
 		mode: "dark",
 		scrollbar: {
 			thumb: "#6b6b6b",
 		},
 		primary: {
-			dark: "#2f60b2",
-			main: "#448aff",
-			light: "#69a1ff",
+			main: "#64D2FFFF",
 		},
 		secondary: {
 			dark: "#2d2d2d",
@@ -20,10 +22,19 @@ const darkTheme = createTheme({
 			light: "#5d5d5d",
 		},
 		background: {
-			default: "#434549",
-			paper: "#14171c",
-			alt: "#202023",
-			container: "#57585b",
+			default: "#1C1C1EFF",
+			paper: "#000000FF",
+			alt: "#1C1C1EFF",
+			container: "#2C2C2EFF",
+		},
+	},
+	components: {
+		MuiAppBar: {
+			styleOverrides: {
+				colorPrimary: {
+					backgroundImage: "unset",
+				},
+			},
 		},
 	},
 });

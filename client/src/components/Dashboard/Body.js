@@ -1,22 +1,88 @@
-import React, { Suspense } from "react";
-import BookList from "../Books/BookList";
-import { Box } from "@mui/system";
-import { Paper, Hidden, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import React, { Suspense, useState, useEffect } from "react";
+import {
+	Paper,
+	Hidden,
+	useMediaQuery,
+	CircularProgress,
+	Box,
+	useTheme,
+} from "@mui/material";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
+import Book from "../books/Book";
+import BookCoverList from "../books/BookCoverList";
+import { useGoogle } from "../../contexts/GoogleContext";
+import CenterWrapper from "../styled_components/CenterWrapper";
+import SmallMediaPlayer from "../media_player/SmallMediaPlayer";
+import MediaPlayer from "../media_player/MediaPlayer";
 
+const EmptyLibrary = React.lazy(() => import("../books/EmptyLibrary"));
 const TrackController = React.lazy(() =>
-	import("../MediaPlayer/TrackController")
+	import("../media_player/TrackController")
 );
-const SmallMediaPlayer = React.lazy(() =>
-	import("../MediaPlayer/SmallMediaPlayer")
-);
-const MediaPlayer = React.lazy(() => import("../MediaPlayer/MediaPlayer"));
 
 const Body = () => {
 	const theme = useTheme();
+	const { library, isLoadingLibrary } = useGoogle();
 	const { showTrackController } = useDashboard();
+	const [bookCovers, setBookCovers] = useState([]);
+	const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
+
+	useEffect(() => {
+		const temp = [];
+
+		library.forEach((book, index) => {
+			const newBookCover = { image: <Book book={book} />, key: book.id };
+			temp.push(newBookCover);
+		});
+
+		setBookCovers(temp);
+	}, [library]);
+
+	const renderMain = (bookCovers) => {
+		if (isLoadingLibrary) {
+			return (
+				<CenterWrapper>
+					<CircularProgress />
+				</CenterWrapper>
+			);
+		} else if (isLargeScreen || !showTrackController) {
+			if (bookCovers && bookCovers.length) {
+				return (
+					<BookCoverList
+						bookCovers={bookCovers}
+						padding={theme.spacing(2)}
+						spacing={theme.spacing(3)}
+					/>
+				);
+			} else {
+				return <EmptyLibrary />;
+			}
+		} else {
+			return (
+				<Suspense fallback={null}>
+					<TrackController />
+				</Suspense>
+			);
+		}
+	};
+
+	const renderMediaPlayer = () => {
+		if (isLargeScreen || !showTrackController) {
+			return (
+				<Box boxShadow={6}>
+					<Paper elevation={0} sx={{ overflow: "hidden", p: 0, m: 0 }}>
+						<Hidden smDown>
+							<MediaPlayer />
+						</Hidden>
+						<Hidden smUp>
+							<SmallMediaPlayer />
+						</Hidden>
+					</Paper>
+				</Box>
+			);
+		} else return null;
+	};
 
 	return (
 		<MediaPlayerContextProvider>
@@ -25,7 +91,7 @@ const Body = () => {
 					height: "100%",
 					display: "flex",
 					flexDirection: "column",
-					overflow: "hidden",
+					justifyContent: "center",
 				}}
 			>
 				<Box
@@ -34,30 +100,9 @@ const Body = () => {
 						overflow: "auto",
 					}}
 				>
-					{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
-						<BookList />
-					) : (
-						<Suspense fallback={null}>
-							<TrackController />
-						</Suspense>
-					)}
+					{renderMain(bookCovers)}
 				</Box>
-				{useMediaQuery(theme.breakpoints.up("sm")) || !showTrackController ? (
-					<Box boxShadow={6}>
-						<Paper elevation={0} sx={{ overflow: "hidden" }}>
-							<Hidden smDown>
-								<Suspense fallback={null}>
-									<MediaPlayer />
-								</Suspense>
-							</Hidden>
-							<Hidden smUp>
-								<Suspense fallback={null}>
-									<SmallMediaPlayer />
-								</Suspense>
-							</Hidden>
-						</Paper>
-					</Box>
-				) : null}
+				{renderMediaPlayer()}
 			</Box>
 		</MediaPlayerContextProvider>
 	);

@@ -1,7 +1,7 @@
 import React from "react";
 import {
+	Box,
 	Drawer,
-	ListItem,
 	ListItemText,
 	List,
 	Typography,
@@ -9,21 +9,23 @@ import {
 	Hidden,
 	Tooltip,
 	ListItemButton,
+	useTheme,
+	styled,
 } from "@mui/material";
 import { useDashboard } from "../../contexts/DashboardContext";
-import { styled } from "@mui/material/styles";
 import { useGoogle } from "../../contexts/GoogleContext";
 
 const Sidebar = () => {
+	const theme = useTheme();
 	const { openDrawer, setOpenDrawer } = useDashboard();
 	const { currentBook, setPlayingChapter, playingChapter, setPlayingBook } =
 		useGoogle();
 
-	function handleDrawerClose() {
+	const handleDrawerClose = () => {
 		setOpenDrawer(false);
-	}
+	};
 
-	function generateListItemClassName(chapter) {
+	const generateListItemClassName = (chapter) => {
 		if (playingChapter) {
 			if (!playingChapter.data.id.localeCompare(chapter.id)) {
 				return "playingChapter";
@@ -31,7 +33,7 @@ const Sidebar = () => {
 		}
 
 		return null;
-	}
+	};
 
 	const drawerContent = (
 		<StyledDrawerContent>
@@ -75,24 +77,30 @@ const Sidebar = () => {
 	return (
 		<div>
 			<Hidden mdDown>
-				<Drawer
+				<StyledDrawer
+					className="thing"
 					variant="persistent"
 					anchor="left"
 					open={true}
-					PaperProps={{ component: StyledPaper }}
+					PaperProps={{
+						sx: { width: theme.drawer.width },
+					}}
 				>
 					{drawerContent}
-				</Drawer>
+				</StyledDrawer>
 			</Hidden>
 			<Hidden mdUp>
-				<Drawer
+				<StyledDrawer
+					className="thing"
 					anchor="left"
 					open={openDrawer}
 					ModalProps={{ onBackdropClick: handleDrawerClose }}
-					PaperProps={{ component: StyledPaper }}
+					PaperProps={{
+						sx: { width: theme.drawer.width },
+					}}
 				>
 					{drawerContent}
-				</Drawer>
+				</StyledDrawer>
 			</Hidden>
 		</div>
 	);
@@ -101,13 +109,10 @@ const Sidebar = () => {
 export default Sidebar;
 
 // Styled Components
-const StyledPaper = styled("div")(({ theme }) => ({
-	width: theme.drawer.width,
-}));
-
-const StyledDrawerContent = styled("div")(({ theme }) => ({
+const StyledDrawerContent = styled(Box)(({ theme }) => ({
 	".MuiTypography-subtitle2": {
-		paddingLeft: theme.spacing(3),
+		paddingLeft: theme.spacing(2),
+		paddingRight: theme.spacing(2),
 		paddingTop: theme.spacing(1),
 		color: theme.palette.text.secondary,
 	},
@@ -118,4 +123,9 @@ const StyledDrawerContent = styled("div")(({ theme }) => ({
 			backgroundColor: theme.palette.secondary.light,
 		},
 	},
+}));
+
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+	"& .MuiDrawer-paper": { borderWidth: 0 },
+	"*::-webkit-scrollbar": { width: theme.scrollbar.smallWidth },
 }));

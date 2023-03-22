@@ -9,8 +9,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import lightTheme from "../themes/lightTheme";
 import darkTheme from "../themes/darkTheme";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
-
-const axios = require("axios");
+import axios from "axios";
 
 const AppContext = React.createContext();
 
@@ -30,38 +29,39 @@ export const AppContextProvider = ({ children }) => {
 	);
 	const [theme, setTheme] = useState(lightTheme);
 	const [axiosError, setAxiosError] = useState();
-	const [rootUpdated, setRootUpdated] = useState(false);
+	const [rootUpdatedAt, setRootUpdatedAt] = useLocalStorage(
+		"rootUpdatedAt",
+		null
+	);
 	const [serverUrl, setServerUrl] = useState();
 
 	useMemo(() => {
 		axiosInstance.interceptors.response.use(
-			function (response) {
+			(response) => {
 				return response;
 			},
-			async function (error) {
-				// refresh access token
-				if (error.response.status === 401) {
-					const originalReq = error.config;
+			async (error) => {
+				const originalConfig = error.config;
+				const refreshUrl = "/auth/refresh_token";
 
-					await axiosInstance.post(`/auth/refresh_token`);
+				// we previously called the refresh token api
+				if (originalConfig.url === refreshUrl) {
+					return;
+					// we made an api call that failed due to an expired access token. This was also the first time making the api call
+				} else if (error.response.status === 401 && !originalConfig.done) {
+					originalConfig.done = true;
 
-					return new Promise((resolve, reject) => {
-						axiosInstance
-							.request(originalReq)
-							.then((response) => {
-								resolve(response);
-							})
-							.catch((error) => {
-								reject(error);
-							});
-					});
+					await axiosInstance.post(refreshUrl);
+
+					return axiosInstance(originalConfig);
 				} else {
 					setAxiosError({
 						code: error.response.status,
-						statusText: error.response.statusText,
+						statusText: error.response.data.error,
 					});
-					return Promise.reject(error);
 				}
+
+				return Promise.reject(error);
 			}
 		);
 	}, []);
@@ -97,15 +97,18 @@ export const AppContextProvider = ({ children }) => {
 		});
 
 		if (response.data.loggedIn) axiosInstance.post("/auth/notifyClientActive");
+		const rua = response.data.rootUpdatedAt;
 
-		setGoogleDirectoryExists(response.data.rootFlag);
-		setRootUpdated((prevState) => !prevState);
+		setGoogleDirectoryExists(rua !== null);
+
+		if (rua && rua !== rootUpdatedAt)
+			setRootUpdatedAt(response.data.rootUpdatedAt);
 	}, [setGoogleDirectoryExists]);
 
-	async function getServerUrl() {
+	const getServerUrl = async () => {
 		const url = await axiosInstance.get("/general/serverUrl");
 		setServerUrl(url.data);
-	}
+	};
 
 	const value = {
 		authentication,
@@ -114,13 +117,14 @@ export const AppContextProvider = ({ children }) => {
 		googleDirectoryExists,
 		setGoogleDirectoryExists,
 		axiosInstance,
-		theme,
 		toggleDarkMode,
+		theme,
+		setDarkModeEnabled,
 		axiosError,
 		setAxiosError,
-		rootUpdated,
-		setRootUpdated,
 		serverUrl,
+		rootUpdatedAt,
+		setRootUpdatedAt,
 	};
 
 	return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

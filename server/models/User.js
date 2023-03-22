@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
 		accessToken: String,
 		refreshToken: String,
 		notifyFlag: Boolean,
+		rootUpdatedAt: Date,
 	},
 	{
 		timestamps: {

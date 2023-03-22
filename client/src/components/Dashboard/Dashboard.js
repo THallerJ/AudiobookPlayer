@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from "react";
 import {
+	Box,
 	Typography,
 	Hidden,
 	IconButton,
@@ -9,43 +10,55 @@ import {
 	Menu,
 	MenuItem,
 	LinearProgress,
+	styled,
+	useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Body from "./Body";
 import { useDashboard } from "../../contexts/DashboardContext";
 import { useApp } from "../../contexts/AppContext";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { styled, useTheme } from "@mui/material/styles";
 import { useGoogle } from "../../contexts/GoogleContext";
 import Div100vh from "react-div-100vh";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
 const FolderSelectDialog = React.lazy(() =>
-	import("../Dialogs/FolderSelectDialog")
+	import("../dialogs/FolderSelectDialog")
 );
-const Sidebar = React.lazy(() => import("./Sidebar"));
+const ChangeCoverDialog = React.lazy(() =>
+	import("../dialogs/ChangeCoverDialog")
+);
 
 const Dashboard = () => {
 	const theme = useTheme();
-	const history = useHistory();
-
-	const { setOpenDrawer, setOpenRootDialog } = useDashboard();
+	const navigate = useNavigate();
+	const [openCoverDialog, setOpenCoverDialog] = useState(false);
+	const {
+		setOpenDrawer,
+		anchorEl,
+		setAnchorEl,
+		openFolderDialog,
+		setOpenFolderDialog,
+		showTrackController,
+	} = useDashboard();
 	const { toggleDarkMode } = useApp();
-	const [anchorEl, setAnchorEl] = useState(null);
-	const { refreshLibrary, logout, isLoadingRefresh } = useGoogle();
+	const { refreshLibrary, logout, currentBook, isRefreshingLibrary } =
+		useGoogle();
+	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
-	function handleOpenMenu(event) {
+	const handleOpenMenu = (event) => {
 		setAnchorEl(event.currentTarget);
-	}
+	};
 
-	function handleCloseMenu() {
+	const handleCloseMenu = () => {
 		setAnchorEl(null);
-	}
+	};
 
 	const appBar = (
 		<div>
 			<Hidden mdDown>
-				<AppBar className={"appBarRight"} color="inherit" position="fixed">
+				<AppBar className={"appBarRight"} position="fixed">
 					<Toolbar>
 						<Typography noWrap variant="h6">
 							Stream Audiobook Player
@@ -59,11 +72,13 @@ const Dashboard = () => {
 							<MoreVert />
 						</IconButton>
 					</Toolbar>
-					{isLoadingRefresh ? <LinearProgress sx={{ zIndex: 1101 }} /> : null}
+					{isRefreshingLibrary ? (
+						<LinearProgress sx={{ zIndex: 1101 }} />
+					) : null}
 				</AppBar>
 			</Hidden>
 			<Hidden mdUp>
-				<AppBar color="inherit" position="fixed">
+				<AppBar position="fixed">
 					<Toolbar>
 						<IconButton
 							color="inherit"
@@ -85,24 +100,25 @@ const Dashboard = () => {
 							<MoreVert />
 						</IconButton>
 					</Toolbar>
-					{isLoadingRefresh ? <LinearProgress sx={{ zIndex: 1101 }} /> : null}
+					{isRefreshingLibrary ? (
+						<LinearProgress sx={{ zIndex: 1101 }} />
+					) : null}
 				</AppBar>
 			</Hidden>
 		</div>
 	);
 
+	const handleOpen = () => {
+		setOpenFolderDialog(true);
+		handleCloseMenu();
+	};
+
 	return (
 		<Div100vh>
 			<StyledDashboardContainer>
-				<Suspense fallback={null}>
-					<Sidebar />
-				</Suspense>
+				<Sidebar />
 				{appBar}
-				<div
-					className={
-						useMediaQuery(theme.breakpoints.up("md")) ? "bodyRight" : "body"
-					}
-				>
+				<div className={isLargeScreen ? "bodyRight" : "body"}>
 					<Body />
 				</div>
 				<Menu
@@ -113,22 +129,29 @@ const Dashboard = () => {
 					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 					transformOrigin={{ horizontal: "center", vertical: "top" }}
 				>
-					<MenuItem
-						onClick={() => {
-							setOpenRootDialog(true);
-							handleCloseMenu();
-						}}
-					>
-						Set Drive Directory
-					</MenuItem>
-					<MenuItem
-						onClick={() => {
-							refreshLibrary();
-							handleCloseMenu();
-						}}
-					>
-						Refresh Library
-					</MenuItem>
+					{!showTrackController && (
+						<MenuItem onClick={handleOpen}>Set Drive Directory</MenuItem>
+					)}
+					{!showTrackController && (
+						<MenuItem
+							onClick={() => {
+								refreshLibrary();
+								handleCloseMenu();
+							}}
+						>
+							Refresh Library
+						</MenuItem>
+					)}
+					{currentBook && !showTrackController && (
+						<MenuItem
+							onClick={() => {
+								setOpenCoverDialog(true);
+								handleCloseMenu();
+							}}
+						>
+							Change Book Cover
+						</MenuItem>
+					)}
 					<MenuItem
 						onClick={() => {
 							toggleDarkMode();
@@ -137,12 +160,22 @@ const Dashboard = () => {
 					>
 						Toggle Dark Mode
 					</MenuItem>
+
 					<MenuItem
 						onClick={() => {
-							history.push("/about");
+							navigate("/appinfo");
+							handleCloseMenu();
 						}}
 					>
 						App Information
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							navigate("/privacypolicy");
+							handleCloseMenu();
+						}}
+					>
+						Privacy Policy
 					</MenuItem>
 					<MenuItem
 						onClick={() => {
@@ -154,7 +187,20 @@ const Dashboard = () => {
 					</MenuItem>
 				</Menu>
 				<Suspense fallback={null}>
-					<FolderSelectDialog />
+					{openFolderDialog && (
+						<FolderSelectDialog
+							open={openFolderDialog}
+							setOpen={setOpenFolderDialog}
+						/>
+					)}
+				</Suspense>
+				<Suspense fallback={null}>
+					{openCoverDialog && (
+						<ChangeCoverDialog
+							open={openCoverDialog}
+							setOpen={setOpenCoverDialog}
+						/>
+					)}
 				</Suspense>
 			</StyledDashboardContainer>
 		</Div100vh>
@@ -164,7 +210,7 @@ const Dashboard = () => {
 export default Dashboard;
 
 // Styled Components
-const StyledDashboardContainer = styled("div")(({ theme }) => ({
+const StyledDashboardContainer = styled(Box)(({ theme }) => ({
 	display: "flex",
 	height: "100%",
 	width: "100%",
@@ -185,12 +231,5 @@ const StyledDashboardContainer = styled("div")(({ theme }) => ({
 		marginLeft: theme.drawer.width,
 		width: "100%",
 		height: "100%",
-	},
-
-	".centerProgress": {
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		height: "90%",
 	},
 }));

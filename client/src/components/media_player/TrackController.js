@@ -8,8 +8,8 @@ import {
 	IconButton,
 	Slider,
 	Chip,
+	styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";

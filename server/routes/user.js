@@ -1,9 +1,22 @@
 const express = require("express");
-var router = express.Router();
+const router = express.Router();
 const userController = require("../controllers/userController");
+const { isAuthenticated } = require("../middleware/auth");
 
-router.post("/setRootDirectory", userController.setRootDirectory);
-router.post("/setChapterProgress", userController.setChapterProgress);
-router.get("/getBooksProgress", userController.getBooksProgress);
+router.post(
+	"/setRootDirectory",
+	isAuthenticated,
+	userController.setRootDirectory
+);
+router.post(
+	"/setChapterProgress",
+	isAuthenticated,
+	userController.setChapterProgress
+);
+router.get(
+	"/getBooksProgress",
+	isAuthenticated,
+	userController.getBooksProgress
+);
 
 module.exports = { userRoute: router };

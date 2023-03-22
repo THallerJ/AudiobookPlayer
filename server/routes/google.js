@@ -1,10 +1,12 @@
 const express = require("express");
-var router = express.Router();
+const router = express.Router();
 require("dotenv").config();
 const googleController = require("../controllers/googleController");
+const { isAuthenticated } = require("../middleware/auth");
 
-router.get("/folders", googleController.folders);
-router.get("/library", googleController.library);
-router.get("/stream/:id", googleController.streamProxy);
+router.get("/folders", isAuthenticated, googleController.fetchFolders);
+router.get("/library", isAuthenticated, googleController.getLibrary);
+router.get("/stream/:id", isAuthenticated, googleController.streamProxy);
+router.get("/getBookCovers", isAuthenticated, googleController.getBookCovers);
 
 module.exports = router;

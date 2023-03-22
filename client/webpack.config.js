@@ -1,9 +1,10 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
+const { SourceMapDevToolPlugin } = require("webpack");
 
 module.exports = {
-	entry: "./src/index.js",
+	entry: "./src/components/root/index.js",
 	output: {
 		path: path.join(__dirname, "/dist"),
 		filename: "index_bundle.js",
@@ -11,12 +12,18 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.js$/,
+				enforce: "pre",
+				use: ["source-map-loader"],
+			},
+			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				use: {
 					loader: "babel-loader",
 				},
 			},
+
 			{
 				test: /\.css$/,
 				use: ["style-loader", "css-loader"],
@@ -32,6 +39,9 @@ module.exports = {
 		],
 	},
 	plugins: [
+		new SourceMapDevToolPlugin({
+			filename: "[file].map",
+		}),
 		new CopyPlugin({
 			patterns: [{ from: "public" }],
 		}),

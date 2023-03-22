@@ -5,18 +5,18 @@ const DashboardContext = React.createContext();
 export const DashboardContextProvider = ({ children }) => {
 	const [openDrawer, setOpenDrawer] = useState(false);
 	const [showTrackController, setShowTrackController] = useState(false);
-	const [openRootDialog, setOpenRootDialog] = useState(false);
-	const [isFolderSelected, setIsFolderSelected] = useState(false);
+	const [openFolderDialog, setOpenFolderDialog] = useState(false);
+	const [anchorEl, setAnchorEl] = useState(null);
 
 	const value = {
 		openDrawer,
 		setOpenDrawer,
 		showTrackController,
 		setShowTrackController,
-		openRootDialog,
-		setOpenRootDialog,
-		isFolderSelected,
-		setIsFolderSelected,
+		openFolderDialog,
+		setOpenFolderDialog,
+		anchorEl,
+		setAnchorEl,
 	};
 
 	return (

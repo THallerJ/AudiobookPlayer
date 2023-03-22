@@ -3,7 +3,7 @@ const encryption = require("../utils/encryption-utils");
 const axios = require("axios");
 const dbUtils = require("../utils/database-utils");
 
-async function refreshToken(req, res) {
+const refreshToken = async (req, res) => {
 	const user = req.authUser;
 
 	try {
@@ -26,37 +26,40 @@ async function refreshToken(req, res) {
 
 		res.status(200).send();
 	} catch (error) {
-		res.status(500).send();
+		res.status(500).send({ error: "There was a problem refreshing the token" });
 	}
-}
+};
 
-function isLoggedIn(req, res) {
-	var loggedIn = false;
-	var rootFlag = false;
+const isLoggedIn = (req, res) => {
+	let loggedIn = false;
+	let rootUpdatedAt = null;
 
 	if (req.user && req.user.length) {
 		loggedIn = true;
-		rootFlag = req.user[0].rootId ? true : false;
+		rootUpdatedAt = req.user[0].rootUpdatedAt;
 	}
 
-	res.status(200).send({ loggedIn: loggedIn, rootFlag: rootFlag });
-}
+	res.status(200).send({
+		loggedIn: loggedIn,
+		rootUpdatedAt: rootUpdatedAt,
+	});
+};
 
-async function notifyClientActive(req, res) {
+const notifyClientActive = async (req, res) => {
 	try {
 		const googleId = req.authUser.googleId;
 
 		await User.findOneAndUpdate({ googleId: googleId }, [
 			{ $set: { notifyFlag: { $eq: [false, "$notifyFlag"] } } },
 		]);
+
+		res.status(200).send();
 	} catch (error) {
-		res.status(500).send();
+		res.status(500).send({ error: "There was a problem notifying the server" });
 	}
+};
 
-	res.status(200).send();
-}
-
-async function revokeAccess(accessToken) {
+const revokeAccess = async (accessToken) => {
 	try {
 		await axios.get("https://accounts.google.com/o/oauth2/revoke", {
 			params: {
@@ -66,9 +69,9 @@ async function revokeAccess(accessToken) {
 	} catch (error) {
 		return error;
 	}
-}
+};
 
-async function logout(req, res) {
+const logout = async (req, res) => {
 	const authUser = req.authUser;
 
 	try {
@@ -77,13 +80,16 @@ async function logout(req, res) {
 		await User.deleteOne({ googleId: authUser.googleId });
 	} catch (error) {
 		if (error.response.status !== 400) {
-			res.status(error.response.status).send();
+			res
+				.status(error.response.status)
+				.send({ error: "There was a problem logging out" });
 		}
 	}
 
 	await req.logout((err) => {
 		if (err) return next(err);
 	});
+
 	req.session.destroy((err) => {
 		if (!err) {
 			res.status(200).clearCookie("connect.sid").send();
@@ -91,7 +97,7 @@ async function logout(req, res) {
 			res.status(500).send();
 		}
 	});
-}
+};
 
 module.exports = {
 	refreshToken,

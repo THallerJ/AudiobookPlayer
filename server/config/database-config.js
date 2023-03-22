@@ -3,9 +3,11 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 require("dotenv").config();
 
-var mySession;
+let mySession;
 
-function createDb() {
+const createDb = () => {
+	mongoose.set("strictQuery", true);
+
 	mongoose.connect(process.env.MONGO_URI, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
@@ -29,11 +31,11 @@ function createDb() {
 		cookie: { maxAge: 1000 * 3600 * 24 * 30 }, // 1 month
 		store: sessionStore,
 	});
-}
+};
 
-function getSession() {
+const getSession = () => {
 	return mySession;
-}
+};
 
 module.exports = {
 	createDb,

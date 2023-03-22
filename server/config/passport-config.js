@@ -36,6 +36,7 @@ passport.use(
 					accessToken: encryption.encryptText(accessToken),
 					refreshToken: encryption.encryptText(refreshToken),
 					notifyFlag: false,
+					rootUpdatedAt: null,
 				});
 
 				user.save((err, result) => {

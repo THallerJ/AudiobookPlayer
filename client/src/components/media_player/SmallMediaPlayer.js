@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
-import { IconButton, Typography, Grid, LinearProgress } from "@mui/material";
+import {
+	IconButton,
+	Typography,
+	Grid,
+	LinearProgress,
+	styled,
+} from "@mui/material";
 import { useGoogle } from "../../contexts/GoogleContext";
 import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
 import PlayIcon from "@mui/icons-material/PlayArrow";
@@ -39,10 +44,10 @@ const SmallMediaPlayer = () => {
 				<Grid container>
 					<Grid item xs={10}>
 						<Typography variant="subtitle2" noWrap>
-							{playingBook ? playingBook.name : "No audiobook selected"}
+							{playingBook ? playingBook.name : "No Audiobook Selected"}
 						</Typography>
 						<Typography variant="subtitle1" noWrap>
-							{playingChapter ? playingChapter.data.name : "-"}
+							{playingChapter ? playingChapter.data.name : ""}
 						</Typography>
 					</Grid>
 					<Grid item xs={2}>
@@ -68,6 +73,7 @@ const SmallMediaPlayer = () => {
 
 export default SmallMediaPlayer;
 
+// Styled Components
 const StyledMediaPlayerContainer = styled("div")(({ theme }) => ({
 	paddingRight: theme.spacing(4),
 	paddingLeft: theme.spacing(4),

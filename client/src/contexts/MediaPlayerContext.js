@@ -1,8 +1,15 @@
-import React, { useContext, useState, useEffect, useCallback } from "react";
+import React, {
+	useContext,
+	useState,
+	useEffect,
+	useCallback,
+	useRef,
+} from "react";
 import { useGoogle } from "../contexts/GoogleContext";
 import { useApp } from "../contexts/AppContext";
+import { useDashboard } from "../contexts/DashboardContext";
 import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
-import useStateRef from "react-usestateref";
+import useStateRef from "../hooks/useStateRef";
 import { Howl } from "howler";
 
 const MediaPlayerContext = React.createContext();
@@ -15,10 +22,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		playingChapter,
 		playingBook,
 		getBookAndChapter,
-		rootUpdated,
-		isLoadingRefresh,
 	} = useGoogle();
-	const { axiosInstance, authentication, serverUrl } = useApp();
+	const { axiosInstance, authentication, serverUrl, rootUpdatedAt } = useApp();
+	const { anchorEl } = useDashboard();
 	const [sound, setSound] = useState();
 	const [soundLoaded, setSoundLoaded] = useState(false);
 	const [duration, setDuration, durationRef] = useStateRef();
@@ -31,20 +37,20 @@ export const MediaPlayerContextProvider = ({ children }) => {
 	const [booksProgress, setBooksProgress] = useState({});
 	const [initializedFlag, setInitializedFlag] = useState(false);
 	const [resumeFlag, setResumeFlag] = useState(false);
-	// eslint-disable-next-line
-	const [refreshFlag, setRefreshFlag, refreshFlagRef] = useStateRef(false);
-	// eslint-disable-next-line
-	const [userInputFlag, setUserInputFlag, userInputFlagRef] =
-		useStateRef(false);
+	const [syncFlag, setSyncFlag] = useState(false);
+	const refreshFlagRef = useRef(false);
+	const userInputFlagRef = useRef(false);
 
 	const syncChapterProgress = useCallback(
-		(book, chapter, progress, duration) => {
+		(book, chapter, progress, duration, doRewind) => {
+			const prog = doRewind ? getRewindTime(progress) : progress;
+
 			if (book && chapter) {
 				axiosInstance.post(`/user/setChapterProgress`, {
 					data: {
 						bookId: book.id,
 						chapterId: chapter.data.id,
-						progress: progress,
+						progress: prog,
 						duration: duration,
 					},
 				});
@@ -52,7 +58,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				setBooksProgress((prevState) => {
 					prevState[book.id] = {
 						chapterId: chapter.data.id,
-						progress: progress,
+						progress: prog,
 					};
 
 					return prevState;
@@ -64,7 +70,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		// sync when user refreshes or leaves website
-		function beforeUnload(e) {
+		const beforeUnload = (e) => {
 			e.preventDefault();
 			e.returnValue = "";
 
@@ -72,9 +78,10 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				playingBook,
 				playingChapter,
 				progressRef.current,
-				durationRef.current
+				durationRef.current,
+				true
 			);
-		}
+		};
 
 		window.addEventListener("beforeunload", beforeUnload);
 
@@ -90,31 +97,27 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		durationRef,
 	]);
 
-	useEffect(() => {
-		if (isLoadingRefresh) {
-			setRefreshFlag(true);
-			setInitializedFlag(false);
-		}
-	}, [isLoadingRefresh, setRefreshFlag]);
-
 	useEffectSkipFirst(() => {
 		// sync when changing tracks
-		if (prevBookData && sound && playingChapter && playingBook)
+		if (syncFlag && prevBookData && sound && playingChapter && playingBook) {
 			syncChapterProgress(
 				prevBookData.book,
 				prevBookData.chapter,
 				progressRef.current,
-				durationRef.current
+				durationRef.current,
+				true
 			);
+		}
 
 		setPrevBookData({ book: playingBook, chapter: playingChapter });
+		setSyncFlag(false);
 	}, [playingBook, playingChapter, progressRef, durationRef]);
 
 	useEffectSkipFirst(() => {
 		if (sound && resumeFlag) {
 			sound.once("play", () => {
 				const time = booksProgress[playingBook.id].progress;
-				sound.seek(getSeekTimeOnResume(time));
+				sound.seek(time);
 				setResumeFlag(false);
 			});
 		}
@@ -142,6 +145,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					onload: function () {
 						setDuration(this.duration());
 						setSoundLoaded(true);
+						setSyncFlag(true);
 					},
 				});
 			});
@@ -168,8 +172,24 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		}
 	}, [playingChapter, sound]);
 
+	useEffectSkipFirst(() => {
+		if (Boolean(anchorEl) && sound) {
+			if (isPlaying) {
+				sound.pause();
+				setIsPlaying(false);
+			}
+			syncChapterProgress(
+				playingBook,
+				playingChapter,
+				progressRef.current,
+				durationRef.current,
+				false
+			);
+		}
+	}, [anchorEl]);
+
 	useEffect(() => {
-		async function getBookProgress() {
+		const getBookProgress = async () => {
 			const response = await axiosInstance.get(`/user/getBooksProgress`);
 
 			if (response.data.length) {
@@ -191,7 +211,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 				if (bookChap) {
 					const time = reduce[bookId].progress;
-					setProgress(getSeekTimeOnResume(time));
+					setProgress(time);
 					setDuration(reduce[bookId].duration);
 					setPlayingChapter(bookChap.chapter);
 					setPlayingBook(bookChap.book);
@@ -199,13 +219,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				}
 			}
 
-			setUserInputFlag(true);
-		}
+			userInputFlagRef.current = true;
+		};
 
 		if (authentication.isAuthenticated && !refreshFlagRef.current)
 			getBookProgress();
 
-		setRefreshFlag(false);
+		refreshFlagRef.current = false;
 	}, [
 		axiosInstance,
 		getBookAndChapter,
@@ -214,11 +234,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setCurrentBook,
 		setDuration,
 		setProgress,
-		rootUpdated,
-		setUserInputFlag,
+		rootUpdatedAt,
 		authentication,
 		refreshFlagRef,
-		setRefreshFlag,
 	]);
 
 	useEffect(() => {
@@ -239,11 +257,11 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		};
 	}, [setProgress, sound, isPlaying, initializedFlag]);
 
-	function getSeekTimeOnResume(time) {
+	const getRewindTime = (time) => {
 		return time < 3 ? 0 : Math.floor(time - 3);
-	}
+	};
 
-	function resumePlayback(bookId) {
+	const resumePlayback = (bookId) => {
 		if (bookId) {
 			const bookChap = getBookAndChapter(
 				bookId,
@@ -255,9 +273,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 
 		setInitializedFlag(true);
 		setResumeFlag(true);
-	}
+	};
 
-	function togglePlay() {
+	const togglePlay = () => {
 		if (sound) {
 			if (isPlaying) {
 				sound.pause();
@@ -267,41 +285,41 @@ export const MediaPlayerContextProvider = ({ children }) => {
 				setIsPlaying(true);
 			}
 		}
-	}
+	};
 
-	function increaseRate() {
+	const increaseRate = () => {
 		if (sound) {
 			if (rate < 4) {
 				setRate(rate + 0.25);
 				sound.rate(rate);
 			}
 		}
-	}
+	};
 
-	function decreaseRate() {
+	const decreaseRate = () => {
 		if (sound) {
 			if (rate > 0.5) {
 				setRate(rate - 0.25);
 				sound.rate(rate);
 			}
 		}
-	}
+	};
 
-	function toggleMute() {
+	const toggleMute = () => {
 		if (sound) {
 			sound.mute(!isMuted);
 			setIsMuted(!isMuted);
 		}
-	}
+	};
 
-	function handleSeek(value) {
+	const handleSeek = (value) => {
 		if (sound && soundLoaded) {
 			setProgress(value);
 			sound.seek(value);
 		}
-	}
+	};
 
-	function seekBackward() {
+	const seekBackward = () => {
 		const newProgress = progress - 5;
 		if (newProgress > 0 && sound) {
 			sound.seek(newProgress);
@@ -310,9 +328,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			sound.seek(0);
 			setProgress(0);
 		}
-	}
+	};
 
-	function seekForward() {
+	const seekForward = () => {
 		const newProgress = progress + 5;
 		if (newProgress > 0 && sound) {
 			sound.seek(newProgress);
@@ -321,9 +339,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 			sound.seek(0);
 			setProgress(0);
 		}
-	}
+	};
 
-	function previousTrack() {
+	const previousTrack = () => {
 		if (playingBook) {
 			const newIndex = playingChapter.index - 1;
 			if (newIndex >= 0)
@@ -332,9 +350,9 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					index: newIndex,
 				});
 		}
-	}
+	};
 
-	function nextTrack() {
+	const nextTrack = () => {
 		if (playingBook) {
 			const newIndex = playingChapter.index + 1;
 			if (newIndex < playingBook.chapters.length)
@@ -343,12 +361,12 @@ export const MediaPlayerContextProvider = ({ children }) => {
 					index: newIndex,
 				});
 		}
-	}
+	};
 
-	function formatTime(seconds) {
+	const formatTime = (seconds) => {
 		const time = new Date(seconds * 1000).toISOString();
 		return seconds < 3600 ? time.substr(14, 5) : time.substr(11, 8);
-	}
+	};
 
 	const value = {
 		isPlaying,
@@ -386,4 +404,5 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		</MediaPlayerContext.Provider>
 	);
 };
+
 export const useMediaPlayer = () => useContext(MediaPlayerContext);
