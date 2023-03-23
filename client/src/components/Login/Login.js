@@ -8,7 +8,7 @@ import {
 	Box,
 	useTheme,
 } from "@mui/material";
-import { useApp } from "../../contexts/AppContext";
+import { useApp } from "../../contexts/AppContext/AppContext";
 import GoogleButton from "react-google-button";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/images/backgroundImage.jpg";
@@ -16,12 +16,13 @@ import backgroundImage from "../../assets/images/backgroundImage.jpg";
 const Login = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
-	const { serverUrl, setDarkModeEnabled } = useApp();
+	const { serverUrl, darkModeEnabled, toggleDarkMode, authentication } =
+		useApp();
 	const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
 
 	useEffect(() => {
-		setDarkModeEnabled(false);
-	}, []);
+		if (darkModeEnabled === "true") toggleDarkMode();
+	}, [authentication]);
 
 	return (
 		<Box

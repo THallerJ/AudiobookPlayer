@@ -12,8 +12,8 @@ import {
 	useTheme,
 	styled,
 } from "@mui/material";
-import { useDashboard } from "../../contexts/DashboardContext";
-import { useGoogle } from "../../contexts/GoogleContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 
 const Sidebar = () => {
 	const theme = useTheme();

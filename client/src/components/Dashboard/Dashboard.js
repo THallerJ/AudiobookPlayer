@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Body from "./Body";
-import { useDashboard } from "../../contexts/DashboardContext";
-import { useApp } from "../../contexts/AppContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
+import { useApp } from "../../contexts/AppContext/AppContext";
 import MoreVert from "@mui/icons-material/MoreVert";
-import { useGoogle } from "../../contexts/GoogleContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import Div100vh from "react-div-100vh";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";

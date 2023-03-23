@@ -6,11 +6,11 @@ import {
 	LinearProgress,
 	styled,
 } from "@mui/material";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import PlayIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import { useDashboard } from "../../contexts/DashboardContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
 
 const SmallMediaPlayer = () => {
 	const { playingChapter, playingBook } = useGoogle();

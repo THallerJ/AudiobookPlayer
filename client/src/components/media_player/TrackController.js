@@ -19,9 +19,9 @@ import Replay5Icon from "@mui/icons-material/Replay5";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useDashboard } from "../../contexts/DashboardContext";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import tinyColor from "tinycolor2";
 import defaultBookCover from "../../assets/images/defaultBookCover.jpg";
 

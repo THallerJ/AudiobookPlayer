@@ -1,8 +1,8 @@
 import React, { useContext, useCallback, useState } from "react";
-import { useApp } from "../contexts/AppContext";
-import useLocalStorage from "../hooks/useLocalStorage";
-import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
-import useLocalStorageRef from "../hooks/useLocalStorageRef";
+import { useApp } from "../AppContext/AppContext";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import useEffectSkipFirst from "../../hooks/useEffectSkipFirst";
+import useLocalStorageRef from "../../hooks/useLocalStorageRef";
 
 const GoogleContext = React.createContext();
 

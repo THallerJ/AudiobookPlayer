@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import Overlay from "../misc/Overlay";
 import BookCover from "./BookCover.js";
 import HeadphonesIcon from "@mui/icons-material/Headphones";

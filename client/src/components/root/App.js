@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useCallback } from "react";
 import ProtectedRoute from "../login/ProtectedRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import {
@@ -9,9 +9,9 @@ import {
 	ThemeProvider,
 } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { DashboardContextProvider } from "../../contexts/DashboardContext";
-import { GoogleContextProvider } from "../../contexts/GoogleContext";
-import { useApp } from "../../contexts/AppContext";
+import { DashboardContextProvider } from "../../contexts/DashboardContext/DashboardContext";
+import { GoogleContextProvider } from "../../contexts/GoogleContext/GoogleContext";
+import { useApp } from "../../contexts/AppContext/AppContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 
 const Login = React.lazy(() => import("../login/Login"));
@@ -24,12 +24,33 @@ const PrivacyPolicy = React.lazy(() =>
 
 const App = () => {
 	const {
-		checkAuthentication,
 		authentication,
 		theme,
 		axiosError,
 		setAxiosError,
+		setGoogleDirectoryExists,
+		rootUpdatedAt,
+		setRootUpdatedAt,
+		setAuthentication,
+		axiosInstance,
 	} = useApp();
+
+	const checkAuthentication = useCallback(async () => {
+		const response = await axiosInstance.get(`/auth/isLoggedIn`);
+
+		setAuthentication({
+			isInitializing: false,
+			isAuthenticated: response.data.loggedIn,
+		});
+
+		if (response.data.loggedIn) axiosInstance.post("/auth/notifyClientActive");
+		const rua = response.data.rootUpdatedAt;
+
+		setGoogleDirectoryExists(rua !== null);
+
+		if (rua && rua !== rootUpdatedAt)
+			setRootUpdatedAt(response.data.rootUpdatedAt);
+	}, [setGoogleDirectoryExists]);
 
 	useEffect(() => {
 		checkAuthentication();

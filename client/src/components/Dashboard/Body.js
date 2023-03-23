@@ -7,11 +7,11 @@ import {
 	Box,
 	useTheme,
 } from "@mui/material";
-import { useDashboard } from "../../contexts/DashboardContext";
-import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
+import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import Book from "../books/Book";
 import BookCoverList from "../books/BookCoverList";
-import { useGoogle } from "../../contexts/GoogleContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 import SmallMediaPlayer from "../media_player/SmallMediaPlayer";
 import MediaPlayer from "../media_player/MediaPlayer";

@@ -18,8 +18,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 
 const MediaPlayer = () => {
 	const theme = useTheme();

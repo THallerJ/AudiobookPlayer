@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BaseDialog from "./BaseDialog";
-import { useGoogle } from "../../contexts/GoogleContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import { CircularProgress, Typography, useTheme } from "@mui/material";
 import BookCoverList from "../books/BookCoverList";
 import BookCoverSelect from "../books/BookCoverSelect";

@@ -10,8 +10,8 @@ import {
 	CircularProgress,
 	styled,
 } from "@mui/material";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useApp } from "../../contexts/AppContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useApp } from "../../contexts/AppContext/AppContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 import BaseDialog from "./BaseDialog";
 

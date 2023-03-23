@@ -5,11 +5,11 @@ import React, {
 	useCallback,
 	useRef,
 } from "react";
-import { useGoogle } from "../contexts/GoogleContext";
-import { useApp } from "../contexts/AppContext";
-import { useDashboard } from "../contexts/DashboardContext";
-import useEffectSkipFirst from "../hooks/useEffectSkipFirst";
-import useStateRef from "../hooks/useStateRef";
+import { useGoogle } from "../GoogleContext/GoogleContext";
+import { useApp } from "../AppContext/AppContext";
+import { useDashboard } from "../DashboardContext/DashboardContext";
+import useEffectSkipFirst from "../../hooks/useEffectSkipFirst";
+import useStateRef from "../../hooks/useStateRef";
 import { Howl } from "howler";
 
 const MediaPlayerContext = React.createContext();
