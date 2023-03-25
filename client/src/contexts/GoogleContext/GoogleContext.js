@@ -1,148 +1,49 @@
-import React, { useContext, useCallback, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useApp } from "../AppContext/AppContext";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import useEffectSkipFirst from "../../hooks/useEffectSkipFirst";
 import useLocalStorageRef from "../../hooks/useLocalStorageRef";
+import useFetchLibrary from "./hooks/useFetchLibrary";
+import useBookCovers from "./hooks/useBookCovers";
+import useLibrary from "./hooks/useLibrary";
+import useManageUser from "./hooks/useManageUser";
 
 const GoogleContext = React.createContext();
 
 export const GoogleContextProvider = ({ children }) => {
-	const {
-		axiosInstance,
-		googleDirectoryExists,
-		setGoogleDirectoryExists,
-		setAuthentication,
-		setRootUpdatedAt,
-		rootUpdatedAt,
-	} = useApp();
+	const { setGoogleDirectoryExists, setAuthentication, setRootUpdatedAt } =
+		useApp();
+
 	const [library, setLibrary, libraryRef] = useLocalStorageRef("library", []);
-	const [overridedCovers, setOverridedCovers] = useLocalStorage(
-		"overridedCovers",
-		[]
-	);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
 	const [playingChapter, setPlayingChapter] = useState();
-	const [isLoadingLibrary, setIsLoadingLibrary] = useState(false);
-	const [isRefreshingLibrary, setIsRefreshingLibrary] = useState(false);
 
-	const fetchLibrary = useCallback(async () => {
-		if (googleDirectoryExists) {
-			const response = await axiosInstance.get(`/google/library`);
-			const sortedLibrary = response.data.sort((book1, book2) => {
-				overridedCovers.forEach((cover) => {
-					if (cover.id === book1.id) {
-						book1.coverImageUrl = cover.coverImageUrl;
-					} else if (cover.id === book2.id) {
-						book2.coverImageUrl = cover.coverImageUrl;
-					}
-				});
+	const {
+		overridedCovers,
+		setOverridedCovers,
+		getBookCovers,
+		updateBookCover,
+	} = useBookCovers(setLibrary, currentBook);
 
-				return book1.name.localeCompare(book2.name);
-			});
+	const { isLoadingLibrary, loadLibrary, isRefreshingLibrary, refreshLibrary } =
+		useFetchLibrary(library, setLibrary, overridedCovers);
 
-			setLibrary(sortedLibrary);
-		}
-	}, [axiosInstance, setLibrary, googleDirectoryExists, library]);
+	const { getFolders, getBookAndChapter } = useLibrary(library, libraryRef);
 
-	const refreshLibrary = async () => {
-		setIsRefreshingLibrary(true);
-		await fetchLibrary();
-		setIsRefreshingLibrary(false);
-	};
-
-	const loadLibrary = async () => {
-		setIsLoadingLibrary(true);
-		await fetchLibrary();
-		setIsLoadingLibrary(false);
-	};
-
-	const getFolders = useCallback(
-		async (directory) => {
-			const response = await axiosInstance.get(`/google/folders`, {
-				params: {
-					directory: directory ? directory : null,
-				},
-			});
-
-			return response.data;
-		},
-		[axiosInstance]
+	const { setRootDirectory, logout } = useManageUser(
+		setPlayingBook,
+		setCurrentBook,
+		setPlayingChapter,
+		setGoogleDirectoryExists,
+		setRootUpdatedAt,
+		setAuthentication
 	);
-
-	const getBookAndChapter = useCallback(
-		(bookId, chapterId) => {
-			if (library && library.length) {
-				const book = library.find((element) => element.id === bookId);
-				const chapterIndex = book.chapters.findIndex(
-					(element) => element.id === chapterId
-				);
-
-				return {
-					book: book,
-					chapter: { data: book.chapters[chapterIndex], index: chapterIndex },
-				};
-			}
-
-			return null;
-		},
-		[libraryRef]
-	);
-
-	const getBookCovers = async (page) => {
-		if (currentBook) {
-			const response = await axiosInstance.get("/google/getBookCovers", {
-				params: { title: currentBook.name, page: page },
-			});
-
-			return response.data;
-		}
-	};
-
-	const updateBookCover = (newCoverUrl) => {
-		setLibrary((prevState) => {
-			return prevState.map((obj) => {
-				if (obj.id === currentBook.id)
-					return { ...obj, coverImageUrl: newCoverUrl };
-				else return obj;
-			});
-		});
-	};
-
-	const resetMediaPlayer = () => {
-		setPlayingBook(null);
-		setCurrentBook(null);
-		setPlayingChapter(null);
-	};
-
-	const setRootDirectory = async (rootId) => {
-		resetMediaPlayer();
-
-		const response = await axiosInstance.post(`/user/setRootDirectory`, {
-			data: {
-				rootId: rootId,
-			},
-		});
-
-		setGoogleDirectoryExists(response.data.rootUpdatedAt !== null);
-		setRootUpdatedAt(response.data.rootUpdatedAt);
-	};
-
-	const logout = async () => {
-		resetMediaPlayer();
-		await axiosInstance.post(`/auth/logout`);
-		setAuthentication({ isAuthenticated: false });
-	};
-
-	useEffectSkipFirst(() => {
-		loadLibrary();
-	}, [rootUpdatedAt]);
 
 	const value = {
 		getFolders,
 		setRootDirectory,
 		library,
 		refreshLibrary,
+		loadLibrary,
 		logout,
 		currentBook,
 		setCurrentBook,
@@ -155,7 +56,6 @@ export const GoogleContextProvider = ({ children }) => {
 		updateBookCover,
 		setOverridedCovers,
 		isLoadingLibrary,
-		setIsLoadingLibrary,
 		isRefreshingLibrary,
 	};
 

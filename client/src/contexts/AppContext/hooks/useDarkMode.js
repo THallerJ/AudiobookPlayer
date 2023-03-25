@@ -21,7 +21,6 @@ const useDarkMode = () => {
 	}, [setDarkModeEnabled]);
 
 	useEffect(() => {
-		console.log(darkModeEnabled);
 		darkModeEnabled === "true" ? setTheme(darkTheme) : setTheme(lightTheme);
 	}, [toggleDarkMode, darkModeEnabled]);
 
