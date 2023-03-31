@@ -1,14 +1,8 @@
 import { useApp } from "../../AppContext/AppContext";
 
-const useManageUser = (
-	setPlayingBook,
-	setCurrentBook,
-	setPlayingChapter,
-	setGoogleDirectoryExists,
-	setRootUpdatedAt,
-	setAuthentication
-) => {
-	const { axiosInstance } = useApp();
+const useManageUser = (setPlayingBook, setCurrentBook, setPlayingChapter) => {
+	const { axiosInstance, setGoogleDirectoryExists, setRootUpdatedAt } =
+		useApp();
 
 	const resetMediaPlayer = () => {
 		setPlayingBook(null);

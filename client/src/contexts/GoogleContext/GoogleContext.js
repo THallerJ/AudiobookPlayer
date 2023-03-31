@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { useApp } from "../AppContext/AppContext";
 import useLocalStorageRef from "../../hooks/useLocalStorageRef";
 import useFetchLibrary from "./hooks/useFetchLibrary";
 import useBookCovers from "./hooks/useBookCovers";
@@ -9,9 +8,6 @@ import useManageUser from "./hooks/useManageUser";
 const GoogleContext = React.createContext();
 
 export const GoogleContextProvider = ({ children }) => {
-	const { setGoogleDirectoryExists, setAuthentication, setRootUpdatedAt } =
-		useApp();
-
 	const [library, setLibrary, libraryRef] = useLocalStorageRef("library", []);
 	const [currentBook, setCurrentBook] = useState();
 	const [playingBook, setPlayingBook] = useState();
@@ -32,10 +28,7 @@ export const GoogleContextProvider = ({ children }) => {
 	const { setRootDirectory, logout } = useManageUser(
 		setPlayingBook,
 		setCurrentBook,
-		setPlayingChapter,
-		setGoogleDirectoryExists,
-		setRootUpdatedAt,
-		setAuthentication
+		setPlayingChapter
 	);
 
 	const value = {
