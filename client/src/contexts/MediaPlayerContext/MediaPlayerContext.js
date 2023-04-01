@@ -1,10 +1,10 @@
-import React, { useContext, useRef } from "react";
+import { useContext, createContext, useRef } from "react";
 import useActions from "./hooks/useActions";
 import useResume from "./hooks/useResume";
 import useSound from "./hooks/useSound";
 import useSyncProgress from "./hooks/useSyncProgress";
 
-const MediaPlayerContext = React.createContext();
+const MediaPlayerContext = createContext();
 
 export const MediaPlayerContextProvider = ({ children }) => {
 	const refreshFlagRef = useRef(false);

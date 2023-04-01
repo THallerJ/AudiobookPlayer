@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, createContext, useState } from "react";
 import useLocalStorageRef from "../../hooks/useLocalStorageRef";
 import useFetchLibrary from "./hooks/useFetchLibrary";
 import useBookCovers from "./hooks/useBookCovers";
 import useLibrary from "./hooks/useLibrary";
 import useManageUser from "./hooks/useManageUser";
 
-const GoogleContext = React.createContext();
+const GoogleContext = createContext();
 
 export const GoogleContextProvider = ({ children }) => {
 	const [library, setLibrary, libraryRef] = useLocalStorageRef("library", []);

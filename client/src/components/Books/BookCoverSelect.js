@@ -1,4 +1,3 @@
-import React from "react";
 import BookCover from "../books/BookCover";
 import Overlay from "../misc/Overlay";
 import CheckIcon from "@mui/icons-material/Check";

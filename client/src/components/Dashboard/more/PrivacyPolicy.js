@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Divider, useTheme } from "@mui/material";
 import DisplayText from "../../misc/DisplayText";
 

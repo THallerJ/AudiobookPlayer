@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, lazy } from "react";
 import {
 	Paper,
 	Hidden,
@@ -16,10 +16,8 @@ import CenterWrapper from "../styled_components/CenterWrapper";
 import SmallMediaPlayer from "../media_player/SmallMediaPlayer";
 import MediaPlayer from "../media_player/MediaPlayer";
 
-const EmptyLibrary = React.lazy(() => import("../books/EmptyLibrary"));
-const TrackController = React.lazy(() =>
-	import("../media_player/TrackController")
-);
+const EmptyLibrary = lazy(() => import("../books/EmptyLibrary"));
+const TrackController = lazy(() => import("../media_player/TrackController"));
 
 const Body = () => {
 	const theme = useTheme();

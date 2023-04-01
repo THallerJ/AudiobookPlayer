@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import { useState, Suspense, lazy } from "react";
 import {
 	Box,
 	Typography,
@@ -23,12 +23,8 @@ import Div100vh from "react-div-100vh";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
-const FolderSelectDialog = React.lazy(() =>
-	import("../dialogs/FolderSelectDialog")
-);
-const ChangeCoverDialog = React.lazy(() =>
-	import("../dialogs/ChangeCoverDialog")
-);
+const FolderSelectDialog = lazy(() => import("../dialogs/FolderSelectDialog"));
+const ChangeCoverDialog = lazy(() => import("../dialogs/ChangeCoverDialog"));
 
 const Dashboard = () => {
 	const theme = useTheme();

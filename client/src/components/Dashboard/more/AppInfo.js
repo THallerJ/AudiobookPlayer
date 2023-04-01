@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, List, Link, Divider } from "@mui/material";
 import LabelListItem from "../../misc/LabelListItem";
 import DisplayText from "../../misc/DisplayText";

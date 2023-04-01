@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-const DashboardContext = React.createContext();
+const DashboardContext = createContext();
 
 export const DashboardContextProvider = ({ children }) => {
 	const [openDrawer, setOpenDrawer] = useState(false);

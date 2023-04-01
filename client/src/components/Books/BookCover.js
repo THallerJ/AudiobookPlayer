@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardMedia, styled } from "@mui/material";
 import defaultBookCover from "../../assets/images/defaultBookCover.jpg";
 

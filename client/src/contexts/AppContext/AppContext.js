@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import { useContext, createContext } from "react";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useAuthentication from "./hooks/useAuthentication";
 import useDarkMode from "./hooks/useDarkMode";
 import useServerUrl from "./hooks/useServerUrl";
 import useAxios from "./hooks/useAxios";
 
-const AppContext = React.createContext();
+const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
 	const { axiosInstance, axiosError, setAxiosError } = useAxios();

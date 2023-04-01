@@ -1,4 +1,3 @@
-import React from "react";
 import LabelIcon from "@mui/icons-material/LabelOutlined";
 import {
 	Typography,

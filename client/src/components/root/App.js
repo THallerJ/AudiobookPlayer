@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useCallback } from "react";
+import { Suspense, useEffect, useCallback, lazy } from "react";
 import ProtectedRoute from "../login/ProtectedRoute";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import {
@@ -14,13 +14,11 @@ import { GoogleContextProvider } from "../../contexts/GoogleContext/GoogleContex
 import { useApp } from "../../contexts/AppContext/AppContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 
-const Login = React.lazy(() => import("../login/Login"));
-const LoginFailed = React.lazy(() => import("../login/LoginFailed"));
-const Dashboard = React.lazy(() => import("../dashboard/Dashboard"));
-const AppInfo = React.lazy(() => import("../dashboard/more/AppInfo"));
-const PrivacyPolicy = React.lazy(() =>
-	import("../dashboard/more/PrivacyPolicy")
-);
+const Login = lazy(() => import("../login/Login"));
+const LoginFailed = lazy(() => import("../login/LoginFailed"));
+const Dashboard = lazy(() => import("../dashboard/Dashboard"));
+const AppInfo = lazy(() => import("../dashboard/more/AppInfo"));
+const PrivacyPolicy = lazy(() => import("../dashboard/more/PrivacyPolicy"));
 
 const App = () => {
 	const {

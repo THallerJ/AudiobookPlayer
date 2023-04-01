@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import { useState, Suspense, lazy } from "react";
 import {
 	Typography,
 	Button,
@@ -11,7 +11,7 @@ import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import { useApp } from "../../contexts/AppContext/AppContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 
-const TutorialDialog = React.lazy(() => import("../dialogs/TutorialDialog"));
+const TutorialDialog = lazy(() => import("../dialogs/TutorialDialog"));
 
 const EmptyLibrary = () => {
 	const { googleDirectoryExists } = useApp();

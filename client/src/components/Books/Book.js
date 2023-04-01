@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import Overlay from "../misc/Overlay";
