@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseDialog from "./BaseDialog";
 import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import { CircularProgress, Typography, useTheme } from "@mui/material";
 import BookCoverList from "../books/BookCoverList";
 import BookCoverSelect from "../books/BookCoverSelect";
 import CenterWrapper from "../styled_components/CenterWrapper";
+import useApiProgressCallback from "../../hooks/useApiProgressCallback";
 
 const ChangeCoverDialog = ({ open, setOpen }) => {
 	const theme = useTheme();
 	const { getBookCovers, currentBook, updateBookCover, setOverridedCovers } =
 		useGoogle();
-	const [loading, setLoading] = useState(false);
 	const [coverResp, setCoverResp] = useState([]);
 	const [bookCovers, setBookCovers] = useState([]);
 	const [selectedCover, setSelectedCover] = useState();
 
-	useEffect(() => {
-		const fetch = async () => {
-			setLoading(true);
-			const response = await getBookCovers(0);
-			setLoading(false);
-			setCoverResp(response);
-		};
+	const [loading, getCovers] = useApiProgressCallback(async () => {
+		const response = await getBookCovers(0);
+		setCoverResp(response);
+	}, [getBookCovers, setCoverResp]);
 
-		fetch();
-	}, [getBookCovers]);
+	useEffect(() => {
+		getCovers();
+	}, [getBookCovers, getCovers]);
 
 	useEffect(() => {
 		coverResp.forEach((cover, index) => {

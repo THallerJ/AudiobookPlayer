@@ -1,12 +1,11 @@
 import { useApp } from "../../AppContext/AppContext";
 import useEffectSkipFirst from "../../../hooks/useEffectSkipFirst";
 import useApiProgress from "../../../hooks/useApiProgress";
-import { useCallback } from "react";
 
-const useFetchLibrary = (library, setLibrary, overridedCovers) => {
+const useFetchLibrary = (setLibrary, overridedCovers) => {
 	const { axiosInstance, googleDirectoryExists, rootUpdatedAt } = useApp();
 
-	const fetchLibrary = useCallback(async () => {
+	const fetchLibrary = async () => {
 		if (googleDirectoryExists) {
 			const response = await axiosInstance.get(`/google/library`);
 			const sortedLibrary = response.data.sort((book1, book2) => {
@@ -23,7 +22,7 @@ const useFetchLibrary = (library, setLibrary, overridedCovers) => {
 
 			setLibrary(sortedLibrary);
 		}
-	}, [axiosInstance, setLibrary, googleDirectoryExists, library]);
+	};
 
 	const [isLoadingLibrary, loadLibrary] = useApiProgress(fetchLibrary);
 	const [isRefreshingLibrary, refreshLibrary] = useApiProgress(fetchLibrary);

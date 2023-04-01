@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import useLocalStorageRef from "../../hooks/useLocalStorageRef";
 import useFetchLibrary from "./hooks/useFetchLibrary";
 import useBookCovers from "./hooks/useBookCovers";
@@ -21,7 +21,7 @@ export const GoogleContextProvider = ({ children }) => {
 	} = useBookCovers(setLibrary, currentBook);
 
 	const { isLoadingLibrary, loadLibrary, isRefreshingLibrary, refreshLibrary } =
-		useFetchLibrary(library, setLibrary, overridedCovers);
+		useFetchLibrary(setLibrary, overridedCovers);
 
 	const { getFolders, getBookAndChapter } = useLibrary(library, libraryRef);
 

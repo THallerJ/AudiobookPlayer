@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
 	Button,
 	Typography,
@@ -14,11 +14,11 @@ import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import { useApp } from "../../contexts/AppContext/AppContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 import BaseDialog from "./BaseDialog";
+import useApiProgressCallback from "../../hooks/useApiProgressCallback";
 
 const FolderSelectDialog = ({ open, setOpen }) => {
 	const { getFolders, setRootDirectory } = useGoogle();
 	const { axiosError } = useApp();
-	const [loading, setLoading] = useState(false);
 	const [selectedFolders, setSelectedFolders] = useState([]);
 	const [folders, setFolders] = useState([]);
 
@@ -26,14 +26,12 @@ const FolderSelectDialog = ({ open, setOpen }) => {
 		if (axiosError && axiosError.code === 401) setOpen(false);
 	}, [axiosError]);
 
-	const updateFolders = useCallback(
+	const [loading, updateFolders] = useApiProgressCallback(
 		async (rootId) => {
-			setLoading(true);
 			const folders = await getFolders(rootId);
 			setFolders(folders);
-			setLoading(false);
 		},
-		[getFolders]
+		[setFolders, getFolders]
 	);
 
 	const updateBreadCrumbs = (rootId, index) => {
