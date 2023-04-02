@@ -24,6 +24,7 @@ const createDb = () => {
 	});
 
 	mySession = session({
+		sameSite: "Lax",
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,

@@ -47,7 +47,7 @@ const TrackController = () => {
 	} = useMediaPlayer();
 
 	useEffect(() => {
-		setHasCover(playingBook.coverImageUrl ? true : false);
+		setHasCover(playingBook.coverImageUrl ? 1 : 0);
 
 		const brightness1 = tinyColor(playingBook.imageColors[0]).getBrightness();
 		const brightness2 = tinyColor(playingBook.imageColors[1]).getBrightness();
@@ -66,7 +66,7 @@ const TrackController = () => {
 			<TrackContollerContainer
 				bright={brightness}
 				colors={playingBook.imageColors}
-				hasCover={hasCover}
+				has_cover={hasCover}
 			>
 				<Grid container>
 					<Grid item xs={12} sx={{ display: "flex" }}>
@@ -185,7 +185,7 @@ export default TrackController;
 
 // Styled Components
 const TrackContollerContainer = styled(Box)(
-	({ theme, bright, colors, hasCover }) => ({
+	({ theme, bright, colors, has_cover }) => ({
 		display: "flex",
 		height: "100%",
 		flexDirection: "column",
@@ -194,11 +194,11 @@ const TrackContollerContainer = styled(Box)(
 
 		".MuiSlider-root": {
 			padding: 0,
-			background: hasCover ? colors[0] : "gray",
+			background: has_cover ? colors[0] : "gray",
 		},
 
 		".MuiSlider-track, .MuiSlider-thumb": {
-			backgroundColor: hasCover ? colors[1] : theme.palette.primary.main,
+			backgroundColor: has_cover ? colors[1] : theme.palette.primary.main,
 		},
 
 		".MuiSlider-thumb": {
