@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Typography,
 	Card,
@@ -8,8 +8,8 @@ import {
 	IconButton,
 	Slider,
 	Chip,
+	styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";
@@ -19,9 +19,9 @@ import Replay5Icon from "@mui/icons-material/Replay5";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useDashboard } from "../../contexts/DashboardContext";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import tinyColor from "tinycolor2";
 import defaultBookCover from "../../assets/images/defaultBookCover.jpg";
 
@@ -47,7 +47,7 @@ const TrackController = () => {
 	} = useMediaPlayer();
 
 	useEffect(() => {
-		setHasCover(playingBook.coverImageUrl ? true : false);
+		setHasCover(playingBook.coverImageUrl ? 1 : 0);
 
 		const brightness1 = tinyColor(playingBook.imageColors[0]).getBrightness();
 		const brightness2 = tinyColor(playingBook.imageColors[1]).getBrightness();
@@ -66,7 +66,7 @@ const TrackController = () => {
 			<TrackContollerContainer
 				bright={brightness}
 				colors={playingBook.imageColors}
-				hasCover={hasCover}
+				has_cover={hasCover}
 			>
 				<Grid container>
 					<Grid item xs={12} sx={{ display: "flex" }}>
@@ -185,7 +185,7 @@ export default TrackController;
 
 // Styled Components
 const TrackContollerContainer = styled(Box)(
-	({ theme, bright, colors, hasCover }) => ({
+	({ theme, bright, colors, has_cover }) => ({
 		display: "flex",
 		height: "100%",
 		flexDirection: "column",
@@ -194,11 +194,11 @@ const TrackContollerContainer = styled(Box)(
 
 		".MuiSlider-root": {
 			padding: 0,
-			background: hasCover ? colors[0] : "gray",
+			background: has_cover ? colors[0] : "gray",
 		},
 
 		".MuiSlider-track, .MuiSlider-thumb": {
-			backgroundColor: hasCover ? colors[1] : theme.palette.primary.main,
+			backgroundColor: has_cover ? colors[1] : theme.palette.primary.main,
 		},
 
 		".MuiSlider-thumb": {

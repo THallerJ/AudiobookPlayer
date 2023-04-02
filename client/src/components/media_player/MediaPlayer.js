@@ -1,6 +1,12 @@
-import React from "react";
-import { styled, useTheme } from "@mui/material/styles";
-import { IconButton, Slider, Typography, Grid, Chip } from "@mui/material";
+import {
+	IconButton,
+	Slider,
+	Typography,
+	Grid,
+	Chip,
+	styled,
+	useTheme,
+} from "@mui/material";
 import PlayIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseIcon from "@mui/icons-material/PauseCircleOutline";
 import NextIcon from "@mui/icons-material/SkipNext";
@@ -11,8 +17,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import VolumeIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { useMediaPlayer } from "../../contexts/MediaPlayerContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useMediaPlayer } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 
 const MediaPlayer = () => {
 	const theme = useTheme();
@@ -45,7 +51,7 @@ const MediaPlayer = () => {
 			<Grid container spacing={theme.spacing(1)}>
 				<Grid item xs={4} sm={3}>
 					<Typography variant="subtitle2" noWrap>
-						{playingBook ? playingBook.name : ""}
+						{playingBook ? playingBook.name : "No Audiobook Selected"}
 					</Typography>
 					<Typography variant="subtitle1" noWrap>
 						{playingChapter && playingChapter.data

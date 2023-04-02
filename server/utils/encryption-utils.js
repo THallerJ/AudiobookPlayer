@@ -1,14 +1,14 @@
-var CryptoJS = require("crypto-js");
+const CryptoJS = require("crypto-js");
 
-function encryptText(text) {
+const encryptText = (text) => {
 	return CryptoJS.AES.encrypt(text, process.env.ENCRYPTION_KEY).toString();
-}
+};
 
-function decryptText(ciphertext) {
+const decryptText = (ciphertext) => {
 	return CryptoJS.AES.decrypt(ciphertext, process.env.ENCRYPTION_KEY).toString(
 		CryptoJS.enc.Utf8
 	);
-}
+};
 
 module.exports = {
 	encryptText,

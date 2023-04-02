@@ -2,23 +2,26 @@ const User = require("../models/User.js");
 const Chapter = require("../models/Chapter.js");
 const dbUtils = require("../utils/database-utils");
 
-async function setRootDirectory(req, res) {
+const setRootDirectory = async (req, res) => {
 	const user = req.authUser;
 	dbUtils.deleteAllChapterProgress(user.googleId);
 
 	try {
+		const date = new Date();
 		await User.updateOne(
 			{ googleId: user.googleId },
-			{ $set: { rootId: req.body.data.rootId } }
+			{ $set: { rootId: req.body.data.rootId, rootUpdatedAt: date } }
 		);
 
-		res.status(200).send({ rootFlag: true });
+		res.status(200).send({ rootUpdatedAt: date });
 	} catch (error) {
-		res.status(500).send();
+		res
+			.status(500)
+			.send({ error: "There was a problem setting the root directory" });
 	}
-}
+};
 
-async function setChapterProgress(req, res) {
+const setChapterProgress = async (req, res) => {
 	const user = req.authUser;
 
 	const bookId = req.body.data.bookId;
@@ -44,11 +47,13 @@ async function setChapterProgress(req, res) {
 
 		res.status(200).send();
 	} catch (error) {
-		res.status(500).send();
+		res
+			.status(500)
+			.send({ error: "There was a problem saving the user's progress" });
 	}
-}
+};
 
-async function getBooksProgress(req, res) {
+const getBooksProgress = async (req, res) => {
 	const user = req.authUser;
 
 	try {
@@ -58,9 +63,11 @@ async function getBooksProgress(req, res) {
 
 		res.status(200).send(result);
 	} catch (error) {
-		res.status(500).send();
+		res.status(500).send({
+			error: "There was a problem retrieving the user's book progress",
+		});
 	}
-}
+};
 
 module.exports = {
 	setRootDirectory,

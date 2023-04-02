@@ -1,87 +1,88 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
 	Button,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogActions,
 	Typography,
-	Divider,
 	List,
-	ListItem,
+	ListItemButton,
 	ListItemText,
 	Breadcrumbs,
 	Link,
 	CircularProgress,
-	Box,
+	styled,
 } from "@mui/material";
-import { useGoogle } from "../../contexts/GoogleContext";
-import { styled } from "@mui/material/styles";
-import { useDashboard } from "../../contexts/DashboardContext";
+import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
+import { useApp } from "../../contexts/AppContext/AppContext";
+import CenterWrapper from "../styled_components/CenterWrapper";
+import BaseDialog from "./BaseDialog";
+import useApiProgressCallback from "../../hooks/useApiProgressCallback";
 
-const FolderSelectDialog = () => {
-	const { getFolders, setRootDirectory, isLoadingRefresh, isLoadingLibrary } =
-		useGoogle();
-	const { openRootDialog, setOpenRootDialog, setIsFolderSelected } =
-		useDashboard();
-	const [loading, setLoading] = useState(false);
+const FolderSelectDialog = ({ open, setOpen }) => {
+	const { getFolders, setRootDirectory } = useGoogle();
+	const { axiosError } = useApp();
 	const [selectedFolders, setSelectedFolders] = useState([]);
 	const [folders, setFolders] = useState([]);
 
 	useEffect(() => {
-		if (isLoadingLibrary || isLoadingRefresh) setIsFolderSelected(false);
-	}, [isLoadingRefresh, isLoadingLibrary, setIsFolderSelected]);
+		if (axiosError && axiosError.code === 401) setOpen(false);
+	}, [axiosError]);
 
-	const updateFolders = useCallback(
+	const [loading, updateFolders] = useApiProgressCallback(
 		async (rootId) => {
-			setLoading(true);
 			const folders = await getFolders(rootId);
 			setFolders(folders);
-			setLoading(false);
 		},
-		[getFolders]
+		[setFolders, getFolders]
 	);
 
-	function updateBreadCrumbs(rootId, index) {
+	const updateBreadCrumbs = (rootId, index) => {
 		setSelectedFolders((state) => state.slice(0, index));
 		updateFolders(rootId);
-	}
+	};
 
 	useEffect(() => {
 		const fetchData = async () => {
 			updateFolders("root");
 		};
 
-		if (openRootDialog) {
+		if (open) {
 			fetchData();
 		} else {
 			setFolders([]);
 			setSelectedFolders([]);
 		}
-	}, [getFolders, updateFolders, openRootDialog]);
+	}, [updateFolders, open]);
 
-	function renderFolders() {
+	const handleOk = () => {
+		setRootDirectory(
+			selectedFolders.length > 0
+				? selectedFolders[selectedFolders.length - 1].id
+				: "root"
+		);
+		setOpen(false);
+	};
+
+	const renderFolders = () => {
 		if (loading) {
 			return (
-				<StyledCenterWrapper>
+				<CenterWrapper>
 					<CircularProgress />
-				</StyledCenterWrapper>
+				</CenterWrapper>
 			);
 		} else {
 			if (folders.length === 0) {
 				return (
-					<StyledCenterWrapper>
+					<CenterWrapper>
 						<Typography variant="subtitle2">
 							There are no folders here
 						</Typography>
-					</StyledCenterWrapper>
+					</CenterWrapper>
 				);
 			} else {
 				return (
 					<List>
 						{folders.map((data, index) => {
 							return (
-								<ListItem
+								<ListItemButton
 									key={data.id}
 									onClick={() => {
 										updateFolders(data.id);
@@ -90,21 +91,20 @@ const FolderSelectDialog = () => {
 											{ id: data.id, name: data.name },
 										]);
 									}}
-									button={true}
 									dense={true}
 									divider={index === folders.length - 1 ? false : true}
 								>
 									<ListItemText primary={data.name} />
-								</ListItem>
+								</ListItemButton>
 							);
 						})}
 					</List>
 				);
 			}
 		}
-	}
+	};
 
-	function renderBreadCrumbs() {
+	const renderBreadCrumbs = () => {
 		return (
 			<Breadcrumbs>
 				<Link
@@ -133,50 +133,21 @@ const FolderSelectDialog = () => {
 				<Link />
 			</Breadcrumbs>
 		);
-	}
+	};
 
 	return (
-		<Box>
-			<Dialog
-				open={openRootDialog}
-				onBackdropClick={() => setOpenRootDialog(false)}
-			>
-				<DialogTitle>
-					<div>
-						<Typography align="center" variant="h6">
-							Set Audiobook Directory
-						</Typography>
-					</div>
-					<Divider />
-					{renderBreadCrumbs()}
-				</DialogTitle>
-				<DialogContent> {renderFolders()}</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							setIsFolderSelected(true);
-							setRootDirectory(
-								selectedFolders.length > 0
-									? selectedFolders[selectedFolders.length - 1].id
-									: "root"
-							);
-							setOpenRootDialog(false);
-						}}
-						variant="text"
-						aria-label="Ok"
-					>
-						OK
-					</Button>
-					<Button
-						onClick={() => setOpenRootDialog(false)}
-						variant="text"
-						aria-label="Cancel"
-					>
-						Cancel
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</Box>
+		<BaseDialog
+			title="Set Audiobook Directory"
+			open={open}
+			setOpen={setOpen}
+			content={renderFolders()}
+			headerContent={renderBreadCrumbs()}
+			ok={handleOk}
+			cancel={() => setOpen(false)}
+			fixed={true}
+			height="80%"
+			width="20%"
+		/>
 	);
 };
 
@@ -185,10 +156,4 @@ export default FolderSelectDialog;
 // Styled Components
 const StyledLinkButton = styled(Button)(({ theme }) => ({
 	textTransform: "none",
-}));
-
-const StyledCenterWrapper = styled(Box)(({ theme }) => ({
-	display: "flex",
-	justifyContent: "center",
-	alignItems: "center",
 }));
