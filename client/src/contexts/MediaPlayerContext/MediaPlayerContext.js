@@ -67,6 +67,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
 		setIsMuted,
 		rate,
 		setRate,
+		progress,
 		setProgress,
 		soundLoaded,
 	};

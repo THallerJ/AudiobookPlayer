@@ -8,6 +8,7 @@ const useActions = ({
 	setIsMuted,
 	rate,
 	setRate,
+	progress,
 	setProgress,
 	soundLoaded,
 }) => {
@@ -63,6 +64,7 @@ const useActions = ({
 
 	const seekForward = () => {
 		const newProgress = progress + 5;
+		console.log("hell osekke");
 		if (newProgress > 0 && sound) {
 			sound.seek(newProgress);
 			setProgress(sound.seek());
