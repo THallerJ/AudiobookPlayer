@@ -1,5 +1,5 @@
-import BaseToolbar from "../misc/BackToolBar";
 import { Typography, useTheme } from "@mui/material";
+import BackToolBar from "../misc/BackToolbar";
 
 const LoginFailed = () => {
 	const theme = useTheme();
@@ -10,7 +10,7 @@ const LoginFailed = () => {
 		</Typography>
 	);
 
-	return <BaseToolbar title="Login Failed" content={content} />;
+	return <BackToolBar title="Login Failed" content={content} />;
 };
 
 export default LoginFailed;

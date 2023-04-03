@@ -7,7 +7,7 @@ import {
 	useTheme,
 	styled,
 } from "@mui/material";
-import BackToolBar from "./BackToolBar";
+import BackToolBar from "./BackToolbar";
 import backgroundImage from "../../assets/images/backgroundImage.jpg";
 import darkBackgroundImage from "../../assets/images/darkBackgroundImage.jpg";
 
