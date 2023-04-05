@@ -15,7 +15,7 @@ const lightTheme = createTheme({
 			thumbAlt: "#c7c7cc",
 		},
 		primary: {
-			main: "#787aff",
+			main: "#9780EA",
 		},
 		secondary: {
 			light: "#b1b1b1",

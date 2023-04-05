@@ -14,7 +14,7 @@ const darkTheme = createTheme({
 			thumb: "#6b6b6b",
 		},
 		primary: {
-			main: "#64D2FFFF",
+			main: "#A6B1E1",
 		},
 		secondary: {
 			dark: "#2d2d2d",

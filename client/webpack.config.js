@@ -12,6 +12,10 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.svg$/,
+				use: ["@svgr/webpack", "file-loader"],
+			},
+			{
 				test: /\.js$/,
 				enforce: "pre",
 				use: ["source-map-loader"],
@@ -29,7 +33,7 @@ module.exports = {
 				use: ["style-loader", "css-loader"],
 			},
 			{
-				test: /\.(png|jpe?g)$/,
+				test: /\.(png|jpe?g|ico)$/,
 				use: [
 					{
 						loader: "file-loader",

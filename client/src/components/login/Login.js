@@ -8,6 +8,7 @@ import {
 	Box,
 	useTheme,
 } from "@mui/material";
+import Logo from "../../assets/icons/logo.svg";
 import { useApp } from "../../contexts/AppContext/AppContext";
 import GoogleButton from "react-google-button";
 import { useNavigate } from "react-router-dom";
@@ -46,20 +47,26 @@ const Login = () => {
 					spacing={theme.spacing(2)}
 				>
 					<Grid item>
+						<img src={Logo} height="75" />
+					</Grid>
+					<Grid item>
 						<Typography
 							align="center"
 							variant={isLargeScreen ? "h3" : "h4"}
 							sx={{
-								pb: theme.spacing(4),
+								pb: theme.spacing(3),
 								pr: theme.spacing(1),
 								pl: theme.spacing(1),
+								pt: theme.spacing(4),
 							}}
 						>
 							Stream Audiobook Player
 						</Typography>
 					</Grid>
+
 					<Grid item>
 						<GoogleButton
+							type="light"
 							onClick={async () => {
 								window.open(`${serverUrl}/auth/google`, "_self");
 							}}
