@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 const useServerUrl = (axiosInstance) => {
-	const [serverUrl, setServerUrl] = useState();
+  const [serverUrl, setServerUrl] = useState();
 
-	const getServerUrl = async () => {
-		const url = await axiosInstance.get("/general/serverUrl");
-		setServerUrl(url.data);
-	};
+  useEffect(() => {
+    const getServerUrl = async () => {
+      const url = await axiosInstance.get('/general/serverUrl');
+      setServerUrl(url.data);
+    };
 
-	useEffect(() => {
-		getServerUrl();
-	}, []);
+    getServerUrl();
+  }, [axiosInstance]);
 
-	return serverUrl;
+  return serverUrl;
 };
 
 export default useServerUrl;

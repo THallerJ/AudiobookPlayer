@@ -1,8 +1,9 @@
-const express = require("express");
-const router = express.Router();
-require("dotenv").config();
-const generalController = require("../controllers/generalController");
+const express = require('express');
+require('dotenv').config();
+const generalController = require('../controllers/generalController');
 
-router.get("/serverUrl", generalController.getServerUrl);
+const router = express.Router();
+
+router.get('/serverUrl', generalController.getServerUrl);
 
 module.exports = router;

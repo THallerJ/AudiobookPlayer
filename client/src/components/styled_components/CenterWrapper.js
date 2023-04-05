@@ -1,13 +1,13 @@
-import { Box, styled } from "@mui/material";
+import { Box, styled } from '@mui/material';
 
 const CenterWrapper = styled(Box, {
-	shouldForwardProp: (prop) => prop !== "fullsize",
+  shouldForwardProp: (prop) => prop !== 'fullsize',
 })(({ fullsize }) => ({
-	height: fullsize ? "100vh" : "100%",
-	display: "flex",
-	flexDirection: "column",
-	justifyContent: "center",
-	alignItems: "center",
+  height: fullsize ? '100vh' : '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
 }));
 
 export default CenterWrapper;

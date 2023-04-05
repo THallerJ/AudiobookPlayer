@@ -1,39 +1,39 @@
-import { useApp } from "../../AppContext/AppContext";
+import { useApp } from '../../AppContext/AppContext';
 
 const useManageUser = (setPlayingBook, setCurrentBook, setPlayingChapter) => {
-	const {
-		axiosInstance,
-		setGoogleDirectoryExists,
-		setRootUpdatedAt,
-		setAuthentication,
-	} = useApp();
+  const {
+    axiosInstance,
+    setGoogleDirectoryExists,
+    setRootUpdatedAt,
+    setAuthentication,
+  } = useApp();
 
-	const resetMediaPlayer = () => {
-		setPlayingBook(null);
-		setCurrentBook(null);
-		setPlayingChapter(null);
-	};
+  const resetMediaPlayer = () => {
+    setPlayingBook(null);
+    setCurrentBook(null);
+    setPlayingChapter(null);
+  };
 
-	const setRootDirectory = async (rootId) => {
-		resetMediaPlayer();
+  const setRootDirectory = async (rootId) => {
+    resetMediaPlayer();
 
-		const response = await axiosInstance.post(`/user/setRootDirectory`, {
-			data: {
-				rootId: rootId,
-			},
-		});
+    const response = await axiosInstance.post(`/user/setRootDirectory`, {
+      data: {
+        rootId,
+      },
+    });
 
-		setGoogleDirectoryExists(response.data.rootUpdatedAt !== null);
-		setRootUpdatedAt(response.data.rootUpdatedAt);
-	};
+    setGoogleDirectoryExists(response.data.rootUpdatedAt !== null);
+    setRootUpdatedAt(response.data.rootUpdatedAt);
+  };
 
-	const logout = async () => {
-		resetMediaPlayer();
-		await axiosInstance.post(`/auth/logout`);
-		setAuthentication({ isAuthenticated: false });
-	};
+  const logout = async () => {
+    resetMediaPlayer();
+    await axiosInstance.post(`/auth/logout`);
+    setAuthentication({ isAuthenticated: false });
+  };
 
-	return { setRootDirectory, logout };
+  return { setRootDirectory, logout };
 };
 
 export default useManageUser;
