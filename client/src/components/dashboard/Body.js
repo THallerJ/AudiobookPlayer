@@ -1,12 +1,5 @@
 import { Suspense, useState, useEffect, lazy } from "react";
-import {
-	Paper,
-	Hidden,
-	useMediaQuery,
-	CircularProgress,
-	Box,
-	useTheme,
-} from "@mui/material";
+import { Paper, Hidden, CircularProgress, Box, useTheme } from "@mui/material";
 import { useDashboard } from "../../contexts/DashboardContext/DashboardContext";
 import { MediaPlayerContextProvider } from "../../contexts/MediaPlayerContext/MediaPlayerContext";
 import Book from "../books/Book";
@@ -15,6 +8,7 @@ import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import CenterWrapper from "../styled_components/CenterWrapper";
 import SmallMediaPlayer from "../media_player/SmallMediaPlayer";
 import MediaPlayer from "../media_player/MediaPlayer";
+import useIsLargeScreen from "../../hooks/useIsLargeScreen";
 
 const EmptyLibrary = lazy(() => import("../books/EmptyLibrary"));
 const TrackController = lazy(() => import("../media_player/TrackController"));
@@ -24,7 +18,7 @@ const Body = () => {
 	const { library, isLoadingLibrary } = useGoogle();
 	const { showTrackController } = useDashboard();
 	const [bookCovers, setBookCovers] = useState([]);
-	const isLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
+	const isLargeScreen = useIsLargeScreen();
 
 	useEffect(() => {
 		const temp = [];

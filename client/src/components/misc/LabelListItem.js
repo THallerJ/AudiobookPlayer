@@ -1,19 +1,14 @@
 import LabelIcon from "@mui/icons-material/LabelOutlined";
-import {
-	Typography,
-	ListItem,
-	ListItemIcon,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { Typography, ListItem, ListItemIcon, useTheme } from "@mui/material";
+import useIsLargeScreen from "../../hooks/useIsLargeScreen";
 
 const LabelListItem = ({ text }) => {
 	const theme = useTheme();
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+	const isLargeScreen = useIsLargeScreen();
 
 	return (
-		<ListItem disableGutters={isSmallScreen}>
-			<ListItemIcon sx={{ minWidth: isSmallScreen ? 40 : null }}>
+		<ListItem disableGutters={!isLargeScreen}>
+			<ListItemIcon sx={{ minWidth: isLargeScreen ? 40 : 30 }}>
 				<LabelIcon fontSize="small" />
 			</ListItemIcon>
 			<Typography>{text}</Typography>

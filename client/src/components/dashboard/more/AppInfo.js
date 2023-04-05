@@ -7,8 +7,8 @@ const AppInfo = () => {
 		<div>
 			<Typography variant="h5">About</Typography>
 			<Typography variant="body1">
-				Stream Audiobook Player is a web app that allows users to stream
-				audiobooks that are stored on their Google Drive.
+				Stream Audiobook Player is a web app that allows users to stream DRM
+				free audiobooks that are stored on their Google Drive.
 			</Typography>
 			<Divider />
 
@@ -21,16 +21,6 @@ const AppInfo = () => {
 				<LabelListItem text="Mobile and desktop friendly UI (built with Material UI)" />
 				<LabelListItem text="Supports MP3, MPEG, OPUS, OGG, OGA, WAV, AAC, CAF, M4A, MP4, WEBA, WEBM, DOLBY, and FLAC file types." />
 			</List>
-			<Divider />
-			<Typography variant="h5">User Data</Typography>
-			<Typography variant="body1">
-				The user's Google ID, access token, and refresh token are saved upon
-				authentication. The google ID is used to map the access and refresh
-				tokens to each user, and the tokens are used for making API calls to the
-				Google Drive API and Google Books API. Using the Google Drive API, the
-				title and ID of files on the user's Google Drive are retrieved and may
-				be saved.
-			</Typography>
 			<Divider />
 			<Typography variant="h5">Privacy Policy</Typography>
 			<Typography variant="body1">

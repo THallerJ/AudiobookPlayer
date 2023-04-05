@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
-import {
-	Box,
-	Typography,
-	useMediaQuery,
-	Link,
-	useTheme,
-	styled,
-} from "@mui/material";
+import { Box, useTheme, styled } from "@mui/material";
 import BackToolBar from "./BackToolbar";
 import backgroundImage from "../../assets/images/backgroundImage.jpg";
 import darkBackgroundImage from "../../assets/images/darkBackgroundImage.jpg";
+import useIsLargeScreen from "../../hooks/useIsLargeScreen";
+import BackgroundImageLink from "./BackgroundImageLink";
 
 const DisplayText = ({ title, content }) => {
 	const [isDarkTheme, setIsDarkTheme] = useState();
 	const [imgUrl, setImgUrl] = useState();
 	const theme = useTheme();
-	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+	const isLargeScreen = useIsLargeScreen();
 
 	const lightImgUrl =
 		"https://www.freepik.com/free-vector/gradient-white-monochrome-background_15273829.htm#page=5&query=background%20white&position=19&from_view=search&track=sph";
@@ -33,19 +28,10 @@ const DisplayText = ({ title, content }) => {
 	}, [theme]);
 
 	const components = (
-		<StyledAppInfoContainer>
+		<StyledAppInfoContainer isLargeScreen={isLargeScreen}>
 			<Box className="container">
 				<Box className="content">{content}</Box>
-				{isLargeScreen && (
-					<Typography className="footer" variant="caption">
-						<Link underline="hover" href={imgUrl}>
-							Image
-						</Link>{" "}
-						by
-						{isDarkTheme && " coolvector on "}
-						{" Freepik"}
-					</Typography>
-				)}
+				{isLargeScreen && <BackgroundImageLink />}
 			</Box>
 		</StyledAppInfoContainer>
 	);
@@ -56,7 +42,7 @@ const DisplayText = ({ title, content }) => {
 export default DisplayText;
 
 // Styled Components
-const StyledAppInfoContainer = styled("div")(({ theme }) => ({
+const StyledAppInfoContainer = styled("div")(({ theme, isLargeScreen }) => ({
 	display: "flex",
 	flexDirection: "column",
 	width: "100%",
@@ -82,7 +68,7 @@ const StyledAppInfoContainer = styled("div")(({ theme }) => ({
 		backgroundColor: theme.palette.background.container,
 		alignItems: "center",
 		overflow: "auto",
-		width: useMediaQuery(theme.breakpoints.up("md")) ? "55%" : "100%",
+		width: isLargeScreen ? "55%" : "100%",
 	},
 
 	".content": {

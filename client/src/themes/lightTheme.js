@@ -17,6 +17,10 @@ const lightTheme = createTheme({
 		primary: {
 			main: "#9780EA",
 		},
+		primaryAlt: {
+			main: "#FFCD66",
+			secondary: "#FFC8C8",
+		},
 		secondary: {
 			light: "#b1b1b1",
 			main: "#9e9e9e",

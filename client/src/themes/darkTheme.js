@@ -16,6 +16,10 @@ const darkTheme = createTheme({
 		primary: {
 			main: "#A6B1E1",
 		},
+		primaryAlt: {
+			main: "#FF9999",
+			secondary: "#FFC8C8",
+		},
 		secondary: {
 			dark: "#2d2d2d",
 			main: "#41414",

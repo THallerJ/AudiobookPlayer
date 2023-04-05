@@ -6,7 +6,6 @@ import {
 	IconButton,
 	AppBar,
 	Toolbar,
-	useMediaQuery,
 	Menu,
 	MenuItem,
 	LinearProgress,
@@ -22,6 +21,7 @@ import { useGoogle } from "../../contexts/GoogleContext/GoogleContext";
 import Div100vh from "react-div-100vh";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import useIsLargeScreen from "../../hooks/useIsLargeScreen";
 
 const FolderSelectDialog = lazy(() => import("../dialogs/FolderSelectDialog"));
 const ChangeCoverDialog = lazy(() => import("../dialogs/ChangeCoverDialog"));
@@ -41,7 +41,7 @@ const Dashboard = () => {
 	const { toggleDarkMode } = useApp();
 	const { refreshLibrary, logout, currentBook, isRefreshingLibrary } =
 		useGoogle();
-	const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+	const isLargeScreen = useIsLargeScreen();
 
 	const handleOpenMenu = (event) => {
 		setAnchorEl(event.currentTarget);

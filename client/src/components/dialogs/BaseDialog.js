@@ -6,9 +6,8 @@ import {
 	DialogActions,
 	Typography,
 	Divider,
-	useTheme,
-	useMediaQuery,
 } from "@mui/material";
+import useIsLargeScreen from "../../hooks/useIsLargeScreen";
 
 const BaseDialog = ({
 	title,
@@ -21,8 +20,7 @@ const BaseDialog = ({
 	ok,
 	cancel,
 }) => {
-	const theme = useTheme();
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+	const isLargeScreen = useIsLargeScreen();
 
 	const renderButtons = (
 		<DialogActions>
@@ -47,7 +45,7 @@ const BaseDialog = ({
 				sx: {
 					height: dialogHeight ? dialogHeight : null,
 					width: () => {
-						if (isSmallScreen) return "90%";
+						if (!isLargeScreen) return "90%";
 						else if (dialogWidth) return dialogWidth;
 						else return null;
 					},
