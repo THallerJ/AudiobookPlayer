@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-const useApiProgressCallback = (callback, deps) => {
+const useFetchProgressCallback = (callback) => {
   const [loading, setLoading] = useState(false);
 
   const callApi = useCallback(
@@ -9,10 +9,10 @@ const useApiProgressCallback = (callback, deps) => {
       await callback(...args);
       setLoading(false);
     },
-    [...deps]
+    [setLoading, callback]
   );
 
   return [loading, callApi];
 };
 
-export default useApiProgressCallback;
+export default useFetchProgressCallback;

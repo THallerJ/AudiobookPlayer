@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import useApiProgressCallback from '../../../hooks/useApiProgressCallback';
+import { useState, useEffect, useCallback } from 'react';
+import useFetchProgressCallback from '../../../hooks/useFetchProgressCallback';
 import { useGoogle } from '../../../contexts/GoogleContext/GoogleContext';
 import BookCoverSelect from '../../books/components/BookCoverSelect';
 
@@ -9,10 +9,12 @@ const useBookCovers = () => {
   const [bookCovers, setBookCovers] = useState([]);
   const [selectedCover, setSelectedCover] = useState();
 
-  const [loading, getCovers] = useApiProgressCallback(async () => {
+  const getCoversCallback = useCallback(async () => {
     const response = await getBookCovers(0);
     setCoverResp(response);
   }, [getBookCovers, setCoverResp]);
+
+  const [loading, getCovers] = useFetchProgressCallback(getCoversCallback);
 
   useEffect(() => {
     getCovers();

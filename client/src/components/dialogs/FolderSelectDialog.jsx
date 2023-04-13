@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Button,
   Typography,
@@ -15,7 +15,7 @@ import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
 import { useApp } from '../../contexts/AppContext/AppContext';
 import CenterWrapper from '../styled_components/CenterWrapper';
 import BaseDialog from './components/BaseDialog';
-import useApiProgressCallback from '../../hooks/useApiProgressCallback';
+import useFetchProgressCallback from '../../hooks/useFetchProgressCallback';
 
 const FolderSelectDialog = ({ open, setOpen }) => {
   const { getFolders, setRootDirectory } = useGoogle();
@@ -27,12 +27,16 @@ const FolderSelectDialog = ({ open, setOpen }) => {
     if (axiosError && axiosError.code === 401) setOpen(false);
   }, [axiosError, setOpen]);
 
-  const [loading, updateFolders] = useApiProgressCallback(
+  const updateFoldersCallback = useCallback(
     async (rootId) => {
       const fetchedFolders = await getFolders(rootId);
       setFolders(fetchedFolders);
     },
     [setFolders, getFolders]
+  );
+
+  const [loading, updateFolders] = useFetchProgressCallback(
+    updateFoldersCallback
   );
 
   const updateBreadCrumbs = (rootId, index) => {

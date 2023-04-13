@@ -1,6 +1,6 @@
 import { useApp } from '../../AppContext/AppContext';
 import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
-import useApiProgress from '../../../hooks/useApiProgress';
+import useFetchProgress from '../../../hooks/useFetchProgress';
 
 const useFetchLibrary = (setLibrary, overridedCovers) => {
   const { axiosInstance, googleDirectoryExists, rootUpdatedAt } = useApp();
@@ -24,8 +24,8 @@ const useFetchLibrary = (setLibrary, overridedCovers) => {
     }
   };
 
-  const [isLoadingLibrary, loadLibrary] = useApiProgress(fetchLibrary);
-  const [isRefreshingLibrary, refreshLibrary] = useApiProgress(fetchLibrary);
+  const [isLoadingLibrary, loadLibrary] = useFetchProgress(fetchLibrary);
+  const [isRefreshingLibrary, refreshLibrary] = useFetchProgress(fetchLibrary);
 
   useEffectSkipFirst(() => {
     loadLibrary();
