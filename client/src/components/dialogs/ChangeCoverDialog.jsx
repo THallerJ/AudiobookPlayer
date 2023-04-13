@@ -1,44 +1,14 @@
-import { useEffect, useState } from 'react';
 import { CircularProgress, Typography, useTheme } from '@mui/material';
-import BaseDialog from './BaseDialog';
+import BaseDialog from './components/BaseDialog';
 import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
 import BookCoverList from '../books/BookCoverList';
-import BookCoverSelect from '../books/BookCoverSelect';
 import CenterWrapper from '../styled_components/CenterWrapper';
-import useApiProgressCallback from '../../hooks/useApiProgressCallback';
+import useBookCovers from './hooks/useBookCovers';
 
 const ChangeCoverDialog = ({ open, setOpen }) => {
   const theme = useTheme();
-  const { getBookCovers, currentBook, updateBookCover, setOverridedCovers } =
-    useGoogle();
-  const [coverResp, setCoverResp] = useState([]);
-  const [bookCovers, setBookCovers] = useState([]);
-  const [selectedCover, setSelectedCover] = useState();
-
-  const [loading, getCovers] = useApiProgressCallback(async () => {
-    const response = await getBookCovers(0);
-    setCoverResp(response);
-  }, [getBookCovers, setCoverResp]);
-
-  useEffect(() => {
-    getCovers();
-  }, [getBookCovers, getCovers]);
-
-  useEffect(() => {
-    coverResp.forEach((cover, index) => {
-      setBookCovers((prevState) => {
-        const newBookCover = (
-          <BookCoverSelect
-            bookCoverUrl={cover.volumeInfo.imageLinks.thumbnail}
-            selectedCover={selectedCover}
-            setSelectedCover={setSelectedCover}
-          />
-        );
-
-        return index === 0 ? [newBookCover] : [...prevState, newBookCover];
-      });
-    });
-  }, [coverResp, selectedCover]);
+  const { currentBook, updateBookCover, setOverridedCovers } = useGoogle();
+  const [bookCovers, selectedCover, loading] = useBookCovers();
 
   const renderContent = () => {
     if (loading)

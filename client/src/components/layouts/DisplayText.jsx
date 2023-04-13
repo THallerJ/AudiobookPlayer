@@ -4,13 +4,11 @@ import BackToolBar from './BackToolbar';
 import backgroundImage from '../../assets/images/backgroundImage.jpg';
 import darkBackgroundImage from '../../assets/images/darkBackgroundImage.jpg';
 import useIsLargeScreen from '../../hooks/useIsLargeScreen';
-import BackgroundImageLink from './BackgroundImageLink';
+import BackgroundImageLink from '../misc/BackgroundImageLink';
 
 const DisplayText = ({ title, content }) => {
-  // eslint-disable-next-line no-unused-vars
-  const [isDarkTheme, setIsDarkTheme] = useState();
-  // eslint-disable-next-line no-unused-vars
-  const [imgUrl, setImgUrl] = useState();
+  const [, setIsDarkTheme] = useState();
+  const [, setImgUrl] = useState();
   const theme = useTheme();
   const isLargeScreen = useIsLargeScreen();
 

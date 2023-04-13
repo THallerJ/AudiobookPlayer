@@ -1,6 +1,6 @@
 import CheckIcon from '@mui/icons-material/Check';
 import BookCover from './BookCover';
-import Overlay from '../misc/Overlay';
+import Overlay from '../../misc/Overlay';
 
 const BookCoverSelect = ({ bookCoverUrl, selectedCover, setSelectedCover }) => {
   const overlays = [

@@ -1,5 +1,5 @@
 import { Typography, Divider, useTheme } from '@mui/material';
-import DisplayText from '../../misc/DisplayText';
+import DisplayText from '../layouts/DisplayText';
 
 const PrivacyPolicy = () => {
   const theme = useTheme();

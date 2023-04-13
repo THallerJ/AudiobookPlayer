@@ -1,5 +1,5 @@
 import { Card, CardMedia, styled } from '@mui/material';
-import defaultBookCover from '../../assets/images/defaultBookCover.jpg';
+import defaultBookCover from '../../../assets/images/defaultBookCover.jpg';
 
 const BookCover = ({
   title,

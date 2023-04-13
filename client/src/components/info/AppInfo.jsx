@@ -1,6 +1,6 @@
 import { Typography, List, Link, Divider } from '@mui/material';
-import LabelListItem from '../../misc/LabelListItem';
-import DisplayText from '../../misc/DisplayText';
+import LabelListItem from '../misc/LabelListItem';
+import DisplayText from '../layouts/DisplayText';
 
 const AppInfo = () => {
   const content = (

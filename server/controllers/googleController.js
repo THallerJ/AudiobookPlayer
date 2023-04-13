@@ -1,34 +1,9 @@
 require('dotenv').config();
 const axios = require('axios');
 require('dotenv').config();
-const ColorThief = require('colorthief');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-
-/* returns last integer in a string, not including integers that appear 
-   after a period to account for integers that appear in file extensions (i.e. .mp3) */
-const extractLastNumber = (a) => {
-  let numStr;
-
-  if (a.includes('.')) {
-    numStr = a.substr(0, a.indexOf('.')).match(/\d+$/);
-  } else {
-    numStr = a.match(/\d+$/);
-  }
-
-  return numStr ? Number(numStr[0]) : null;
-};
-
-const rgbToHex = (r, g, b) => {
-  const rgb = [r, g, b];
-  const hex = ['#'];
-
-  rgb.forEach((color) => {
-    const hexValue = color.toString(16);
-    hex.push(hexValue.length === 1 ? `0${hexValue}` : hexValue);
-  });
-
-  return hex.join('');
-};
+const { extractLastNumber } = require('../utils/string-utils');
+const { getImageColors } = require('../utils/color-utils');
 
 const streamProxy = createProxyMiddleware({
   target: 'https://www.googleapis.com',
@@ -170,22 +145,6 @@ const sortChapters = (chaps) => {
 
     return num1 && num2 ? num1 - num2 : 0;
   });
-};
-
-const getImageColors = async (imageUrl) => {
-  const hexColors = [];
-
-  if (imageUrl) {
-    const colors = await ColorThief.getPalette(imageUrl, 2);
-
-    colors.forEach((color) => {
-      hexColors.push(rgbToHex(color[0], color[1], color[2]));
-    });
-  } else {
-    hexColors.push('#eeeeee', '#eeeeee');
-  }
-
-  return hexColors;
 };
 
 const getLibrary = async (req, res) => {

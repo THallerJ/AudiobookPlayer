@@ -1,5 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
-import BackToolBar from '../misc/BackToolbar';
+import BackToolBar from '../layouts/BackToolbar';
 
 const LoginFailed = () => {
   const theme = useTheme();

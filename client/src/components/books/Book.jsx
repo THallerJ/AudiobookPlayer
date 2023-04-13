@@ -1,39 +1,20 @@
-import { useState, useEffect } from 'react';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
 import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
 import { useMediaPlayer } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
 import Overlay from '../misc/Overlay';
-import BookCover from './BookCover';
+import BookCover from './components/BookCover';
+import useBookState from './hooks/useBookState';
 
 const Book = ({ book }) => {
-  const [showTitleOverlay, setShowTitleOverlay] = useState(false);
-  const [showPlayingOverlay, setShowPlayingOverlay] = useState(false);
-  const { setCurrentBook, currentBook, playingBook } = useGoogle();
+  const { setCurrentBook } = useGoogle();
   const { booksProgress, resumePlayback } = useMediaPlayer();
-  const [hasCover, setHasCover] = useState();
-  const [showSelectedOverlay, setShowSelectedOverlay] = useState(false);
-
-  useEffect(() => {
-    setHasCover(book.coverImageUrl);
-  }, [book]);
-
-  useEffect(() => {
-    if (currentBook) {
-      setShowSelectedOverlay(book.name === currentBook.name);
-    }
-  }, [currentBook, book]);
-
-  useEffect(() => {
-    if (playingBook) setShowPlayingOverlay(book.name === playingBook.name);
-  }, [playingBook, book]);
-
-  useEffect(() => {
-    if (!hasCover) {
-      setShowTitleOverlay(true);
-    } else {
-      setShowTitleOverlay(false);
-    }
-  }, [hasCover]);
+  const {
+    hasCover,
+    setShowTitleOverlay,
+    showTitleOverlay,
+    showPlayingOverlay,
+    showSelectedOverlay,
+  } = useBookState(book);
 
   const resumeOverlay = (
     <Overlay

@@ -6,6 +6,7 @@ export const DashboardContextProvider = ({ children }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [showTrackController, setShowTrackController] = useState(false);
   const [openFolderDialog, setOpenFolderDialog] = useState(false);
+  const [openCoverDialog, setOpenCoverDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const value = useMemo(
@@ -16,6 +17,8 @@ export const DashboardContextProvider = ({ children }) => {
       setShowTrackController,
       openFolderDialog,
       setOpenFolderDialog,
+      openCoverDialog,
+      setOpenCoverDialog,
       anchorEl,
       setAnchorEl,
     }),
@@ -26,6 +29,8 @@ export const DashboardContextProvider = ({ children }) => {
       setShowTrackController,
       openFolderDialog,
       setOpenFolderDialog,
+      openCoverDialog,
+      setOpenCoverDialog,
       anchorEl,
       setAnchorEl,
     ]

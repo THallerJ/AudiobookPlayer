@@ -7,7 +7,7 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import useIsLargeScreen from '../../hooks/useIsLargeScreen';
+import useIsLargeScreen from '../../../hooks/useIsLargeScreen';
 
 const BaseDialog = ({
   title,

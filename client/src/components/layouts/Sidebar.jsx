@@ -34,42 +34,46 @@ const Sidebar = () => {
     return null;
   };
 
+  const renderChapters = () => {
+    if (currentBook) {
+      return currentBook.chapters.map((chapter, index) => {
+        return (
+          <Tooltip
+            title={chapter.name}
+            followCursor
+            placement="right-end"
+            enterDelay={1000}
+            key={chapter.id}
+          >
+            <ListItemButton
+              className={generateListItemClassName(chapter)}
+              divider
+              dense
+              onClick={() => {
+                setPlayingChapter({ data: chapter, index });
+                setPlayingBook(currentBook);
+              }}
+            >
+              <ListItemText
+                primary={chapter.name}
+                primaryTypographyProps={{ noWrap: true }}
+              />
+            </ListItemButton>
+          </Tooltip>
+        );
+      });
+    }
+
+    return null;
+  };
+
   const drawerContent = (
     <StyledDrawerContent>
       <Typography noWrap variant="subtitle2" align="center">
         {currentBook ? currentBook.name : 'NO BOOK SELECTED'}
       </Typography>
       <Divider />
-      <List>
-        {currentBook
-          ? currentBook.chapters.map((chapter, index) => {
-              return (
-                <Tooltip
-                  title={chapter.name}
-                  followCursor
-                  placement="right-end"
-                  enterDelay={1000}
-                  key={chapter.id}
-                >
-                  <ListItemButton
-                    className={generateListItemClassName(chapter)}
-                    divider
-                    dense
-                    onClick={() => {
-                      setPlayingChapter({ data: chapter, index });
-                      setPlayingBook(currentBook);
-                    }}
-                  >
-                    <ListItemText
-                      primary={chapter.name}
-                      primaryTypographyProps={{ noWrap: true }}
-                    />
-                  </ListItemButton>
-                </Tooltip>
-              );
-            })
-          : null}
-      </List>
+      <List>{renderChapters()}</List>
     </StyledDrawerContent>
   );
 

@@ -14,7 +14,7 @@ import {
 import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
 import { useApp } from '../../contexts/AppContext/AppContext';
 import CenterWrapper from '../styled_components/CenterWrapper';
-import BaseDialog from './BaseDialog';
+import BaseDialog from './components/BaseDialog';
 import useApiProgressCallback from '../../hooks/useApiProgressCallback';
 
 const FolderSelectDialog = ({ open, setOpen }) => {

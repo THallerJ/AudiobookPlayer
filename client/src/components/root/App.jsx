@@ -16,9 +16,9 @@ import CenterWrapper from '../styled_components/CenterWrapper';
 
 const Login = lazy(() => import('../login/Login'));
 const LoginFailed = lazy(() => import('../login/LoginFailed'));
-const Dashboard = lazy(() => import('../dashboard/Dashboard'));
-const AppInfo = lazy(() => import('../dashboard/more/AppInfo'));
-const PrivacyPolicy = lazy(() => import('../dashboard/more/PrivacyPolicy'));
+const Dashboard = lazy(() => import('../layouts/Dashboard'));
+const AppInfo = lazy(() => import('../info/AppInfo'));
+const PrivacyPolicy = lazy(() => import('../info/PrivacyPolicy'));
 
 const App = () => {
   const {

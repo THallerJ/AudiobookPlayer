@@ -1,35 +1,24 @@
-import { Suspense, useState, useEffect, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Paper, Hidden, CircularProgress, Box, useTheme } from '@mui/material';
-import { useDashboard } from '../../contexts/DashboardContext/DashboardContext';
-import { MediaPlayerContextProvider } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
-import Book from '../books/Book';
-import BookCoverList from '../books/BookCoverList';
-import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
-import CenterWrapper from '../styled_components/CenterWrapper';
-import SmallMediaPlayer from '../media_player/SmallMediaPlayer';
-import MediaPlayer from '../media_player/MediaPlayer';
-import useIsLargeScreen from '../../hooks/useIsLargeScreen';
+import { useDashboard } from '../../../contexts/DashboardContext/DashboardContext';
+import { MediaPlayerContextProvider } from '../../../contexts/MediaPlayerContext/MediaPlayerContext';
+import BookCoverList from '../../books/BookCoverList';
+import CenterWrapper from '../../styled_components/CenterWrapper';
+import SmallMediaPlayer from '../../media_player/SmallMediaPlayer';
+import MediaPlayer from '../../media_player/MediaPlayer';
+import useIsLargeScreen from '../../../hooks/useIsLargeScreen';
+import useBookLibrary from '../hooks/useBookLibrary';
 
-const EmptyLibrary = lazy(() => import('../books/EmptyLibrary'));
-const TrackController = lazy(() => import('../media_player/TrackController'));
+const EmptyLibrary = lazy(() => import('../../books/EmptyLibrary'));
+const TrackController = lazy(() =>
+  import('../../media_player/TrackController')
+);
 
 const Body = () => {
   const theme = useTheme();
-  const { library, isLoadingLibrary } = useGoogle();
   const { showTrackController } = useDashboard();
-  const [bookCovers, setBookCovers] = useState([]);
   const isLargeScreen = useIsLargeScreen();
-
-  useEffect(() => {
-    const temp = [];
-
-    library.forEach((book) => {
-      const newBookCover = { image: <Book book={book} />, key: book.id };
-      temp.push(newBookCover);
-    });
-
-    setBookCovers(temp);
-  }, [library]);
+  const [bookCovers, isLoadingLibrary] = useBookLibrary();
 
   const renderMain = () => {
     if (isLoadingLibrary)
