@@ -1,7 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Paper, Hidden, CircularProgress, Box, useTheme } from '@mui/material';
 import { useDashboard } from '../../../contexts/DashboardContext/DashboardContext';
-import { MediaPlayerContextProvider } from '../../../contexts/MediaPlayerContext/MediaPlayerContext';
 import BookCoverList from '../../books/BookCoverList';
 import CenterWrapper from '../../styled_components/CenterWrapper';
 import SmallMediaPlayer from '../../media_player/SmallMediaPlayer';
@@ -71,26 +70,24 @@ const Body = () => {
   };
 
   return (
-    <MediaPlayerContextProvider>
+    <Box
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
       <Box
         sx={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          height: showTrackController ? '100%' : '90%',
+          overflow: 'auto',
         }}
       >
-        <Box
-          sx={{
-            height: showTrackController ? '100%' : '90%',
-            overflow: 'auto',
-          }}
-        >
-          {renderMain()}
-        </Box>
-        {renderMediaPlayer()}
+        {renderMain()}
       </Box>
-    </MediaPlayerContextProvider>
+      {renderMediaPlayer()}
+    </Box>
   );
 };
 

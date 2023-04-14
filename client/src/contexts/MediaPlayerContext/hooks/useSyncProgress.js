@@ -5,13 +5,7 @@ import { useApp } from '../../AppContext/AppContext';
 import { useDashboard } from '../../DashboardContext/DashboardContext';
 import { useGoogle } from '../../GoogleContext/GoogleContext';
 
-const useSyncProgress = ({
-  sound,
-  isPlaying,
-  setIsPlaying,
-  progress,
-  duration,
-}) => {
+const useSyncProgress = ({ sound, isPlaying, progress, duration }) => {
   const { axiosInstance } = useApp();
   const { anchorEl } = useDashboard();
   const { playingChapter, playingBook } = useGoogle();
@@ -100,7 +94,6 @@ const useSyncProgress = ({
     if (Boolean(anchorEl) && sound) {
       if (isPlaying) {
         sound.pause();
-        setIsPlaying(false);
       }
       syncChapterProgress(
         playingBook,

@@ -5,8 +5,7 @@ import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
 import useStateRef from '../../../hooks/useStateRef';
 import { useApp } from '../../AppContext/AppContext';
 
-const useSound = ({ userInputFlagRef, refreshFlagRef }) => {
-  const [initializedFlag, setInitializedFlag] = useState(false);
+const useSound = ({ initializedFlag, refreshFlagRef }) => {
   const { serverUrl } = useApp();
   const { playingChapter, playingBook } = useGoogle();
   const [sound, setSound] = useState();
@@ -37,16 +36,22 @@ const useSound = ({ userInputFlagRef, refreshFlagRef }) => {
             setDuration(this.duration());
             setSoundLoaded(true);
           },
+          onstop: () => {
+            setIsPlaying(false);
+          },
+          onpause: () => {
+            setIsPlaying(false);
+          },
+          onplay: () => {
+            setIsPlaying(true);
+          },
+          onmute: () => {
+            setIsMuted((prev) => !prev);
+          },
         });
       });
     }
   }, [playingChapter, playingBook, rateRef, serverUrl]);
-
-  useEffect(() => {
-    if (userInputFlagRef.current) {
-      setInitializedFlag(true);
-    }
-  }, [playingChapter, userInputFlagRef]);
 
   useEffectSkipFirst(() => {
     if (sound && initializedFlag) {
@@ -82,6 +87,7 @@ const useSound = ({ userInputFlagRef, refreshFlagRef }) => {
 
   return {
     sound,
+    setSound,
     isPlaying,
     setIsPlaying,
     volume,
@@ -96,7 +102,6 @@ const useSound = ({ userInputFlagRef, refreshFlagRef }) => {
     setDuration,
     soundLoaded,
     initializedFlag,
-    setInitializedFlag,
   };
 };
 

@@ -2,12 +2,22 @@ import { Menu, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useGoogle } from '../../../contexts/GoogleContext/GoogleContext';
 import { useDashboard } from '../../../contexts/DashboardContext/DashboardContext';
+import { useMediaPlayer } from '../../../contexts/MediaPlayerContext/MediaPlayerContext';
 import { useApp } from '../../../contexts/AppContext/AppContext';
+import useLogout from '../../../hooks/useLogout';
 
 const DashboardMenu = () => {
   const navigate = useNavigate();
-  const { toggleDarkMode } = useApp();
-  const { refreshLibrary, logout, currentBook } = useGoogle();
+  const { toggleDarkMode, setAuthentication } = useApp();
+
+  const {
+    refreshLibrary,
+    currentBook,
+    setPlayingBook,
+    setCurrentBook,
+    setPlayingChapter,
+  } = useGoogle();
+
   const {
     anchorEl,
     setAnchorEl,
@@ -15,6 +25,16 @@ const DashboardMenu = () => {
     showTrackController,
     setOpenCoverDialog,
   } = useDashboard();
+
+  const { setSound } = useMediaPlayer();
+
+  const logout = useLogout(
+    setAuthentication,
+    setSound,
+    setPlayingChapter,
+    setPlayingBook,
+    setCurrentBook
+  );
 
   const handleCloseMenu = () => {
     setAnchorEl(null);

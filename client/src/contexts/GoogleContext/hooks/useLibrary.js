@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useApp } from '../../AppContext/AppContext';
 
-const useLibrary = (library, libraryRef) => {
+const useLibrary = (libraryRef) => {
   const { axiosInstance } = useApp();
 
   const getFolders = useCallback(

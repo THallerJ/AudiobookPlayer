@@ -3,7 +3,6 @@ import useLocalStorageRef from '../../hooks/useLocalStorageRef';
 import useFetchLibrary from './hooks/useFetchLibrary';
 import useBookCovers from './hooks/useBookCovers';
 import useLibrary from './hooks/useLibrary';
-import useManageUser from './hooks/useManageUser';
 
 const GoogleContext = createContext();
 
@@ -23,22 +22,14 @@ export const GoogleContextProvider = ({ children }) => {
   const { isLoadingLibrary, loadLibrary, isRefreshingLibrary, refreshLibrary } =
     useFetchLibrary(setLibrary, overridedCovers);
 
-  const { getFolders, getBookAndChapter } = useLibrary(library, libraryRef);
-
-  const { setRootDirectory, logout } = useManageUser(
-    setPlayingBook,
-    setCurrentBook,
-    setPlayingChapter
-  );
+  const { getFolders, getBookAndChapter } = useLibrary(libraryRef);
 
   const value = useMemo(
     () => ({
       getFolders,
-      setRootDirectory,
       library,
       refreshLibrary,
       loadLibrary,
-      logout,
       currentBook,
       setCurrentBook,
       playingBook,
@@ -54,11 +45,9 @@ export const GoogleContextProvider = ({ children }) => {
     }),
     [
       getFolders,
-      setRootDirectory,
       library,
       refreshLibrary,
       loadLibrary,
-      logout,
       currentBook,
       setCurrentBook,
       playingBook,

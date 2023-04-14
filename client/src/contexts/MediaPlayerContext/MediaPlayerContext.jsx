@@ -1,4 +1,11 @@
-import { useContext, createContext, useRef, useMemo, useCallback } from 'react';
+import {
+  useContext,
+  createContext,
+  useRef,
+  useMemo,
+  useCallback,
+  useState,
+} from 'react';
 import useActions from './hooks/useActions';
 import useResume from './hooks/useResume';
 import useSound from './hooks/useSound';
@@ -7,16 +14,17 @@ import useSyncProgress from './hooks/useSyncProgress';
 const MediaPlayerContext = createContext();
 
 export const MediaPlayerContextProvider = ({ children }) => {
+  const [initializedFlag, setInitializedFlag] = useState(false);
   const refreshFlagRef = useRef(false);
-  const userInputFlagRef = useRef(false);
 
   const useSoundProps = {
-    userInputFlagRef,
+    initializedFlag,
     refreshFlagRef,
   };
 
   const {
     sound,
+    setSound,
     isPlaying,
     setIsPlaying,
     volume,
@@ -30,14 +38,11 @@ export const MediaPlayerContextProvider = ({ children }) => {
     duration,
     setDuration,
     soundLoaded,
-    initializedFlag,
-    setInitializedFlag,
   } = useSound({ ...useSoundProps });
 
   const useSyncProgressProps = {
     sound,
     isPlaying,
-    setIsPlaying,
     progress,
     duration,
   };
@@ -49,7 +54,6 @@ export const MediaPlayerContextProvider = ({ children }) => {
   const useResumeProps = {
     sound,
     refreshFlagRef,
-    userInputFlagRef,
     setInitializedFlag,
     booksProgress,
     setBooksProgress,
@@ -62,14 +66,13 @@ export const MediaPlayerContextProvider = ({ children }) => {
   const uesActionsProps = {
     sound,
     isPlaying,
-    setIsPlaying,
     isMuted,
-    setIsMuted,
     rate,
     setRate,
     progress,
     setProgress,
     soundLoaded,
+    setInitializedFlag,
   };
 
   const {
@@ -82,6 +85,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
     previousTrack,
     nextTrack,
     handleSeek,
+    playChapter,
   } = useActions({ ...uesActionsProps });
 
   const formatTime = useCallback((seconds) => {
@@ -96,6 +100,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
       duration,
       setDuration,
       sound,
+      setSound,
       togglePlay,
       increaseRate,
       decreaseRate,
@@ -117,6 +122,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
       booksProgress,
       resumePlayback,
       initializedFlag,
+      playChapter,
     }),
     [
       isPlaying,
@@ -124,6 +130,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
       duration,
       setDuration,
       sound,
+      setSound,
       togglePlay,
       increaseRate,
       decreaseRate,
@@ -145,6 +152,7 @@ export const MediaPlayerContextProvider = ({ children }) => {
       booksProgress,
       resumePlayback,
       initializedFlag,
+      playChapter,
     ]
   );
 

@@ -16,12 +16,25 @@ import { useApp } from '../../contexts/AppContext/AppContext';
 import CenterWrapper from '../styled_components/CenterWrapper';
 import BaseDialog from './components/BaseDialog';
 import useFetchProgressCallback from '../../hooks/useFetchProgressCallback';
+import useSetRootDirectory from '../../hooks/useSetRootDirectory';
+import { useMediaPlayer } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
 
 const FolderSelectDialog = ({ open, setOpen }) => {
-  const { getFolders, setRootDirectory } = useGoogle();
-  const { axiosError } = useApp();
+  const { getFolders, setCurrentBook, setPlayingBook, setPlayingChapter } =
+    useGoogle();
+  const { axiosError, setGoogleDirectoryExists, setRootUpdatedAt } = useApp();
+  const { setSound } = useMediaPlayer();
   const [selectedFolders, setSelectedFolders] = useState([]);
   const [folders, setFolders] = useState([]);
+
+  const setRootDirectory = useSetRootDirectory(
+    setSound,
+    setPlayingBook,
+    setCurrentBook,
+    setPlayingChapter,
+    setGoogleDirectoryExists,
+    setRootUpdatedAt
+  );
 
   useEffect(() => {
     if (axiosError && axiosError.code === 401) setOpen(false);

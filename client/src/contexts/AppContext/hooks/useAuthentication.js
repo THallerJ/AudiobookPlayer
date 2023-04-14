@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
+// import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
 
 const useAuthentication = () => {
   const [authentication, setAuthentication] = useState({
@@ -7,10 +7,6 @@ const useAuthentication = () => {
     isAuthenticated: false,
   });
   const [googleDirectoryExists, setGoogleDirectoryExists] = useState(null);
-
-  useEffectSkipFirst(() => {
-    if (!authentication.isAuthenticated) localStorage.clear();
-  }, [authentication]);
 
   return {
     authentication,

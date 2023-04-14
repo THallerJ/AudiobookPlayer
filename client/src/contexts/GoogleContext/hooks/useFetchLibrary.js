@@ -1,11 +1,13 @@
+import { useCallback, useRef } from 'react';
 import { useApp } from '../../AppContext/AppContext';
 import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
-import useFetchProgress from '../../../hooks/useFetchProgress';
+import useFetchProgressCallback from '../../../hooks/useFetchProgressCallback';
 
 const useFetchLibrary = (setLibrary, overridedCovers) => {
   const { axiosInstance, googleDirectoryExists, rootUpdatedAt } = useApp();
+  const init = useRef(false);
 
-  const fetchLibrary = async () => {
+  const fetchLibrary = useCallback(async () => {
     if (googleDirectoryExists) {
       const response = await axiosInstance.get(`/google/library`);
       const sortedLibrary = response.data.sort((book1, book2) => {
@@ -22,18 +24,20 @@ const useFetchLibrary = (setLibrary, overridedCovers) => {
 
       setLibrary(sortedLibrary);
     }
-  };
+  }, [axiosInstance, googleDirectoryExists, setLibrary, overridedCovers]);
 
-  const [isLoadingLibrary, loadLibrary] = useFetchProgress(fetchLibrary);
-  const [isRefreshingLibrary, refreshLibrary] = useFetchProgress(fetchLibrary);
+  const [isLoadingLibrary, loadLibrary] =
+    useFetchProgressCallback(fetchLibrary);
+  const [isRefreshingLibrary, refreshLibrary] =
+    useFetchProgressCallback(fetchLibrary);
 
   useEffectSkipFirst(() => {
-    loadLibrary();
-  }, [rootUpdatedAt]);
+    if (init.current === true) loadLibrary();
+    init.current = true;
+  }, [rootUpdatedAt, loadLibrary, init]);
 
   return {
     isLoadingLibrary,
-    loadLibrary,
     isRefreshingLibrary,
     refreshLibrary,
   };

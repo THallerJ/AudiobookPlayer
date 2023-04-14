@@ -13,12 +13,13 @@ import {
 } from '@mui/material';
 import { useDashboard } from '../../contexts/DashboardContext/DashboardContext';
 import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
+import { useMediaPlayer } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
 
 const Sidebar = () => {
   const theme = useTheme();
   const { openDrawer, setOpenDrawer } = useDashboard();
-  const { currentBook, setPlayingChapter, playingChapter, setPlayingBook } =
-    useGoogle();
+  const { currentBook, playingChapter } = useGoogle();
+  const { playChapter } = useMediaPlayer();
 
   const handleDrawerClose = () => {
     setOpenDrawer(false);
@@ -50,8 +51,7 @@ const Sidebar = () => {
               divider
               dense
               onClick={() => {
-                setPlayingChapter({ data: chapter, index });
-                setPlayingBook(currentBook);
+                playChapter(currentBook, { data: chapter, index });
               }}
             >
               <ListItemText

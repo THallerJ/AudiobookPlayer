@@ -1,57 +1,64 @@
+import { useCallback } from 'react';
 import { useGoogle } from '../../GoogleContext/GoogleContext';
 
 const useActions = ({
   sound,
   isPlaying,
-  setIsPlaying,
   isMuted,
-  setIsMuted,
   rate,
   setRate,
   progress,
   setProgress,
   soundLoaded,
+  setInitializedFlag,
 }) => {
-  const { setPlayingChapter, playingChapter, playingBook } = useGoogle();
+  const { setPlayingChapter, playingChapter, playingBook, setPlayingBook } =
+    useGoogle();
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     if (sound) {
       if (isPlaying) {
         sound.pause();
-        setIsPlaying(false);
       } else {
         sound.play();
-        setIsPlaying(true);
       }
     }
-  };
+  }, [isPlaying, sound]);
 
-  const toggleMute = () => {
+  const playChapter = useCallback(
+    (book, chapter) => {
+      setPlayingChapter(chapter);
+      setPlayingBook(book);
+      setInitializedFlag(true);
+    },
+    [setPlayingBook, setPlayingChapter, setInitializedFlag]
+  );
+
+  const toggleMute = useCallback(() => {
     if (sound) {
       sound.mute(!isMuted);
-      setIsMuted(!isMuted);
     }
-  };
+  }, [sound, isMuted]);
 
-  const increaseRate = () => {
+  const increaseRate = useCallback(() => {
     if (sound) {
       if (rate < 4) {
         setRate(rate + 0.25);
         sound.rate(rate);
       }
     }
-  };
+  }, [sound, rate, setRate]);
 
-  const decreaseRate = () => {
+  const decreaseRate = useCallback(() => {
     if (sound) {
       if (rate > 0.5) {
         setRate(rate - 0.25);
         sound.rate(rate);
       }
     }
-  };
+  }, [sound, rate, setRate]);
 
-  const seekBackward = () => {
+  const seekBackward = useCallback(() => {
     const newProgress = progress - 5;
     if (newProgress > 0 && sound) {
       sound.seek(newProgress);
@@ -60,9 +67,9 @@ const useActions = ({
       sound.seek(0);
       setProgress(0);
     }
-  };
+  }, [progress, sound, setProgress]);
 
-  const seekForward = () => {
+  const seekForward = useCallback(() => {
     const newProgress = progress + 5;
 
     if (newProgress > 0 && sound) {
@@ -72,9 +79,9 @@ const useActions = ({
       sound.seek(0);
       setProgress(0);
     }
-  };
+  }, [progress, setProgress, sound]);
 
-  const previousTrack = () => {
+  const previousTrack = useCallback(() => {
     if (playingBook) {
       const newIndex = playingChapter.index - 1;
       if (newIndex >= 0)
@@ -83,9 +90,9 @@ const useActions = ({
           index: newIndex,
         });
     }
-  };
+  }, [playingBook, setPlayingChapter, playingChapter]);
 
-  const nextTrack = () => {
+  const nextTrack = useCallback(() => {
     if (playingBook) {
       const newIndex = playingChapter.index + 1;
       if (newIndex < playingBook.chapters.length)
@@ -94,14 +101,17 @@ const useActions = ({
           index: newIndex,
         });
     }
-  };
+  }, [playingBook, playingChapter, setPlayingChapter]);
 
-  const handleSeek = (value) => {
-    if (sound && soundLoaded) {
-      setProgress(value);
-      sound.seek(value);
-    }
-  };
+  const handleSeek = useCallback(
+    (value) => {
+      if (sound && soundLoaded) {
+        setProgress(value);
+        sound.seek(value);
+      }
+    },
+    [sound, soundLoaded, setProgress]
+  );
 
   return {
     togglePlay,
@@ -113,6 +123,7 @@ const useActions = ({
     previousTrack,
     nextTrack,
     handleSeek,
+    playChapter,
   };
 };
 

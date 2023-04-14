@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useGoogle } from '../../GoogleContext/GoogleContext';
 import useEffectSkipFirst from '../../../hooks/useEffectSkipFirst';
 import { useApp } from '../../AppContext/AppContext';
@@ -6,7 +6,6 @@ import { useApp } from '../../AppContext/AppContext';
 const useResume = ({
   sound,
   refreshFlagRef,
-  userInputFlagRef,
   setInitializedFlag,
   booksProgress,
   setBooksProgress,
@@ -22,20 +21,31 @@ const useResume = ({
     setCurrentBook,
   } = useGoogle();
   const [resumeFlag, setResumeFlag] = useState(false);
+  const doFetchProgressRef = useRef(true);
 
-  const resumePlayback = (bookId) => {
-    if (bookId) {
-      const bookChap = getBookAndChapter(
-        bookId,
-        booksProgress[bookId].chapterId
-      );
-      setPlayingChapter(bookChap.chapter);
-      setPlayingBook(bookChap.book);
-    }
+  const resumePlayback = useCallback(
+    (bookId) => {
+      if (bookId) {
+        const bookChap = getBookAndChapter(
+          bookId,
+          booksProgress[bookId].chapterId
+        );
+        setPlayingChapter(bookChap.chapter);
+        setPlayingBook(bookChap.book);
+      }
 
-    setInitializedFlag(true);
-    setResumeFlag(true);
-  };
+      setInitializedFlag(true);
+      setResumeFlag(true);
+    },
+    [
+      booksProgress,
+      setResumeFlag,
+      setPlayingBook,
+      getBookAndChapter,
+      setInitializedFlag,
+      setPlayingChapter,
+    ]
+  );
 
   useEffectSkipFirst(() => {
     if (sound && resumeFlag) {
@@ -83,10 +93,14 @@ const useResume = ({
         }
       }
 
-      userInputFlagRef.current = true;
+      doFetchProgressRef.current = false;
     };
 
-    if (authentication.isAuthenticated && !refreshFlagRef.current)
+    if (
+      authentication.isAuthenticated &&
+      !refreshFlagRef.current &&
+      doFetchProgressRef.current
+    )
       getBookProgress();
   }, [
     axiosInstance,
@@ -100,7 +114,7 @@ const useResume = ({
     authentication,
     refreshFlagRef,
     setBooksProgress,
-    userInputFlagRef,
+    doFetchProgressRef,
   ]);
 
   return resumePlayback;

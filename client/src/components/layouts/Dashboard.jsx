@@ -7,6 +7,7 @@ import Sidebar from './Sidebar';
 import useIsLargeScreen from '../../hooks/useIsLargeScreen';
 import DashboardMenu from './components/DashboardMenu';
 import DashboardAppBar from './components/DashboardAppBar';
+import { MediaPlayerContextProvider } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
 
 const FolderSelectDialog = lazy(() => import('../dialogs/FolderSelectDialog'));
 const ChangeCoverDialog = lazy(() => import('../dialogs/ChangeCoverDialog'));
@@ -23,20 +24,22 @@ const Dashboard = () => {
   return (
     <Div100vh>
       <StyledDashboardContainer>
-        <Sidebar />
         <DashboardAppBar />
-        <div className={isLargeScreen ? 'bodyRight' : 'body'}>
-          <DashboardBody />
-        </div>
-        <DashboardMenu />
-        <Suspense fallback={null}>
-          {openFolderDialog && (
-            <FolderSelectDialog
-              open={openFolderDialog}
-              setOpen={setOpenFolderDialog}
-            />
-          )}
-        </Suspense>
+        <MediaPlayerContextProvider>
+          <Sidebar />
+          <div className={isLargeScreen ? 'bodyRight' : 'body'}>
+            <DashboardBody />
+          </div>
+          <DashboardMenu />
+          <Suspense fallback={null}>
+            {openFolderDialog && (
+              <FolderSelectDialog
+                open={openFolderDialog}
+                setOpen={setOpenFolderDialog}
+              />
+            )}
+          </Suspense>
+        </MediaPlayerContextProvider>
         <Suspense fallback={null}>
           {openCoverDialog && (
             <ChangeCoverDialog
