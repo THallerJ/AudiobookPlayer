@@ -40,7 +40,7 @@ const AppInfo = ({ scrollRef }) => {
           }}
         >
           {' '}
-          {isLargeScreen && <BackgroundImageLink darkMode />}
+          {isLargeScreen && <BackgroundImageLink darkMode={false} />}
         </Box>
       </Box>
     </Box>

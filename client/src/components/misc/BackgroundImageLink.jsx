@@ -1,8 +1,14 @@
 import { Typography, Link } from '@mui/material';
 
 const BackgroundImageLink = ({ darkMode }) => {
+  const getTextColor = () => {
+    if (darkMode === undefined) return null;
+    if (!darkMode) return 'black';
+    return 'white';
+  };
+
   return (
-    <Typography variant="caption" color={darkMode ? 'black' : 'white'}>
+    <Typography variant="caption" color={getTextColor()}>
       <Link
         target="_blank"
         rel="noopener noreferrer"
