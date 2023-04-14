@@ -27,8 +27,8 @@ const BookCover = ({
         alt={title}
       />
       {overlays &&
-        overlays.map((overlay) => (
-          <div key={`${title}${width + height + overlays.length}`}>
+        overlays.map((overlay, index) => (
+          <div key={`${title}${width + height + overlays.length + index}`}>
             {overlay}
           </div>
         ))}
