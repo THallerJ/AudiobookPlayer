@@ -2,9 +2,11 @@
 
 ## Description
 
-[Stream Audiobook Player](https://stream-audiobook-player.herokuapp.com/) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
+[Stream Audiobook Player](https://stream-audiobook-player.onrender.com/) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
 
 (_Note: the app has not yet been verified by Google_).
+
+![capture](https://user-images.githubusercontent.com/26337084/231924976-20436769-2ab9-4d1f-bc56-7d91072e2667.png)
 
 ## Freatures
 
@@ -88,19 +90,6 @@ Alternatively, to run the app for development purposes, execute the following co
 3. `npm run watch`
 
 Once running, the app can be accessed at the server URL.
-
-## Screenshots
-
-### Desktop
-
-![capture](https://user-images.githubusercontent.com/26337084/188253243-5b49068a-21ea-4848-8300-d4be8e570431.png)
-
-![capture](https://user-images.githubusercontent.com/26337084/188253249-f22b6332-41a4-432b-86b3-b3bb9139a7d8.png)
-
-### Mobile
-
-<a href="url"><img src="https://user-images.githubusercontent.com/26337084/188253256-4daf36e9-a67e-4b6d-8974-fa18b9a39ed2.png"  height="720"></a>
-<a href="url"><img src="https://user-images.githubusercontent.com/26337084/188253258-dd7a94b1-b33e-4a1c-a604-a2a7695e5cdc.png"  height="720"></a>
 
 ## License
 
