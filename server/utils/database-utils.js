@@ -8,11 +8,11 @@ const deleteExpiredDocuments = async () => {
 
   await Chapter.deleteMany({
     updatedAt: { $lt: expireDate },
-  });
+  }).exec();
 
   await User.deleteMany({
     updatedAt: { $lt: expireDate },
-  });
+  }).exec();
 
   setTimeout(async () => {
     await deleteExpiredDocuments();
@@ -20,7 +20,7 @@ const deleteExpiredDocuments = async () => {
 };
 
 const deleteAllChapterProgress = (googleId) => {
-  Chapter.deleteMany({ googleId });
+  Chapter.deleteMany({ googleId }).exec();
 };
 
 module.exports = {

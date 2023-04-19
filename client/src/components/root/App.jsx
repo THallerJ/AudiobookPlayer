@@ -46,7 +46,6 @@ const App = () => {
     setGoogleDirectoryExists(rua !== null);
 
     setRootUpdatedAt((prevState) => {
-      console.log('updated');
       if (rua && rua !== prevState) return response.data.rootUpdatedAt;
       return prevState;
     });

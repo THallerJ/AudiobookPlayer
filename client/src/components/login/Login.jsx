@@ -11,6 +11,7 @@ const Login = () => {
   const { darkModeEnabled, toggleDarkMode, authentication } = useApp();
 
   useEffect(() => {
+    localStorage.clear();
     if (darkModeEnabled === 'true') toggleDarkMode();
   }, [authentication, darkModeEnabled, toggleDarkMode]);
 

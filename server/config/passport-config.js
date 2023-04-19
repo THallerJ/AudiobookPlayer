@@ -9,15 +9,23 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await User.find({ googleId: id });
+  try {
+    const user = await User.find({ googleId: id });
 
-  const encryptedAccessToken = user[0].accessToken;
-  const encryptedRefreshToken = user[0].refreshToken;
+    if (user.length) {
+      const encryptedAccessToken = user[0].accessToken;
+      const encryptedRefreshToken = user[0].refreshToken;
 
-  user[0].accessToken = encryption.decryptText(encryptedAccessToken);
-  user[0].refreshToken = encryption.decryptText(encryptedRefreshToken);
+      user[0].accessToken = encryption.decryptText(encryptedAccessToken);
+      user[0].refreshToken = encryption.decryptText(encryptedRefreshToken);
 
-  done(null, user);
+      done(null, user);
+    } else {
+      done(null, false);
+    }
+  } catch (e) {
+    done(e);
+  }
 });
 
 passport.use(
