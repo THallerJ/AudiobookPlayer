@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
       <Typography variant="h5">APIs</Typography>
       <Typography variant="body1" sx={{ pb: theme.spacing(1) }}>
         The app uses the Google Drive API for accessing files stored on the
-        user&apos;s Google Drive whenand for accessing the audiobook files
+        user&apos;s Google Drive and for accessing the audiobook files
         themselves.
       </Typography>
       <Typography variant="body1">

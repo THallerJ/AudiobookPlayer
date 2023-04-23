@@ -18,7 +18,6 @@ const darkTheme = createTheme({
     },
     primaryAlt: {
       main: '#FF9999',
-      secondary: '#FFC8C8',
     },
     secondary: {
       dark: '#2d2d2d',

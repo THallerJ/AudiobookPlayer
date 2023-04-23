@@ -40,7 +40,7 @@ const AppInfo = ({ scrollRef }) => {
           }}
         >
           {' '}
-          {isLargeScreen && <BackgroundImageLink darkMode={false} />}
+          {isLargeScreen && <BackgroundImageLink />}
         </Box>
       </Box>
     </Box>
@@ -49,7 +49,7 @@ const AppInfo = ({ scrollRef }) => {
   const renderVisuals = () => (
     <Box className="visuals">
       <MockupImage />
-      {!isLargeScreen && <BackgroundImageLink />}
+      {!isLargeScreen && <BackgroundImageLink darkMode />}
     </Box>
   );
 
@@ -102,7 +102,7 @@ const StyledAppInfoContainer = styled(Box)(({ theme, isLargeScreen }) => ({
   '.visuals': {
     minHeight: '100vh',
     width: isLargeScreen ? '50%' : '100%',
-    background: `linear-gradient(15deg, black 55%, ${theme.palette.primary.main} 100%)`,
+    background: `linear-gradient(5deg, black 55%, ${theme.palette.primary.main} 100%)`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: isLargeScreen ? 'center' : 'space-between',

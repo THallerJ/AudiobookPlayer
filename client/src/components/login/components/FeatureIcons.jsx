@@ -51,7 +51,7 @@ const FeatureIcons = () => {
       </Grid>
       <Grid item xs={6} md={4}>
         <TextIcon Icon={DarkModeIcon} title="Dark Mode">
-          Can toggle light/dark mode
+          Toggle light/dark mode
         </TextIcon>
       </Grid>
     </Grid>
