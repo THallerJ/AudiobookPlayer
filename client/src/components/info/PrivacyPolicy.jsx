@@ -63,7 +63,7 @@ const PrivacyPolicy = () => {
       <Typography variant="h5">Contact Information</Typography>
       <Typography variant="body1">
         If you have any questions or suggestions regarding the privacy policy,
-        then contact me at: streamaudiobookplayer@gmail.com
+        then contact me at: hallert60@gmail.com
       </Typography>
     </div>
   );
