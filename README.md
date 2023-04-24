@@ -2,7 +2,7 @@
 
 ## Description
 
-[Stream Audiobook Player](https://stream-audiobook-player.onrender.com/) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
+[Stream Audiobook Player](https://streamaudiobookplayer.xyz) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
 
 (_Note: the app has not yet been verified by Google_).
 
