@@ -13,11 +13,12 @@ const deleteExpiredDocuments = async () => {
   await User.deleteMany({
     updatedAt: { $lt: expireDate },
   }).exec();
-
-  setTimeout(async () => {
-    await deleteExpiredDocuments();
-  }, 7 * 86400); // 7 days
 };
+
+// execute deleteExpiredDocuments every 7 days
+setInterval(() => {
+  deleteExpiredDocuments();
+}, 7 * 86400 * 1000);
 
 const deleteAllChapterProgress = (googleId) => {
   Chapter.deleteMany({ googleId }).exec();
