@@ -23,7 +23,7 @@ const FolderSelectDialog = ({ open, setOpen }) => {
   const { getFolders, setCurrentBook, setPlayingBook, setPlayingChapter } =
     useGoogle();
   const { axiosError, setGoogleDirectoryExists, setRootUpdatedAt } = useApp();
-  const { setSound } = useMediaPlayer();
+  const { setSound, setProgress } = useMediaPlayer();
   const [selectedFolders, setSelectedFolders] = useState([]);
   const [folders, setFolders] = useState([]);
 
@@ -32,6 +32,7 @@ const FolderSelectDialog = ({ open, setOpen }) => {
     setPlayingBook,
     setCurrentBook,
     setPlayingChapter,
+    setProgress,
     setGoogleDirectoryExists,
     setRootUpdatedAt
   );

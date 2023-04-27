@@ -5,6 +5,7 @@ const useSetRootDirectory = (
   setPlayingBook,
   setCurrentBook,
   setPlayingChapter,
+  setProgress,
   setGoogleDirectoryExists,
   setRootUpdatedAt
 ) => {
@@ -12,6 +13,7 @@ const useSetRootDirectory = (
     setPlayingChapter(null);
     setPlayingBook(null);
     setCurrentBook(null);
+    setProgress(0);
 
     setSound((prevState) => {
       if (prevState) prevState.unload();
