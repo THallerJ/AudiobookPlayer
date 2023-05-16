@@ -13,7 +13,11 @@ router.get('/failed', (req, res) => {
 router.get(
   '/google',
   passport.authenticate('google', {
-    scope: ['profile', 'https://www.googleapis.com/auth/drive.readonly'],
+    scope: [
+      'profile',
+      'https://www.googleapis.com/auth/drive.readonly',
+      'https://www.googleapis.com/auth/books',
+    ],
     accessType: 'offline',
     prompt: 'consent',
   })
