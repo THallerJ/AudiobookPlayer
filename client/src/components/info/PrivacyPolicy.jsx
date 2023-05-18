@@ -34,7 +34,9 @@ const PrivacyPolicy = () => {
         corresponding to a book cover that is retrieved from the Books API so
         the audiobooks can be displayed to the user. Similarily, the ID and
         title of each chapter of each book is stored in the browser so the
-        chapters can be displayed to the user and streamed.
+        chapters can be displayed to the user and streamed. Another list of
+        image urls that map to an audiobook is stored on the client used to
+        track the user&apos;s overrided book covers.
       </Typography>
       <Typography variant="body1" sx={{ pb: theme.spacing(1) }}>
         The user&apos;s progress in each audiobook is saved in a database so
