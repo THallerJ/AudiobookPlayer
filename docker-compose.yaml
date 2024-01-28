@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    depends_on:
+      - api
+    build:
+      context: ./client
+  api:
+    depends_on:
+      - db
+    build:
+      context: .
+    restart: on-failure:10
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - MONGO_URI=mongodb://db/db_data
+      - SESSION_SECRET=secret
+      - ENCRYPTION_KEY=encryptionkey
+    ports:
+      - '5000:5000'
+  db:
+    image: mongo:latest
+    volumes:
+      - ./db_data:/data/db
+    ports:
+      - '27017:27017'
+volumes:
+  db_data:
