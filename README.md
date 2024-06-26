@@ -2,7 +2,7 @@
 
 ## Description
 
-[Stream Audiobook Player](https://streamaudiobookplayer.xyz) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
+[Stream Audiobook Player](https://stream-audiobook-player.onrender.com/) is a web app that allows users to stream audiobooks that are stored on their Google Drive.
 
 (_Note: the app has not yet been verified by Google_).
 
@@ -61,11 +61,13 @@ The app allows the user to resume any book where they left off, even across diff
 
 ## Running the App Locally
 
-In order to run the app locally, one must first create a project on the [Google Developer Console](https://console.cloud.google.com/apis/dashboard) and enable the Google Drive API and Google Books API. One must also [create a MongoDB database](https://www.mongodb.com/basics/create-database).
+The app can either be built manually or with Docker.
+
+In order to run the app locally, one must first create a project on the [Google Developer Console](https://console.cloud.google.com/apis/dashboard) and enable the Google Drive API and Google Books API. One must also [create a MongoDB database](https://www.mongodb.com/basics/create-database), unless the app is run with Docker.
 
 ### Environment Variables
 
-The environment variables listed below must be provided to the app:
+If building the app manually, the environment variables listed below must be provided to the app:
 
 | Variable             | Value                                                                            |
 | -------------------- | -------------------------------------------------------------------------------- |
@@ -77,19 +79,30 @@ The environment variables listed below must be provided to the app:
 | ENCRYPTION_KEY       | Key used for encrypting user credentials                                         |
 | SERVER_URL           | URL of the server (_When run locally, the server uses port 5000_)                |
 
+If using Docker, only the following environmental variables need to be provided:
+
+| Variable             | Value                                                                            |
+| -------------------- | -------------------------------------------------------------------------------- |
+| GOOGLE_API_KEY       | from [Google Developer Console](https://console.cloud.google.com/apis/dashboard) |
+| GOOGLE_CLIENT_ID     | from [Google Developer Console](https://console.cloud.google.com/apis/dashboard) |
+| GOOGLE_CLIENT_SECRET | from [Google Developer Console](https://console.cloud.google.com/apis/dashboard) |
+
 All environment variables should be provided at the root level of the app.
 
 ### Commands
 
-To build and run the app, execute the `npm run build-run-app` command from the root directory of the app.
+To build and run the app manually, execute the `npm run build-run-app` command from the root directory of the app.
 
-Alternatively, to run the app for development purposes, execute the following commands from the root directory:
+To run the app for development purposes, execute the following commands from the root directory:
 
 1. `npm run install-deps`
 2. `npm run dev`
 3. `npm run watch`
 
 Once running, the app can be accessed at the server URL.
+
+Alternatively, if using docker, one can build the necessary docker images and run the app using the command
+`docker compose up`. Otherwise, the prebuilt images can be retrieved [here](https://hub.docker.com/u/hallert60).
 
 ## License
 
