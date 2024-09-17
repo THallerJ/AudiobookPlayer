@@ -17,6 +17,7 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - MONGO_URI=mongodb://db/db_data
+      - SERVER_URL=http://localhost:5000
       - SESSION_SECRET=secret
       - ENCRYPTION_KEY=encryptionkey
     ports:
