@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box, useTheme, styled } from '@mui/material';
 import BackToolBar from './BackToolbar';
-import backgroundImage from '../../assets/images/backgroundImage.jpg';
-import darkBackgroundImage from '../../assets/images/darkBackgroundImage.jpg';
+import backgroundImage from '../../assets/images/backgroundImage.webp';
+import darkBackgroundImage from '../../assets/images/darkBackgroundImage.webp';
 import useIsLargeScreen from '../../hooks/useIsLargeScreen';
 import BackgroundImageLink from '../misc/BackgroundImageLink';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import MockupImg from '../../../assets/images/mockup.png';
-import MockupMobileImg from '../../../assets/images/mockup-mobile.png';
+import MockupImg from '../../../assets/images/mockup.webp';
+import MockupMobileImg from '../../../assets/images/mockup-mobile.webp';
 import useIsLargeScreen from '../../../hooks/useIsLargeScreen';
 
 const MockupImage = () => {

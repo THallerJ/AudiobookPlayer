@@ -23,7 +23,7 @@ import tinyColor from 'tinycolor2';
 import { useDashboard } from '../../contexts/DashboardContext/DashboardContext';
 import { useGoogle } from '../../contexts/GoogleContext/GoogleContext';
 import { useMediaPlayer } from '../../contexts/MediaPlayerContext/MediaPlayerContext';
-import defaultBookCover from '../../assets/images/defaultBookCover.jpg';
+import defaultBookCover from '../../assets/images/defaultBookCover.webp';
 
 const TrackController = () => {
   const { setShowTrackController } = useDashboard();
